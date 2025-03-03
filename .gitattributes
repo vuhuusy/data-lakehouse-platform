@@ -1,0 +1,12 @@
+# Auto convert line endings
+* text=auto
+
+# Tell Git not to diff or merge binary files
+*.png  binary
+*.jpg  binary
+*.mp4  binary
+*.zip  binary
+
+# Ignore Certain File Types in Git Diffs
+*.log  -diff
+*.csv  -diff
