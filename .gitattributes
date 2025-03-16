@@ -1,12 +1,76 @@
-# Auto convert line endings
-* text=auto
+# --- Language Detection ---
+# Ensure GitHub Linguist detects Markdown correctly
+*.md linguist-detectable
 
-# Tell Git not to diff or merge binary files
-*.png  binary
-*.jpg  binary
-*.mp4  binary
-*.zip  binary
+# --- Text File Handling & Diff Rules ---
+# Define how Git should handle text files and their diffs
+*.py    text diff=python
+*.pyi   text diff=python
+*.pyx   text diff=python
+*.sql   text diff=sql
+*.md    text diff=markdown
+*.csv   text eol=crlf
+*.json  text
+*.toml  text
+*.xml   text
+*.yaml  text
+*.yml   text
 
-# Ignore Certain File Types in Git Diffs
-*.log  -diff
-*.csv  -diff
+# --- Normalize Line Endings ---
+# Auto normalize line endings for text files
+*       text=auto
+
+# Ensure shell scripts use LF (Unix-style line endings)
+*.sh    text eol=lf
+*.bash  text eol=lf
+*.zsh   text eol=lf
+*.fish  text eol=lf
+*.ksh   text eol=lf
+
+# Ensure Windows scripts use CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# --- Binary Files Handling ---
+# Prevent Git from diffing and merging binary files
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.tif   binary
+*.tiff  binary
+*.ico   binary
+*.mp4   binary
+*.mp3   binary
+*.avi   binary
+*.mov   binary
+
+# --- Archives (Binary - No Diff) ---
+*.7z    binary
+*.zip   binary
+*.tar   binary
+*.gz    binary
+*.bz2   binary
+*.xz    binary
+*.rar   binary
+*.tgz   binary
+*.tbz2  binary
+*.tlz   binary
+*.zst   binary
+
+# --- Ignore Certain File Types in Git Diffs ---
+# Exclude log and data files from Git diffs
+*.log   -diff
+*.csv   -diff
+
+# --- Preserve Formatting for Patch Files ---
+*.patch -text
+
+# --- Exclude Development Files from Exporting ---
+# These files will not be included in `git archive`
+.gitattributes export-ignore
+.gitignore     export-ignore
+README.md      export-ignore
+docs/          export-ignore
+tests/         export-ignore
