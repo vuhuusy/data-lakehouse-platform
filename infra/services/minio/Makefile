@@ -21,14 +21,14 @@ uninstall-minio: uninstall-tenant uninstall-operator
 install-operator:
 	@set -e; \
 	helm upgrade --install --namespace $(NAMESPACE) \
-		--values $(MINIO_DIR)/operator/values.yaml \
+		--values infra/services/minio/operator/values.yaml \
 		minio-operator $(MINIO_OPERATOR)
 
 # Install MinIO Tenant
 install-tenant:
 	@set -e; \
 	helm upgrade --install --namespace $(NAMESPACE) \
-		--values $(MINIO_DIR)/tenant/values.yaml \
+		--values infra/services/minio/tenant/values.yaml \
 		minio-tenant $(MINIO_TENANT)
 
 # Uninstall MinIO Operator
@@ -46,22 +46,22 @@ uninstall-tenant:
 # Generate self-signed certificate
 generate-self-signed-cert:
 	@set -e; \
-	openssl req -new -x509 -nodes -days 730 -keyout $(MINIO_DIR)/selfsigned.key \
-		-out $(MINIO_DIR)/selfsigned.crt \
-		-config $(MINIO_DIR)/openssl.conf
+	openssl req -new -x509 -nodes -days 730 -keyout infra/services/minio/selfsigned.key \
+		-out infra/services/minio/selfsigned.crt \
+		-config infra/services/minio/openssl.conf
 
 # Register self-signed certificate
 register-self-signed-cert:
 	@set -e; \
 	kubectl delete secret minio-selfsigned-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret tls minio-selfsigned-secret \
-		--key $(MINIO_DIR)/selfsigned.key \
-		--cert $(MINIO_DIR)/selfsigned.crt \
+		--key infra/services/minio/selfsigned.key \
+		--cert infra/services/minio/selfsigned.crt \
 		--namespace $(NAMESPACE); \
 	kubectl delete secret operator-ca-tls --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic operator-ca-tls \
-   		--from-file=public.crt=$(MINIO_DIR)/selfsigned.crt \
-		--from-file=private.key=$(MINIO_DIR)/selfsigned.key \
+   		--from-file=public.crt=infra/services/minio/selfsigned.crt \
+		--from-file=private.key=infra/services/minio/selfsigned.key \
 		--namespace $(NAMESPACE)
 
 # Show help message

@@ -147,7 +147,7 @@ Create storage buckets for data organization:
 
 ```bash
 # Create a generic bucket
-mc mb myminio/brone-zone --insecure
+mc mb myminio/bronze-zone --insecure
 
 # Create a dedicated Nessie warehouse bucket
 mc mb myminio/nessie-warehouse --insecure
