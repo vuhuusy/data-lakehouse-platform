@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 
 # Variables
-NAMESPACE ?= lakehouse
+NAMESPACE ?= minio
 MINIO_OPERATOR ?= minio-operator/operator
 MINIO_TENANT ?= minio-operator/tenant
 MINIO_DIR ?= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
