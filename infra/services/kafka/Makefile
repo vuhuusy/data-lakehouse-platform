@@ -17,7 +17,7 @@ STORE_PASSWORD ?= changeit
 # Generate self-signed certificate and keystore/truststore
 generate-self-signed-cert-keystore-truststore:
 	@set -e; \
-	rm infra/services/kafka/certs/*.jks; \
+	rm -f infra/services/kafka/certs/*.jks; \
 	openssl req -new -x509 -nodes -days 730 -keyout infra/services/kafka/certs/kafka.key \
 		-out infra/services/kafka/certs/kafka.crt \
 		-config infra/services/kafka/certs/openssl.conf; \
