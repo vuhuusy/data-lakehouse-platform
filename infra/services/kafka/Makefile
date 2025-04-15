@@ -53,7 +53,7 @@ install-kafka:
 
 
 # Uninstall Kafka
-uninstall:
+uninstall-kafka:
 	@set -e; \
 	helm uninstall --namespace $(NAMESPACE) \
 		kafka
