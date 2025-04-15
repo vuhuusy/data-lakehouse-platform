@@ -15,10 +15,10 @@ Before starting, ensure that the following tools are installed:
 Ensure you are in the root directory of the project before running these commands
 
 
-## Create Kubernetes Namespace
+## Create Kubernetes Namespace for MinIO
 
 ```bash
-kubectl create namespace lakehouse & kubectl config set-context --current --namespace=lakehouse
+kubectl create namespace minio & kubectl config set-context --current --namespace=minio
 ```
 
 
@@ -64,7 +64,16 @@ curl -sLo infra/services/minio/operator/values.yaml https://raw.githubuserconten
 curl -sLo infra/services/minio/tenant/values.yaml https://raw.githubusercontent.com/minio/operator/master/helm/tenant/values.yaml
 ```
 
-Make sure you configure `externalCertSecret` and `requestAutoCert` so that the server use Self-signed certificate instead of auto-generated certificate
+Ensure that ``externalCertSecret`` is configured to reference your custom TLS secret and that ``requestAutoCert`` is set to false, so the server uses your self-signed certificate instead of generating one automatically.
+
+```bash
+# MinIO Tenant values.yaml
+externalCertSecret:
+  - name: minio-selfsigned-secret
+    type: kubernetes.io/tls
+
+requestAutoCert: false
+```
 
 ## Install MinIO Operator and Tenant
 
@@ -72,22 +81,31 @@ Make sure you configure `externalCertSecret` and `requestAutoCert` so that the s
 make -f infra/services/minio/Makefile install-minio
 
 # Verify the Operator installation
-kubectl get all
+kubectl get all -n minio
 
 # The response should resemble the following:
-NAME                                  READY   STATUS    RESTARTS   AGE
-pod/minio-operator-576499f74c-kl6pb   1/1     Running   0          5s
-pod/minio-operator-576499f74c-rqmg7   1/1     Running   0          5s
+NAME                                 READY   STATUS    RESTARTS     AGE
+pod/minio-operator-7678c5785-nn4nt   1/1     Running   0            7h4m
+pod/minio-operator-7678c5785-rhpbz   1/1     Running   0            7h4m
+pod/myminio-pool-0-0                 2/2     Running   0            121m
+pod/myminio-pool-0-1                 2/2     Running   0            121m
+pod/myminio-pool-0-2                 2/2     Running   0            121m
 
-NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/operator   ClusterIP   10.103.74.35    <none>        4221/TCP   5s
-service/sts        ClusterIP   10.107.163.40   <none>        4223/TCP   5s
+NAME                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+service/minio             ClusterIP   10.43.207.86   <none>        443/TCP          7h4m
+service/myminio-console   ClusterIP   10.43.108.63   <none>        9443/TCP         7h4m
+service/myminio-hl        ClusterIP   None           <none>        9000/TCP         7h4m
+service/operator          ClusterIP   10.43.117.16   <none>        4221/TCP         7h4m
+service/sts               ClusterIP   10.43.59.76    <none>        4223/TCP         7h4m
 
 NAME                             READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/minio-operator   2/2     2            2           5s
+deployment.apps/minio-operator   2/2     2            2           7h4m
 
-NAME                                        DESIRED   CURRENT   READY   AGE
-replicaset.apps/minio-operator-576499f74c   2         2         2       5s
+NAME                                       DESIRED   CURRENT   READY   AGE
+replicaset.apps/minio-operator-7678c5785   2         2         2       7h4m
+
+NAME                              READY   AGE
+statefulset.apps/myminio-pool-0   3/3     7h4m
 ```
 
 ## Accessing MinIO Services via Port Forwarding
@@ -96,10 +114,10 @@ To interact with MinIO services securely from your local machine, use port forwa
 
 ```bash
 # Forward MinIO API service to port 9000
-kubectl port-forward service/myminio-hl 9000 -n lakehouse &
+kubectl port-forward service/myminio-hl 9000 -n minio &
 
 # Forward MinIO Console service to port 9443
-kubectl port-forward service/myminio-console 9443 -n lakehouse &
+kubectl port-forward service/myminio-console 9443 -n minio &
 ```
 
 After running the commands, you can:

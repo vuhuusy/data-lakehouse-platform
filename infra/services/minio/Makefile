@@ -4,7 +4,6 @@
 NAMESPACE ?= minio
 MINIO_OPERATOR ?= minio-operator/operator
 MINIO_TENANT ?= minio-operator/tenant
-MINIO_DIR ?= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # Define phony targets
 .PHONY: install-minio install-operator install-tenant \
