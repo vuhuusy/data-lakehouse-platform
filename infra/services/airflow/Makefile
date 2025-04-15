@@ -7,7 +7,7 @@ CHART_REDIS ?= bitnami/redis
 AIRFLOW_OPERATOR ?= apache-airflow/airflow
 
 # Define phony targets
-.PHONY: 
+.PHONY: \
 	build-custom-dockerfile \
 	release-docker-images \
 	install-all install-postgresql-redis \
