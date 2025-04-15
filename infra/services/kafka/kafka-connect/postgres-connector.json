@@ -1,0 +1,24 @@
+{
+  "name": "finance-core-connector",
+  "config": {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "tasks.max": "1",
+      "database.hostname": "postgres-finance-core.finance-core.svc.cluster.local",
+      "database.port": "5432",
+      "database.user": "postgres",
+      "database.password": "postgres",
+      "database.dbname" : "postgres",
+      "topic.prefix": "finance-core",
+      "schema.include.list": "finance-core",
+      "plugin.name": "pgoutput",
+      "producer.override.security.protocol": "SASL_PLAINTEXT",
+      "producer.override.sasl.mechanism": "PLAIN",
+      "producer.override.sasl.jaas.config": "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"user1\" password=\"MMOKgCFj2U\";",
+      "producer.override.ssl.truststore.type": "JKS",
+      "producer.override.ssl.truststore.location": "/usr/share/confluent-hub-components/kafka.truststore.jks",
+      "producer.override.ssl.truststore.password": "changeit",
+      "producer.override.ssl.keystore.type": "JKS",
+      "producer.override.ssl.keystore.location": "/usr/share/confluent-hub-components/kafka.keystore.jks",
+      "producer.override.ssl.keystore.password": "changeit"
+  }
+}
