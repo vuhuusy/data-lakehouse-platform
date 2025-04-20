@@ -1,0 +1,11 @@
+- name: Setup Rancher node
+  hosts: rancher
+  become: yes
+  roles:
+    - rancher_node
+
+- name: Setup RKE2 master & worker nodes
+  hosts: master,workers
+  become: yes
+  roles:
+    - rke2_node

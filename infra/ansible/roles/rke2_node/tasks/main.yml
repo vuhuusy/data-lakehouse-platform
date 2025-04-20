@@ -1,0 +1,9 @@
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install Java 11
+  apt:
+    name: openjdk-11-jdk
+    state: present
