@@ -1,0 +1,11 @@
+- name: Setup master nodes
+  hosts: masters
+  become: yes
+  roles:
+    - master
+
+- name: Setup worker nodes
+  hosts: workers
+  become: yes
+  roles:
+    - worker
