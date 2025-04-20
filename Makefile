@@ -6,3 +6,5 @@ longhorn-install:
 	  --create-namespace \
 	  --set defaultSettings.defaultDataPath="/var/lib/longhorn/" \
 	  --set persistence.defaultClass=true
+
+	kubectl apply -f infra/services/longhorn/storageclasses.yaml
