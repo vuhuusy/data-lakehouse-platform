@@ -1,0 +1,29 @@
+envFrom:
+  - secretRef:
+      name: kafka-ui-jks
+
+extraVolumes:
+  - name: kafka-jks
+    secret:
+      secretName: kafka-ui-jks
+
+extraVolumeMounts:
+  - name: kafka-jks
+    mountPath: /ssl/jks
+    readOnly: true
+
+yamlApplicationConfig:
+  kafka:
+    clusters:
+      - name: kafka-cluster
+        bootstrapServers: kafka.kafka.svc.cluster.local:9092
+        properties:
+          security.protocol: SSL
+          ssl.truststore.location: /ssl/jks/kafka.truststore.jks
+          ssl.truststore.type: JKS
+          ssl.truststore.password: changeit
+          ssl.keystore.location: /ssl/jks/kafka.keystore.jks
+          ssl.keystore.type: JKS
+          ssl.keystore.password: changeit
+  auth:
+    type: disabled

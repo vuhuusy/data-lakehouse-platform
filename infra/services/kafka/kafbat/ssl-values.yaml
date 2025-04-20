@@ -1,0 +1,60 @@
+existingSecret: ssl-secret
+
+env:
+  - name: KAFKA_CLUSTERS_0_NAME
+    value: kafka-cluster
+  - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+    value: kafka.kafka.svc.cluster.local:9092
+
+  # --- SASL ---
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL
+    value: SASL_SSL
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM
+    value: SCRAM-SHA-512
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG
+    value: org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka";
+
+  # --- SSL ---
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION
+    value: /ssl/kafka.truststore.jks
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_TYPE
+    value: JKS
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION
+    value: /ssl/kafka.keystore.jks
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE
+    value: JKS
+
+  # --- SSL passwords từ Secret ---
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ssl-secret
+        key: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
+
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: ssl-secret
+        key: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
+
+  # --- Tắt hostname verification (tạm thời) ---
+  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
+    value: ""
+
+volumeMounts:
+  - name: ssl-files
+    mountPath: /ssl
+    readOnly: true
+
+volumes:
+  - name: ssl-files
+    configMap:
+      name: ssl-files
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30089  # Bạn có thể đổi sang port khác nếu bị trùng
+
+ingress:
+  enabled: false  # Đảm bảo không xung đột nếu bạn đang dùng ingress
