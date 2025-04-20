@@ -9,7 +9,6 @@
       - docker.io
       - openjdk-11-jdk
       - make
-      - helm
       - curl
     state: present
 
@@ -19,6 +18,12 @@
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
   args:
     creates: /usr/local/bin/kubectl
+
+- name: Install Helm
+  shell: |
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  args:
+    creates: /usr/local/bin/helm
 
 - name: Add kubectl aliases to ~/.bashrc
   blockinfile:
