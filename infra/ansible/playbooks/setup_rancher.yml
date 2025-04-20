@@ -1,0 +1,5 @@
+- name: Setup Rancher Nodes
+  hosts: ranchers
+  become: yes
+  roles:
+    - rancher

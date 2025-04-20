@@ -1,0 +1,32 @@
+- name: Update apt
+  apt:
+    update_cache: yes
+    upgrade: dist
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Install build-essential (make)
+  apt:
+    name: build-essential
+    state: present
+
+- name: Install Helm via official script
+  shell: |
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  args:
+    executable: /bin/bash
+    creates: /usr/local/bin/helm
+
+- name: Install kubectl v1.31.0
+  shell: |
+    curl -LO https://dl.k8s.io/release/v1.31.0/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/kubectl
+  args:
+    chdir: /tmp
+    creates: /usr/local/bin/kubectl
