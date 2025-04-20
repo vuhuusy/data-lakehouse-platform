@@ -20,6 +20,7 @@ uninstall-minio: uninstall-tenant uninstall-operator
 install-operator:
 	@set -e; \
 	helm upgrade --install --namespace $(NAMESPACE) \
+		--create-namespace \
 		--values infra/services/minio/operator/values.yaml \
 		minio-operator $(MINIO_OPERATOR)
 
@@ -27,6 +28,7 @@ install-operator:
 install-tenant:
 	@set -e; \
 	helm upgrade --install --namespace $(NAMESPACE) \
+		--create-namespace \
 		--values infra/services/minio/tenant/values.yaml \
 		minio-tenant $(MINIO_TENANT)
 
