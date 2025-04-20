@@ -2,10 +2,12 @@
   hosts: masters
   become: yes
   roles:
+    - common
     - master
 
 - name: Setup worker nodes
   hosts: workers
   become: yes
   roles:
+    - common
     - worker
