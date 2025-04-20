@@ -1,0 +1,18 @@
+source:
+  type: hive-metastore
+  config:
+    host_port: hive-metastore-postgres-postgresql.hive.svc.cluster.local:5432
+    database: postgres
+    username: postgres
+    password: postgres
+    scheme: postgresql+psycopg2
+
+    schema_pattern:
+      allow:
+        - "^public"
+
+sink:
+  type: datahub-rest
+  config:
+    server: http://datahub-datahub-gms.minio.svc.cluster.local:8080
+    token: eyJhbGciOiJIUzI1NiJ9.eyJhY3RvclR5cGUiOiJVU0VSIiwiYWN0b3JJZCI6ImRhdGFodWIiLCJ0eXBlIjoiUEVSU09OQUwiLCJ2ZXJzaW9uIjoiMiIsImp0aSI6IjRjZDM2NzdmLTI0ZmYtNDJiOC04NWQ5LTNmOWM3MjViNDI5YiIsInN1YiI6ImRhdGFodWIiLCJleHAiOjE3NDc2MDQ0MzUsImlzcyI6ImRhdGFodWItbWV0YWRhdGEtc2VydmljZSJ9.oQ5Vjwe_2t_UiMJVyLs3hjcdpeEzm53BsQL0hSmDFF8

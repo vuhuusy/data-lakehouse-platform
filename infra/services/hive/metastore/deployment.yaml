@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hive-metastore
+spec:
+  selector:
+    matchLabels:
+      app: hive-metastore
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: hive-metastore
+    spec:
+      containers:
+        - name: hive-metastore
+          image: huusy/hive-metastore-custom:3.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9083
+          env:
+            - name: CORE_SITE
+              value: /opt/hadoop/etc/hadoop/core-site.xml
+            - name: METASTORE_SITE
+              value: /opt/hive-metastore/conf/metastore-site.xml
+            - name: S3_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: ENDPOINT
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: AWS_SECRET_ACCESS_KEY            
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hive-metastore-secret
+                  key: POSTGRES_URL
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hive-metastore-secret
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hive-metastore-secret
+                  key: POSTGRES_PASSWORD
+            - name: S3_WAREHOUSE_DIR
+              valueFrom:
+                secretKeyRef:
+                  name: hive-metastore-secret
+                  key: S3_WAREHOUSE_DIR
+          command: ["/opt/entrypoint.sh"]

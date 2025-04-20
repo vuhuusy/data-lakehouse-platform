@@ -1,0 +1,19 @@
+source:
+  type: sql
+  config:
+    scheme: postgresql+psycopg2
+    host_port: hive-metastore-postgres-postgresql.hive.svc.cluster.local:5432
+    database: postgres
+    username: postgres
+    password: postgres
+
+    schema_pattern:
+      allow:
+        - "^public"
+
+sink:
+  type: datahub-rest
+  config:
+    server: http://datahub-datahub-gms.minio.svc.cluster.local:8080
+    token: ${DATAHUB_TOKEN}
+

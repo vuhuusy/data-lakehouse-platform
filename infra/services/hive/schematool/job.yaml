@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hive-schema-init
+spec:
+  template:
+    metadata:
+      labels:
+        app: hive-schema-init
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: hive-schema-init
+        image: huusy/hive-schematool-custom:4.0.0
+        command: ["/bin/sh", "-c"]
+        env:    
+          - name: POSTGRES_URL
+            valueFrom:
+              secretKeyRef:
+                name: hive-metastore-secret
+                key: POSTGRES_URL
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: hive-metastore-secret
+                key: POSTGRES_USERNAME
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: hive-metastore-secret
+                key: POSTGRES_PASSWORD
+        args:
+        - |
+          /opt/hive/bin/schematool --verbose -initSchema -dbType postgres \
+          -driver org.postgresql.Driver -userName "$POSTGRES_USERNAME" -passWord "$POSTGRES_PASSWORD" \
+          -url "$POSTGRES_URL?user=$POSTGRES_USERNAME&password=$POSTGRES_PASSWORD&createDatabaseIfNotExist=true"
