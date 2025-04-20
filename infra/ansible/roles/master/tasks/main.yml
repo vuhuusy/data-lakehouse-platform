@@ -1,6 +1,6 @@
 - name: Register master node to RKE2 cluster
   shell: |
-    curl -fL {{ server_url }}/system-agent-install.sh | sudo sh -s - \
+    curl --insecure -fL {{ server_url }}/system-agent-install.sh | sudo sh -s - \
       --server {{ server_url }} \
       --label 'cattle.io/os=linux' \
       --token {{ token }} \
