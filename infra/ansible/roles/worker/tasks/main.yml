@@ -1,0 +1,11 @@
+- name: Register worker node to RKE2 cluster
+  shell: |
+    curl -fL {{ server_url }}/system-agent-install.sh | sudo sh -s - \
+      --server {{ server_url }} \
+      --label 'cattle.io/os=linux' \
+      --token {{ token }} \
+      --ca-checksum {{ ca_checksum }} \
+      --worker
+  args:
+    executable: /bin/bash
+  when: "'workers' in group_names"
