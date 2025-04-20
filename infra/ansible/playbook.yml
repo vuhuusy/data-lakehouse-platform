@@ -2,10 +2,10 @@
   hosts: rancher
   become: yes
   roles:
-    - rancher_node
+    - rancher-node
 
 - name: Setup RKE2 master & worker nodes
   hosts: master,workers
   become: yes
   roles:
-    - rke2_node
+    - rke2-node
