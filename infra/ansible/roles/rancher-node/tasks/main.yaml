@@ -39,8 +39,3 @@
       alias kdf='kubectl delete -f'
       alias kctx='kubectl config use-context'
       alias kns='kubectl config set-context --current --namespace'
-
-- name: Source .bashrc to apply alias immediately
-  shell: source ~/.bashrc
-  args:
-    executable: /bin/bash
