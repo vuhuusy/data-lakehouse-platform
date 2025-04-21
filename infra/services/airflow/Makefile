@@ -73,6 +73,10 @@ create-clusterrolebinding-for-spark-applications:
 		--serviceaccount=$(NAMESPACE):airflow-worker \
 		--namespace $(NAMESPACE)
 
+create-web-nodeport:
+	@set -e; \
+	kubectl apply -f infra/services/airflow/web-nodeport.yaml
+
 help:
 	@echo "Makefile commands:"; \
 	echo "make install-all                 - Install PostgreSQL, Redis, and Airflow"; \
@@ -80,4 +84,5 @@ help:
 	echo "make install-postgresql-redis    - Install only PostgreSQL and Redis"; \
 	echo "make uninstall-postgresql-redis  - Uninstall only PostgreSQL and Redis"; \
 	echo "make install-airflow             - Install only Airflow (assumes external services ready)"; \
-	echo "make uninstall-airflow           - Uninstall Airflow"
+	echo "make uninstall-airflow           - Uninstall Airflow"; \
+	echo "make create-web-nodeport         - Create a NodePort service for Airflow web server"
