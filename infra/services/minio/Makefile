@@ -58,7 +58,8 @@ register-self-signed-cert:
 	kubectl create secret tls minio-selfsigned-secret \
 		--key infra/services/minio/selfsigned.key \
 		--cert infra/services/minio/selfsigned.crt \
-		--namespace $(NAMESPACE); \
+		--namespace $(NAMESPACE)
+		--create-namespace \; \
 	kubectl delete secret operator-ca-tls --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic operator-ca-tls \
    		--from-file=public.crt=infra/services/minio/selfsigned.crt \
