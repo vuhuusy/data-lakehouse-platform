@@ -59,7 +59,7 @@ register-self-signed-cert:
 		--key infra/services/minio/selfsigned.key \
 		--cert infra/services/minio/selfsigned.crt \
 		--namespace $(NAMESPACE)
-		--create-namespace \; \
+		--create-namespace; \
 	kubectl delete secret operator-ca-tls --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic operator-ca-tls \
    		--from-file=public.crt=infra/services/minio/selfsigned.crt \
