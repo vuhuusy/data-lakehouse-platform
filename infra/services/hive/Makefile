@@ -25,6 +25,7 @@ build-schematool-custom-dockerfile:
 
 install:
 	@set -e; \
+	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
 	kubectl delete secret hive-metastore-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic hive-metastore-secret \
 		--from-literal=POSTGRES_URL=jdbc:postgresql://hive-metastore-postgres-postgresql.hive.svc.cluster.local:5432/metastore \
