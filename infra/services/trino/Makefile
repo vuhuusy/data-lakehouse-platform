@@ -40,24 +40,10 @@ install:
 	helm upgrade --install --namespace $(NAMESPACE) \
 		trino $(TRINO_OPERATOR) \
 		-f infra/services/trino/values.yaml; \
-	$(MAKE) create-ui-nodeport
 
 create-ui-nodeport:
-	@kubectl apply -n $(NAMESPACE) -f - <<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  name: trino-ui-nodeport
-spec:
-  type: NodePort
-  selector:
-    app.kubernetes.io/name: trino
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-      nodePort: 30080
-EOF
+	@set -ex; \
+	kubectl apply -n $(NAMESPACE) -f infra/services/trino/trino-ui-nodeport.yaml || true; \
 
 uninstall:
 	@set -ex; \
