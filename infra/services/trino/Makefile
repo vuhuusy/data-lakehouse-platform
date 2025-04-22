@@ -8,7 +8,7 @@ TRINO_OPERATOR ?= trino/trino
 
 build-trino-custom-dockerfile:
 	@set -ex; \
-	docker build --progress=plain \
+	docker build \
 		-t huusy/trino:470 \
 		-f infra/services/trino/Dockerfile .
 
@@ -16,7 +16,7 @@ install:
 	@set -ex; \
 	helm upgrade --install --namespace $(NAMESPACE) \
 		trino $(TRINO_OPERATOR) \
-		  -f infra/services/trino/catalogs.yaml
+		  -f infra/services/trino/values.yaml
 
 uninstall:
 	@set -ex; \
