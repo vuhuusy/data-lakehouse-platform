@@ -41,6 +41,13 @@ install:
 		trino $(TRINO_OPERATOR) \
 		-f infra/services/trino/values.yaml; \
 
+install-catalog:
+	@set -ex; \
+	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
+	helm upgrade --install --namespace $(NAMESPACE) \
+		trino $(TRINO_OPERATOR) \
+		-f infra/services/trino/catalogs.yaml; \
+
 create-ui-nodeport:
 	@set -ex; \
 	kubectl apply -n $(NAMESPACE) -f infra/services/trino/trino-ui-nodeport.yaml || true; \
