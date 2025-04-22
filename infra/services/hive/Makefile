@@ -31,8 +31,8 @@ create-minio-secret:
 	kubectl delete secret minio-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic minio-secret \
 		--from-literal=ENDPOINT=minio.minio.svc.cluster.local:9000 \
-		--from-literal=ACCESS_KEY=minio \
-		--from-literal=SECRET_KEY=minio123 \
+		--from-literal=AWS_ACCESS_KEY_ID=minio \
+		--from-literal=AWS_SECRET_ACCESS_KEY=minio123 \
 		--namespace $(NAMESPACE); \
 
 install:
