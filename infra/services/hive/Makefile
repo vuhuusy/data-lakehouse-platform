@@ -13,13 +13,13 @@ POSTGRES_CHART ?= bitnami/postgresql
 
 build-metastore-custom-dockerfile:
 	@set -e; \
-	docker build --progress=plain \
+	docker build \
 		-t huusy/hive-metastore-custom:3.0.0 \
 		-f infra/services/hive/metastore/Dockerfile .
 
 build-schematool-custom-dockerfile:
 	@set -e; \
-	docker build --progress=plain \
+	docker build \
 		-t huusy/hive-schematool-custom:4.0.0 \
 		-f infra/services/hive/schematool/Dockerfile .
 
