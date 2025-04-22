@@ -14,6 +14,7 @@ build-trino-custom-dockerfile:
 
 install:
 	@set -ex; \
+	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
 	helm upgrade --install --namespace $(NAMESPACE) \
 		trino $(TRINO_OPERATOR) \
 		  -f infra/services/trino/values.yaml
