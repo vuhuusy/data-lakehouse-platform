@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := help
+
 # Makefile for Hive metastore deployment
 
 NAMESPACE ?= hive
@@ -9,7 +11,8 @@ POSTGRES_CHART ?= bitnami/postgresql
 	build-schematool-custom-dockerfile \
 	install \
 	uninstall \
-	release-docker-images
+	release-docker-images \
+	help
 
 build-metastore-custom-dockerfile:
 	@set -e; \
@@ -61,3 +64,12 @@ release-docker-images:
 	@set -ex; \
 	docker push huusy/hive-metastore-custom:3.0.0; \
 	docker push huusy/hive-schematool-custom:4.0.0
+
+help:
+	@echo "Makefile for Hive metastore deployment"
+	@echo "Usage:"
+	@echo "  make install                - Install Hive metastore and dependencies"
+	@echo "  make uninstall              - Uninstall Hive metastore and dependencies"
+	@echo "  make build-metastore-custom-dockerfile - Build custom Docker image for Hive metastore"
+	@echo "  make build-schematool-custom-dockerfile - Build custom Docker image for Hive schematool"
+	@echo "  make release-docker-images  - Push custom Docker images to registry"
