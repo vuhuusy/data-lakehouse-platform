@@ -5,7 +5,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: trino
+    app.kubernetes.io/component : coordinator
   ports:
     - name: http
       port: 8080
