@@ -46,7 +46,7 @@ install:
 		--from-literal=POSTGRES_PASSWORD=postgres \
 		--from-literal=S3_WAREHOUSE_DIR=s3a://hive-warehouse \
 		--namespace $(NAMESPACE); \
-	helm upgrade --install --namespace $(NAMESPACE) \
+	helm upgrade --install -f infra/services/hive/database/values.yaml --namespace $(NAMESPACE) \
 		hive-metastore-postgres $(POSTGRES_CHART); \
 	kubectl apply -f infra/services/hive/schematool/job.yaml --namespace $(NAMESPACE); \
 	kubectl apply -f infra/services/hive/metastore/deployment.yaml --namespace $(NAMESPACE); \
