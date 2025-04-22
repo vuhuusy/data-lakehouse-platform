@@ -42,8 +42,8 @@ install:
 	kubectl delete secret hive-metastore-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic hive-metastore-secret \
 		--from-literal=POSTGRES_URL=jdbc:postgresql://hive-metastore-postgres-postgresql.hive.svc.cluster.local:5432/metastore \
-		--from-literal=POSTGRES_USERNAME=hive \
-		--from-literal=POSTGRES_PASSWORD=hive \
+		--from-literal=POSTGRES_USERNAME=postgres \
+		--from-literal=POSTGRES_PASSWORD=postgres \
 		--from-literal=S3_WAREHOUSE_DIR=s3a://hive-warehouse \
 		--namespace $(NAMESPACE); \
 	helm upgrade --install --namespace $(NAMESPACE) \

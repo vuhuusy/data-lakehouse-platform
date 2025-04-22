@@ -149,10 +149,10 @@ auth:
   postgresPassword: "postgres"
   ## @param auth.username Name for a custom user to create
   ##
-  username: "hive"
+  username: ""
   ## @param auth.password Password for the custom user to create. Ignored if `auth.existingSecret` is provided
   ##
-  password: "hive"
+  password: ""
   ## @param auth.database Name for a custom database to create
   ##
   database: "metastore"
