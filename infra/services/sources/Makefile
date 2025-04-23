@@ -8,6 +8,13 @@ POSTGRES_CHART ?= bitnami/postgresql
 	install-postgres \
 	uninstall-postgres
 
+create-configmap:
+	@set -e; \
+	kubectl delete configmap postgres-init-sql --namespace $(NAMESPACE) || true; \
+	kubectl create configmap postgres-init-sql \
+		--from-file=postgresql.conf=infra/services/sources/init.sql \
+		--namespace $(NAMESPACE)
+
 install-postgres:
 	@set -e; \
 	kubectl delete configmap postgresql-conf --namespace $(NAMESPACE) || true; \
