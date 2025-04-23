@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mlflow-test
+  namespace: mlflow
+spec:
+  containers:
+  - name: mlflow-client
+    image: python:3.10
+    command: ["/bin/bash", "-c"]
+    args:
+      - |
+        pip install mlflow && \
+        python -c "
+        import mlflow
+        mlflow.set_tracking_uri('http://mlflow.mlflow.svc.cluster.local:5000')
+        mlflow.set_experiment('k8s-test-experiment')
+        with mlflow.start_run():
+          mlflow.log_param('test-param', 42)
+          mlflow.log_metric('test-metric', 0.95)
+          print('Logged to MLflow successfully')
+          " && sleep 3600  # Giữ pod alive để kiểm tra logs
