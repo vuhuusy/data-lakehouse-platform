@@ -1,6 +1,6 @@
 # Makefile for source systems
 
-NAMESPACE ?= finance-core
+NAMESPACE ?= financial-ops
 POSTGRES_CHART ?= bitnami/postgresql
 
 # Optional targets for specific components
@@ -8,8 +8,9 @@ POSTGRES_CHART ?= bitnami/postgresql
 	install-postgres \
 	uninstall-postgres
 
-create-configmap:
+create-init-sql-configmap:
 	@set -e; \
+	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
 	kubectl delete configmap postgres-init-sql --namespace $(NAMESPACE) || true; \
 	kubectl create configmap postgres-init-sql \
 		--from-file=postgresql.conf=infra/services/sources/init.sql \
