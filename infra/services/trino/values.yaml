@@ -26,7 +26,7 @@ image:
   digest: ""
   # -- When true, only the content in `repository` is used as image reference
   useRepositoryAsSoleImageReference: false
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 # -- An optional list of references to secrets in the same namespace to use for pulling images.
 # @raw
