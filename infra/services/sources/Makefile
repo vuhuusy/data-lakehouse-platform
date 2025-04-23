@@ -29,5 +29,5 @@ install-postgres:
 uninstall-postgres:
 	@set -e; \
 	helm uninstall --namespace $(NAMESPACE) \
-		postgres-financial-ops;\
+		postgres-financial-ops || true;\
 	kubectl delete namespace $(NAMESPACE)
