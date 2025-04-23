@@ -45,7 +45,7 @@ CREATE TABLE core.card (
     FOREIGN KEY (client_id) REFERENCES core.user_account(id)
 );
 
--- 4. Bảng merchant
+-- 4. merchant table
 CREATE TABLE core.merchant (
     id BIGINT PRIMARY KEY,
     city VARCHAR(100),
@@ -55,7 +55,7 @@ CREATE TABLE core.merchant (
     FOREIGN KEY (mcc_code) REFERENCES core.mcc(code)
 );
 
--- 5. Bảng transaction
+-- 5. transaction table
 CREATE TABLE core.transaction (
     id BIGINT PRIMARY KEY,
     date TIMESTAMP,
@@ -67,3 +67,27 @@ CREATE TABLE core.transaction (
     FOREIGN KEY (card_id) REFERENCES core.card(id),
     FOREIGN KEY (merchant_id) REFERENCES core.merchant(id)
 );
+
+-- insert data into tables --
+COPY core.user_account (
+    id, retirement_age, birth_year, birth_month, gender, address,
+    latitude, longitude, per_capita_income, yearly_income,
+    total_debt, credit_score, num_credit_cards
+)
+FROM '/docker-entrypoint-initdb.d/user.csv' DELIMITER ',' CSV HEADER;
+
+COPY core.mcc (
+    code, description
+)
+FROM '/docker-entrypoint-initdb.d/mcc.csv' DELIMITER ',' CSV HEADER;
+
+COPY core.card (
+    id, client_id, card_brand, card_type, card_number, expires, cvv, has_chip,
+    num_cards_issued, credit_limit, acct_open_date, year_pin_last_changed, card_on_dark_web
+)
+FROM '/docker-entrypoint-initdb.d/card.csv' DELIMITER ',' CSV HEADER;
+
+COPY core.merchant (
+    id, city, state, zip, mcc_code
+)
+FROM '/docker-entrypoint-initdb.d/merchant.csv' DELIMITER ',' CSV HEADER;

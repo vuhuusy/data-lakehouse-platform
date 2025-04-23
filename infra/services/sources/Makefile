@@ -21,6 +21,10 @@ install-postgres:
 	kubectl delete configmap postgresql-conf --namespace $(NAMESPACE) || true; \
 	kubectl create configmap postgresql-conf \
 		--from-file=postgresql.conf=infra/services/sources/postgresql.conf \
+	  --from-file=user.csv=infra/services/sources/data-source/user.csv \
+		--from-file=card.csv=infra/services/sources/data-source/card.csv \
+		--from-file=mcc.csv=infra/services/sources/data-source/mcc.csv \
+		--from-file=merchant.csv=infra/services/sources/data-source/merchant.csv \
 		--namespace $(NAMESPACE); \
 	helm upgrade --install --namespace $(NAMESPACE) \
 		postgres-financial-ops $(POSTGRES_CHART) \
