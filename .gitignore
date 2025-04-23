@@ -3,3 +3,4 @@ note
 venv
 infra/services/minio/selfsigned.crt
 infra/services/minio/selfsigned.key
+infra/services/sources/data-source/transaction.csv
