@@ -42,7 +42,7 @@ CREATE TABLE core.card (
     acct_open_date VARCHAR(20),
     year_pin_last_changed INT,
     card_on_dark_web BOOLEAN,
-    FOREIGN KEY (client_id) REFERENCES user_account(id)
+    FOREIGN KEY (client_id) REFERENCES core.user_account(id)
 );
 
 -- 4. Bảng merchant
@@ -52,7 +52,7 @@ CREATE TABLE core.merchant (
     state VARCHAR(100),
     zip VARCHAR(20),
     mcc_code VARCHAR(10),
-    FOREIGN KEY (mcc_code) REFERENCES mcc(code)
+    FOREIGN KEY (mcc_code) REFERENCES core.mcc(code)
 );
 
 -- 5. Bảng transaction
@@ -64,6 +64,6 @@ CREATE TABLE core.transaction (
     use_chip BOOLEAN,
     merchant_id BIGINT,
     errors TEXT,
-    FOREIGN KEY (card_id) REFERENCES card(id),
-    FOREIGN KEY (merchant_id) REFERENCES merchant(id)
+    FOREIGN KEY (card_id) REFERENCES core.card(id),
+    FOREIGN KEY (merchant_id) REFERENCES core.merchant(id)
 );
