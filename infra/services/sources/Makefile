@@ -23,12 +23,9 @@ install-postgres:
 		--from-file=postgresql.conf=infra/services/sources/postgresql.conf \
 		--namespace $(NAMESPACE); \
 	helm upgrade --install --namespace $(NAMESPACE) \
-		postgres-finance-core $(POSTGRES_CHART) \
-		--set global.postgresql.auth.postgresPassword=postgres \
-		--set global.postgresql.auth.database=postgres \
-		--set primary.existingConfigmap=postgresql-conf
+		postgres-financial-ops $(POSTGRES_CHART)
 
 uninstall-postgres:
 	@set -e; \
 	helm uninstall --namespace $(NAMESPACE) \
-		postgres-finance-core
+		postgres-financial-ops

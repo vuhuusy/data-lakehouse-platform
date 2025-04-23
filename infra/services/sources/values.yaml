@@ -38,7 +38,7 @@ global:
       postgresPassword: "postgres"
       username: ""
       password: ""
-      database: ""
+      database: "postgres"
       existingSecret: ""
       secretKeys:
         adminPasswordKey: ""
@@ -326,7 +326,7 @@ primary:
   ## @param primary.existingConfigmap Name of an existing ConfigMap with PostgreSQL Primary configuration
   ## NOTE: `primary.configuration` and `primary.pgHbaConfiguration` will be ignored
   ##
-  existingConfigmap: ""
+  existingConfigmap: "postgresql-conf"
   ## @param primary.extendedConfiguration Extended PostgreSQL Primary configuration (appended to main or default configuration)
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/postgresql#allow-settings-to-be-loaded-from-files-other-than-the-default-postgresqlconf
   ##
