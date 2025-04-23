@@ -13,7 +13,7 @@ create-init-sql-configmap:
 	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
 	kubectl delete configmap postgres-init-sql --namespace $(NAMESPACE) || true; \
 	kubectl create configmap postgres-init-sql \
-		--from-file=postgresql.conf=infra/services/sources/init.sql \
+		--from-file=init.sql=infra/services/sources/init.sql \
 		--namespace $(NAMESPACE)
 
 install-postgres:
@@ -23,7 +23,8 @@ install-postgres:
 		--from-file=postgresql.conf=infra/services/sources/postgresql.conf \
 		--namespace $(NAMESPACE); \
 	helm upgrade --install --namespace $(NAMESPACE) \
-		postgres-financial-ops $(POSTGRES_CHART)
+		postgres-financial-ops $(POSTGRES_CHART) \
+		-f infra/services/sources/values.yaml
 
 uninstall-postgres:
 	@set -e; \
