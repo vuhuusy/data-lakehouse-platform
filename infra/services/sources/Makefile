@@ -21,14 +21,28 @@ install-postgres:
 	kubectl delete configmap postgresql-conf --namespace $(NAMESPACE) || true; \
 	kubectl create configmap postgresql-conf \
 		--from-file=postgresql.conf=infra/services/sources/postgresql.conf \
-	  --from-file=user.csv=infra/services/sources/data-source/user.csv \
-		--from-file=card.csv=infra/services/sources/data-source/card.csv \
-		--from-file=mcc.csv=infra/services/sources/data-source/mcc.csv \
-		--from-file=merchant.csv=infra/services/sources/data-source/merchant.csv \
 		--namespace $(NAMESPACE); \
 	helm upgrade --install --namespace $(NAMESPACE) \
 		postgres-financial-ops $(POSTGRES_CHART) \
 		-f infra/services/sources/values.yaml
+
+copy-csv-to-pod:
+	@set -e; \
+	PG_POD=$$(kubectl get pod -n $(NAMESPACE) -l app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}'); \
+	kubectl cp infra/services/sources/data-source/user.csv $(NAMESPACE)/$$PG_POD:/tmp/user.csv; \
+	kubectl cp infra/services/sources/data-source/card.csv $(NAMESPACE)/$$PG_POD:/tmp/card.csv; \
+	kubectl cp infra/services/sources/data-source/mcc.csv $(NAMESPACE)/$$PG_POD:/tmp/mcc.csv; \
+	kubectl cp infra/services/sources/data-source/merchant.csv $(NAMESPACE)/$$PG_POD:/tmp/merchant.csv
+
+insert-csv:
+	@set -e; \
+	PG_POD=$$(kubectl get pod -n $(NAMESPACE) -l app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}'); \
+	kubectl exec -n $(NAMESPACE) -it $$PG_POD -- psql -U postgres -d financial_ops -c "\
+		\COPY core.user_account FROM '/tmp/user.csv' WITH (FORMAT csv, HEADER true);\
+		\COPY core.card FROM '/tmp/card.csv' WITH (FORMAT csv, HEADER true);\
+		\COPY core.mcc FROM '/tmp/mcc.csv' WITH (FORMAT csv, HEADER true);\
+		\COPY core.merchant FROM '/tmp/merchant.csv' WITH (FORMAT csv, HEADER true);\
+	"
 
 uninstall-postgres:
 	@set -e; \
