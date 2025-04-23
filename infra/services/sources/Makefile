@@ -36,15 +36,16 @@ copy-csv-to-pod:
 
 insert-csv:
 	@set -e; \
-	echo "\
-	\COPY core.user_account FROM '/tmp/user.csv' WITH (FORMAT csv, HEADER true);\
-	\COPY core.card FROM '/tmp/card.csv' WITH (FORMAT csv, HEADER true);\
-	\COPY core.mcc FROM '/tmp/mcc.csv' WITH (FORMAT csv, HEADER true);\
-	\COPY core.merchant FROM '/tmp/merchant.csv' WITH (FORMAT csv, HEADER true);" > /tmp/load.sql; \
+	printf "%s\n" \
+	"\\COPY core.user_account FROM '/tmp/user.csv' WITH (FORMAT csv, HEADER true);" \
+	"\\COPY core.card FROM '/tmp/card.csv' WITH (FORMAT csv, HEADER true);" \
+	"\\COPY core.mcc FROM '/tmp/mcc.csv' WITH (FORMAT csv, HEADER true);" \
+	"\\COPY core.merchant FROM '/tmp/merchant.csv' WITH (FORMAT csv, HEADER true);" \
+	> /tmp/load.sql; \
 	PG_POD=$$(kubectl get pod -n $(NAMESPACE) -l app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}'); \
 	kubectl cp /tmp/load.sql $(NAMESPACE)/$$PG_POD:/tmp/load.sql; \
 	kubectl exec -n $(NAMESPACE) -i $$PG_POD -- bash -c "export PGPASSWORD=postgres; psql -U postgres -d financial_ops -f /tmp/load.sql"
-
+	
 uninstall-postgres:
 	@set -e; \
 	helm uninstall --namespace $(NAMESPACE) \
