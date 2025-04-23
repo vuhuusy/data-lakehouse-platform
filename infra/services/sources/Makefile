@@ -37,12 +37,12 @@ copy-csv-to-pod:
 insert-csv:
 	@set -e; \
 	PG_POD=$$(kubectl get pod -n $(NAMESPACE) -l app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}'); \
-	kubectl exec -n $(NAMESPACE) -it $$PG_POD -- psql -U postgres -d financial_ops -c "\
-		\COPY core.user_account FROM '/tmp/user.csv' WITH (FORMAT csv, HEADER true);\
-		\COPY core.card FROM '/tmp/card.csv' WITH (FORMAT csv, HEADER true);\
-		\COPY core.mcc FROM '/tmp/mcc.csv' WITH (FORMAT csv, HEADER true);\
-		\COPY core.merchant FROM '/tmp/merchant.csv' WITH (FORMAT csv, HEADER true);\
-	"
+	kubectl exec -n $(NAMESPACE) -i $$PG_POD -- bash -c "export PGPASSWORD=postgres; psql -U postgres -d financial_ops" <<'EOF'
+	\COPY core.user_account FROM '/tmp/user.csv' WITH (FORMAT csv, HEADER true);
+	\COPY core.card FROM '/tmp/card.csv' WITH (FORMAT csv, HEADER true);
+	\COPY core.mcc FROM '/tmp/mcc.csv' WITH (FORMAT csv, HEADER true);
+	\COPY core.merchant FROM '/tmp/merchant.csv' WITH (FORMAT csv, HEADER true);
+	EOF
 
 uninstall-postgres:
 	@set -e; \
