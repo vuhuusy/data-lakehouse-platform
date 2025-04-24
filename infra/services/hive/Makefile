@@ -9,6 +9,7 @@ POSTGRES_CHART ?= bitnami/postgresql
 .PHONY: \
 	build-metastore-custom-dockerfile \
 	build-schematool-custom-dockerfile \
+	create-minio-secret \
 	install \
 	uninstall \
 	release-docker-images \
