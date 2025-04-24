@@ -40,8 +40,7 @@ build-spark-application-dockerfile:
 	@set -e; \
 	docker build \
 		-t huusy/spark-application:3.5.3 \
-		-f infra/services/spark/Dockerfile .; \
-	$(MAKE) create-minio-secret
+		-f infra/services/spark/Dockerfile .
 
 release-docker-image:
 	@set -e; \
