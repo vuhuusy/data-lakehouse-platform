@@ -12,7 +12,12 @@ POSTGRES_CHART ?= bitnami/postgresql
 	install \
 	uninstall \
 	release-docker-images \
+	create-namespace \
 	help
+
+create-namespace:
+	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
 
 build-metastore-custom-dockerfile:
 	@set -e; \
