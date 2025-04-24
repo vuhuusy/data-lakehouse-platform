@@ -1384,9 +1384,9 @@ webserver:
   # Wait for at most 1 minute (6*10s) for the webserver container to startup.
   # livenessProbe kicks in after the first successful startupProbe
   startupProbe:
-    initialDelaySeconds: 0
+    initialDelaySeconds: 60
     timeoutSeconds: 20
-    failureThreshold: 6
+    failureThreshold: 30
     periodSeconds: 10
     scheme: HTTP
 
