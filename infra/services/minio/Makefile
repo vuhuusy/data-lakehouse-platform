@@ -10,6 +10,8 @@ MINIO_TENANT ?= minio-operator/tenant
 		uninstall-minio uninstall-operator uninstall-tenant \
 		generate-self-signed-cert register-self-signed-cert  \
 		create-namespace  \
+		create-nodeport  \
+		delete-nodeport  \
 		help
 
 # Install MinIO Operator and MinIO Tenant
@@ -75,6 +77,9 @@ register-self-signed-cert:
 create-nodeport:
 	@kubectl apply -f infra/services/minio/console-nodeport.yaml
 
+delete-nodeport:
+	@kubectl delete service minio-console-nodeport --namespace $(NAMESPACE) || true
+
 # Show help message
 help:
 	@echo "Makefile commands:"
@@ -87,3 +92,4 @@ help:
 	@echo "make generate-self-signed-cert - Generate a self-signed certificate"
 	@echo "make register-self-signed-cert - Register the self-signed certificate with Kubernetes"
 	@echo "make create-nodeport             - Expose MinIO Console via NodePort (9443 -> 30943)"
+	@echo "make delete-nodeport             - Delete MinIO NodePort services (Console)"
