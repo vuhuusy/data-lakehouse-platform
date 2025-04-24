@@ -8,6 +8,8 @@ MINIO_TENANT ?= minio-operator/tenant
 # Define phony targets
 .PHONY: install-minio install-operator install-tenant \
 		uninstall-minio uninstall-operator uninstall-tenant \
+		generate-self-signed-cert register-self-signed-cert  \
+		create-namespace  \
 		help
 
 # Install MinIO Operator and MinIO Tenant
@@ -15,6 +17,11 @@ install-minio: install-operator install-tenant
 
 # Uninstall MinIO Operator and MinIO Tenant
 uninstall-minio: uninstall-tenant uninstall-operator
+
+# Create namespace if it doesn't exist
+create-namespace:
+	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
 
 # Install MinIO Operator
 install-operator:
