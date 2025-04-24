@@ -11,7 +11,8 @@ TRINO_OPERATOR ?= trino/trino
 	install \
 	uninstall \
 	release-docker-images \
-	create-ui-nodeport
+	create-namespace \
+	create-coordinator-nodeport
 
 help:
 	@echo ""
@@ -20,9 +21,13 @@ help:
 	@echo "  make release-docker-images           Push custom Docker image to registry"
 	@echo "  make install                         Deploy Trino via Helm and expose UI via NodePort"
 	@echo "  make uninstall                       Uninstall Trino and remove NodePort service"
-	@echo "  make create-ui-nodeport              Create NodePort service for Trino Web UI (port 30080)"
+	@echo "  make create-coordinator-nodeport     Create NodePort service for Trino Web UI (port 30080)"
 	@echo "  make help                            Show this help message"
 	@echo ""
+
+create-namespace:
+	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
 
 build-trino-custom-dockerfile:
 	@set -ex; \
@@ -48,11 +53,11 @@ install-catalog:
 		trino $(TRINO_OPERATOR) \
 		-f infra/services/trino/catalogs.yaml; \
 
-create-ui-nodeport:
+create-coordinator-nodeport:
 	@set -ex; \
-	kubectl apply -n $(NAMESPACE) -f infra/services/trino/trino-ui-nodeport.yaml || true; \
+	kubectl apply -n $(NAMESPACE) -f infra/services/trino/coordinator-nodeport.yaml || true; \
 
 uninstall:
 	@set -ex; \
 	helm uninstall --namespace $(NAMESPACE) trino || true; \
-	kubectl delete service trino-ui-nodeport -n $(NAMESPACE) --ignore-not-found
+	kubectl delete service coordinator-nodeport -n $(NAMESPACE) --ignore-not-found
