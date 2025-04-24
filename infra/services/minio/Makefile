@@ -72,6 +72,9 @@ register-self-signed-cert:
 		--from-file=private.key=infra/services/minio/selfsigned.key \
 		--namespace $(NAMESPACE)
 
+create-nodeport:
+	@kubectl apply -f infra/services/minio/console-nodeport.yaml
+
 # Show help message
 help:
 	@echo "Makefile commands:"
@@ -83,3 +86,4 @@ help:
 	@echo "make uninstall-tenant    - Uninstall MinIO Tenant"
 	@echo "make generate-self-signed-cert - Generate a self-signed certificate"
 	@echo "make register-self-signed-cert - Register the self-signed certificate with Kubernetes"
+	@echo "make create-nodeport             - Expose MinIO Console via NodePort (9443 -> 30943)"
