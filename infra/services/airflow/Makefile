@@ -15,6 +15,9 @@ AIRFLOW_OPERATOR ?= apache-airflow/airflow
 	uninstall-all \
 	uninstall-postgresql-redis \
 	uninstall-airflow \
+	create-namespace \
+	create-web-nodeport \
+	delete-web-nodeport \
 	create-clusterrolebinding-for-spark-applications \
 	help
 
@@ -23,6 +26,10 @@ install-all: install-postgresql-redis install-airflow
 
 # Uninstall all
 uninstall-all: uninstall-airflow uninstall-postgresql-redis
+
+create-namespace:
+	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
 
 # Build custom Dockerfile for Airflow
 build-custom-dockerfile:
@@ -77,6 +84,10 @@ create-web-nodeport:
 	@set -e; \
 	kubectl apply -f infra/services/airflow/web-nodeport.yaml
 
+delete-web-nodeport:
+	@set -e; \
+	kubectl delete -f infra/services/airflow/web-nodeport.yaml
+
 help:
 	@echo "Makefile commands:"; \
 	echo "make install-all                 - Install PostgreSQL, Redis, and Airflow"; \
@@ -86,3 +97,5 @@ help:
 	echo "make install-airflow             - Install only Airflow (assumes external services ready)"; \
 	echo "make uninstall-airflow           - Uninstall Airflow"; \
 	echo "make create-web-nodeport         - Create a NodePort service for Airflow web server"
+	echo "make delete-web-nodeport         - Delete the NodePort service for Airflow web server"; \
+	echo "make create-namespace            - Create Kubernetes namespace if not exists"; \
