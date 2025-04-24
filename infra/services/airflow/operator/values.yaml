@@ -2753,7 +2753,7 @@ dags:
     # Enable persistent volume for storing dags
     enabled: false
     # Volume size for dags
-    size: 1Gi
+    size: 2Gi
     # If using a custom storageClass, pass name here
     storageClassName:
     # access mode of the persistent volume
@@ -2768,7 +2768,7 @@ dags:
     # git repo clone url
     # ssh example: git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
-    repo: https://github.com/vuhuusy/DAGs.git
+    repo: https://github.com/vuhuusy/data-lakehouse-platform.git
     branch: main
     rev: HEAD
     # The git revision (branch, tag, or hash) to check out, v4 only
@@ -2778,7 +2778,7 @@ dags:
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: ""
+    subPath: "source_code/airflow/dags"
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---
