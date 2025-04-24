@@ -11,7 +11,14 @@ KAFKA_OPERATOR ?= bitnami/kafka
 	install-kafka \
 	uninstall-kafka \
 	create-kafka-client-pod \
+	create-namespace \
 	help
+
+# Create namespace if it doesn't exist
+create-namespace:
+	@set -e; \
+	kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
 
 # Generate self-signed certificate and keystore/truststore
 generate-self-signed-cert-keystore-truststore:
