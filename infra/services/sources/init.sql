@@ -47,7 +47,8 @@ CREATE TABLE core.card (
 
 -- 4. merchant table
 CREATE TABLE core.merchant (
-    id BIGINT PRIMARY KEY,
+    key VARCHAR(10) PRIMARY KEY,    
+    id BIGINT,
     city VARCHAR(100),
     state VARCHAR(100),
     zip VARCHAR(20),
@@ -62,32 +63,8 @@ CREATE TABLE core.transaction (
     card_id BIGINT,
     amount NUMERIC,
     use_chip BOOLEAN,
-    merchant_id BIGINT,
+    merchant_key VARCHAR(10),
     errors TEXT,
     FOREIGN KEY (card_id) REFERENCES core.card(id),
-    FOREIGN KEY (merchant_id) REFERENCES core.merchant(id)
+    FOREIGN KEY (merchant_key) REFERENCES core.merchant(key)
 );
-
--- insert data into tables --
-COPY core.user_account (
-    id, retirement_age, birth_year, birth_month, gender, address,
-    latitude, longitude, per_capita_income, yearly_income,
-    total_debt, credit_score, num_credit_cards
-)
-FROM '/docker-entrypoint-initdb.d/user.csv' DELIMITER ',' CSV HEADER;
-
-COPY core.mcc (
-    code, description
-)
-FROM '/docker-entrypoint-initdb.d/mcc.csv' DELIMITER ',' CSV HEADER;
-
-COPY core.card (
-    id, client_id, card_brand, card_type, card_number, expires, cvv, has_chip,
-    num_cards_issued, credit_limit, acct_open_date, year_pin_last_changed, card_on_dark_web
-)
-FROM '/docker-entrypoint-initdb.d/card.csv' DELIMITER ',' CSV HEADER;
-
-COPY core.merchant (
-    id, city, state, zip, mcc_code
-)
-FROM '/docker-entrypoint-initdb.d/merchant.csv' DELIMITER ',' CSV HEADER;
