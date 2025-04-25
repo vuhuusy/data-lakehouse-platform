@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-nodeport
+  namespace: financial-ops
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/instance: postgres-financial-ops
+    app.kubernetes.io/name: postgresql
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30054

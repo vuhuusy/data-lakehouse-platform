@@ -32,9 +32,8 @@ install-postgres:
 		postgres-financial-ops $(POSTGRES_CHART) \
 		-f infra/services/sources/values.yaml
 
-create-minio-loader-job:
-	@kubectl delete job insert-csv-from-minio --ignore-not-found=true --namespace $(NAMESPACE)
-	@kubectl apply -f infra/services/sources/minio-loader-job.yaml --namespace $(NAMESPACE)
+expose-postgres-nodeport:
+	@kubectl apply -f infra/services/sources/postgres-nodeport.yaml
 
 uninstall-postgres:
 	@set -e; \
