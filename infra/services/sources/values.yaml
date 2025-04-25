@@ -650,10 +650,11 @@ primary:
       command: ["/bin/sh", "-c"]
       args:
         - |
-          curl -k -o /workdir/user.csv https://103.179.172.171:30943/browser/data-sources/user.csv &&
-          curl -k -o /workdir/mcc.csv https://103.179.172.171:30943/browser/data-sources/mcc.csv &&
-          curl -k -o /workdir/card.csv https://103.179.172.171:30943/browser/data-sources/card.csv &&
-          curl -k -o /workdir/merchant.csv https://103.179.172.171:30943/browser/data-sources/merchant.csv
+          curl -k -o /workdir/user.csv https://103.179.172.171:30943/data-sources/user.csv &&
+          curl -k -o /workdir/mcc.csv https://103.179.172.171:30943/data-sources/mcc.csv &&
+          curl -k -o /workdir/card.csv https://103.179.172.171:30943/data-sources/card.csv &&
+          curl -k -o /workdir/merchant.csv https://103.179.172.171:30943/data-sources/merchant.csv
+
       volumeMounts:
         - name: workdir
           mountPath: /workdir
