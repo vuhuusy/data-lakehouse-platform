@@ -7,7 +7,7 @@ CREATE SCHEMA core;
 -- 1. mcc table
 CREATE TABLE core.mcc (
     code VARCHAR(10) PRIMARY KEY,
-    description TEXT NOT NULL
+    descriptions TEXT NOT NULL
 );
 
 -- 2. user table
