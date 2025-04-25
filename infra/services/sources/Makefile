@@ -9,7 +9,10 @@ POSTGRES_CHART ?= bitnami/postgresql
 	uninstall-postgres \
 	create-namespace \
 	create-init-sql-configmap \
-	create-minio-loader-job
+	expose-postgres-nodeport \
+	install
+
+install: create-namespace create-init-sql-configmap install-postgres expose-postgres-nodeport
 
 create-namespace:
 	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
