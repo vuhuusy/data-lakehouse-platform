@@ -33,6 +33,7 @@ install-postgres:
 		-f infra/services/sources/values.yaml
 
 create-minio-loader-job:
+	@kubectl delete job insert-csv-from-minio --ignore-not-found=true --namespace $(NAMESPACE)
 	@kubectl apply -f infra/services/sources/minio-loader-job.yaml --namespace $(NAMESPACE)
 
 uninstall-postgres:
