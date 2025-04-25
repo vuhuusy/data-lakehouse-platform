@@ -640,7 +640,19 @@ primary:
   ##     image: busybox
   ##     command: ['do', 'something']
   ##
-  initContainers: []
+  initContainers:
+    - name: download-csv
+      image: curlimages/curl
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          curl -k -o /workdir/user.csv https://103.179.172.171:30943/browser/data-sources/user.csv &&
+          curl -k -o /workdir/mcc.csv https://103.179.172.171:30943/browser/data-sources/mcc.csv &&
+          curl -k -o /workdir/card.csv https://103.179.172.171:30943/browser/data-sources/card.csv &&
+          curl -k -o /workdir/merchant.csv https://103.179.172.171:30943/browser/data-sources/merchant.csv
+      volumeMounts:
+        - name: workdir
+          mountPath: /workdir
   ## Pod Disruption Budget configuration
   ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb
   ## @param primary.pdb.create Enable/disable a Pod Disruption Budget creation

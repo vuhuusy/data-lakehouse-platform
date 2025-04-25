@@ -68,3 +68,9 @@ CREATE TABLE core.transaction (
     FOREIGN KEY (card_id) REFERENCES core.card(id),
     FOREIGN KEY (merchant_key) REFERENCES core.merchant(key)
 );
+
+-- insert data into tables --
+COPY core.mcc FROM '/workdir/mcc.csv' DELIMITER ',' CSV HEADER;
+COPY core.card FROM '/workdir/card.csv' DELIMITER ',' CSV HEADER;
+COPY core.merchant FROM '/workdir/merchant.csv' DELIMITER ',' CSV HEADER;
+COPY core.user_account FROM '/workdir/user.csv' DELIMITER ',' CSV HEADER;
