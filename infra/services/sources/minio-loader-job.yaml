@@ -18,9 +18,9 @@ spec:
             mc cp minio/data-sources/card.csv /tmp/card.csv &&
             mc cp minio/data-sources/merchant.csv /tmp/merchant.csv &&
             export PGPASSWORD=postgres &&
-            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.user_account FROM '/tmp/user.csv' DELIMITER ',' CSV HEADER;" &&
-            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.mcc FROM '/tmp/mcc.csv' DELIMITER ',' CSV HEADER;" &&
-            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.card FROM '/tmp/card.csv' DELIMITER ',' CSV HEADER;" &&
-            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.merchant FROM '/tmp/merchant.csv' DELIMITER ',' CSV HEADER;"
+            psql -h postgres-financial-ops-postgresql.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.user_account FROM '/tmp/user.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres-financial-ops-postgresql.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.mcc FROM '/tmp/mcc.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres-financial-ops-postgresql.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.card FROM '/tmp/card.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres-financial-ops-postgresql.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.merchant FROM '/tmp/merchant.csv' DELIMITER ',' CSV HEADER;"
       restartPolicy: Never
   backoffLimit: 2
