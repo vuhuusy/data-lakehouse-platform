@@ -617,10 +617,14 @@ primary:
     rollingUpdate: {}
   ## @param primary.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the PostgreSQL Primary container(s)
   ##
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    - name: workdir
+      mountPath: /workdir
   ## @param primary.extraVolumes Optionally specify extra list of additional volumes for the PostgreSQL Primary pod(s)
   ##
-  extraVolumes: []
+  extraVolumes:
+    - name: workdir
+      emptyDir: {}
   ## @param primary.sidecars Add additional sidecar containers to the PostgreSQL Primary pod(s)
   ## For example:
   ## sidecars:
