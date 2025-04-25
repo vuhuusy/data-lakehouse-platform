@@ -646,14 +646,15 @@ primary:
   ##
   initContainers:
     - name: download-csv
-      image: curlimages/curl
+      image: minio/mc
       command: ["/bin/sh", "-c"]
       args:
         - |
-          curl -k -o /workdir/user.csv https://minio.minio.svc.cluster.local:443/data-sources/user.csv &&
-          curl -k -o /workdir/mcc.csv https://103.179.172.171:30943/data-sources/mcc.csv &&
-          curl -k -o /workdir/card.csv https://103.179.172.171:30943/data-sources/card.csv &&
-          curl -k -o /workdir/merchant.csv https://103.179.172.171:30943/data-sources/merchant.csv
+          mc alias set myminio https://minio.minio.svc.cluster.local:443 minio minio123 && \
+          mc cp myminio/data-sources/user.csv /workdir/user.csv && \
+          mc cp myminio/data-sources/mcc.csv /workdir/mcc.csv && \
+          mc cp myminio/data-sources/card.csv /workdir/card.csv && \
+          mc cp myminio/data-sources/merchant.csv /workdir/merchant.csv
 
       volumeMounts:
         - name: workdir
