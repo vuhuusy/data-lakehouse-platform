@@ -650,7 +650,7 @@ primary:
       command: ["/bin/sh", "-c"]
       args:
         - |
-          mc alias set myminio https://minio.minio.svc.cluster.local:443 minio minio123 && \
+          mc alias set --insecure myminio https://minio.minio.svc.cluster.local:443 minio minio123 && \
           mc cp myminio/data-sources/user.csv /workdir/user.csv && \
           mc cp myminio/data-sources/mcc.csv /workdir/mcc.csv && \
           mc cp myminio/data-sources/card.csv /workdir/card.csv && \
