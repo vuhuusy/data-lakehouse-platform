@@ -7,7 +7,9 @@ POSTGRES_CHART ?= bitnami/postgresql
 .PHONY: \
 	install-postgres \
 	uninstall-postgres \
-	create-namespace
+	create-namespace \
+	create-init-sql-configmap \
+	create-minio-loader-job
 
 create-namespace:
 	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
