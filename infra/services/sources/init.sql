@@ -71,6 +71,6 @@ CREATE TABLE core.transaction (
 
 -- insert data into tables --
 COPY core.mcc FROM '/workdir/mcc.csv' DELIMITER ',' CSV HEADER;
-COPY core.card FROM '/workdir/card.csv' DELIMITER ',' CSV HEADER;
 COPY core.merchant FROM '/workdir/merchant.csv' DELIMITER ',' CSV HEADER;
 COPY core.user_account FROM '/workdir/user.csv' DELIMITER ',' CSV HEADER;
+COPY core.card FROM '/workdir/card.csv' DELIMITER ',' CSV HEADER;
