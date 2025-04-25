@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: insert-csv-from-minio
+spec:
+  template:
+    spec:
+      containers:
+      - name: data-loader
+        image: bitnami/postgresql:17.4.0-debian-12-r15
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            apt update && apt install -y mc wget &&
+            mc alias set minio https://minio.minio.svc.cluster.local:443 minio minio123 &&
+            mc cp minio/data-sources/user.csv /tmp/user.csv &&
+            mc cp minio/data-sources/mcc.csv /tmp/mcc.csv &&
+            mc cp minio/data-sources/card.csv /tmp/card.csv &&
+            mc cp minio/data-sources/merchant.csv /tmp/merchant.csv &&
+            export PGPASSWORD=postgres &&
+            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.user_account FROM '/tmp/user.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.mcc FROM '/tmp/mcc.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.card FROM '/tmp/card.csv' DELIMITER ',' CSV HEADER;" &&
+            psql -h postgres.financial-ops.svc.cluster.local -U postgres -d financial_ops -c "\COPY core.merchant FROM '/tmp/merchant.csv' DELIMITER ',' CSV HEADER;"
+      restartPolicy: Never
+  backoffLimit: 2
