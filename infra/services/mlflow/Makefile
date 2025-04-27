@@ -6,8 +6,7 @@ install-mlflow:
 	kubectl get namespace mlflow >/dev/null 2>&1 || kubectl create namespace mlflow; \
 	helm upgrade --install mlflow community-charts/mlflow \
 		--namespace mlflow \
-		-f infra/services/mlflow/values.yaml; \
-	make apply-mlflow-service
+		-f infra/services/mlflow/values.yaml
 
 # Create MLflow Service with fixed NodePort
 expose-mlflow-service:
