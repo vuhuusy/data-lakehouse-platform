@@ -67,10 +67,11 @@ securityContext: {}
 # -- This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # -- This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: ClusterIP
+  type: NodePort
   # -- This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 5000
   # -- Default Service name
+  nodePort: 30500
   name: http
   # -- Additional service annotations
   annotations: {}
@@ -189,15 +190,15 @@ artifactRoot:
   # -- Specifies if you want to use AWS S3 Mlflow Artifact Root
   s3:
     # -- Specifies if you want to use AWS S3 Mlflow Artifact Root
-    enabled: false
+    enabled: true
     # -- S3 bucket name
-    bucket: "" # required
+    bucket: "mlflow" # required
     # -- S3 bucket folder. If you want to use root level, please don't set anything.
     path: "" # optional
     # -- AWS IAM user AWS_ACCESS_KEY_ID which has attached policy for access to the S3 bucket
-    awsAccessKeyId: "" # (awsAccessKeyId and awsSecretAccessKey) or roleArn serviceaccount annotation required
+    awsAccessKeyId: "minio" # (awsAccessKeyId and awsSecretAccessKey) or roleArn serviceaccount annotation required
     # -- AWS IAM user AWS_SECRET_ACCESS_KEY which has attached policy for access to the S3 bucket
-    awsSecretAccessKey: "" # (awsAccessKeyId and awsSecretAccessKey) or roleArn serviceaccount annotation required
+    awsSecretAccessKey: "minio123" # (awsAccessKeyId and awsSecretAccessKey) or roleArn serviceaccount annotation required
 
   # -- Specifies if you want to use Google Cloud Storage Mlflow Artifact Root
   gcs:
@@ -346,7 +347,7 @@ extraEnvVars: {}
   # MLFLOW_S3_IGNORE_TLS: true
   # MLFLOW_S3_UPLOAD_EXTRA_ARGS: '{"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": "1234"}'
   # AWS_DEFAULT_REGION: my_region
-  # MLFLOW_S3_ENDPOINT_URL: http://1.2.3.4:9000
+  MLFLOW_S3_ENDPOINT_URL: https://minio.minio.svc.cluster.local:443
   # AWS_CA_BUNDLE: /some/ca/bundle.pem
   # MLFLOW_GCS_DEFAULT_TIMEOUT - Sets the standard timeout for transfer operations in seconds (Default: 60). Use -1 for indefinite timeout.
   # MLFLOW_GCS_UPLOAD_CHUNK_SIZE - Sets the standard upload chunk size for bigger files in bytes (Default: 104857600 ≙ 100MiB), must be multiple of 256 KB.
@@ -392,7 +393,7 @@ resources: {}
 
 serviceMonitor:
   # -- When set true then use a ServiceMonitor to configure scraping
-  enabled: false
+  enabled: true
   # -- When set true then use a service port. On default use a pod port.
   useServicePort: false
   # -- Set the namespace the ServiceMonitor should be deployed
