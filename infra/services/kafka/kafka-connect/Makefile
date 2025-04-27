@@ -7,7 +7,7 @@ NAMESPACE ?= kafka
 
 build-custom-dockerfile:
 	@set -ex; \
-	docker build --progress=plain \
+	docker build \
 		-t huusy/kafka-connect-custom:7.9.0 \
 		-f infra/services/kafka/kafka-connect/Dockerfile .
 
