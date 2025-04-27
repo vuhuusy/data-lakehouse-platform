@@ -7,7 +7,7 @@
         "database.port": "5432",
         "database.user": "postgres",
         "database.password": "postgres",
-        "database.dbname" : "postgres",
+        "database.dbname" : "financial_ops",
         "topic.prefix": "financial-ops",
         "schema.include.list": "core",
         "plugin.name": "pgoutput",
