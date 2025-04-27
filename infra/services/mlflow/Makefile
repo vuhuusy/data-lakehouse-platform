@@ -11,7 +11,7 @@ install-mlflow:
 # Create MLflow Service with fixed NodePort
 expose-mlflow-service:
 	@set -e; \
-	kubectl apply -f infra/services/mlflow/mlflow-svc.yaml
+	kubectl apply -f infra/services/mlflow/mlflow-nodeport.yaml
 
 # Uninstall MLflow
 uninstall-mlflow:
