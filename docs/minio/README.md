@@ -108,21 +108,13 @@ NAME                              READY   AGE
 statefulset.apps/myminio-pool-0   3/3     7h4m
 ```
 
-## Accessing MinIO Services via Port Forwarding
-
-To interact with MinIO services securely from your local machine, use port forwarding to expose the necessary service ports. The following commands allow access to both the MinIO API and the MinIO web console.
+## Accessing MinIO Console via NodePort
 
 ```bash
-# Forward MinIO API service to port 9000
-kubectl port-forward service/myminio-hl 9000 -n minio &
-
-# Forward MinIO Console service to port 9443
-kubectl port-forward service/myminio-console 9443 -n minio &
+make -f infra/services/minio/Makefile create-nodeport
 ```
 
-After running the commands, you can:
-- Access MinIO API at `https://localhost:9000` using MinIO client (mc) or S3-compatible tools.
-- Access MinIO Console at `https://localhost:9443` via a web browser.
+After running the commands, you can access MinIO Console at `https://<worker_ip>:30943` via a web browser.
 
 
 ## Install the mc command line tool

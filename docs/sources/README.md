@@ -1,0 +1,1 @@
+make -f infra/services/sources/Makefile install

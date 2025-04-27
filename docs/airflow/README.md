@@ -55,7 +55,7 @@ Make sure you configure the ``airflow`` user and ``redis`` password correctly in
 ## Install PostgreSQL backend database for Airflow
 
 ```bash
-make -f infra/services/airlow/Makefile install-postgresql-redis
+make -f infra/services/airflow/Makefile install-postgresql-redis
 
 # Verify the PostgreSQL and Redis installation
 kubectl get all -n airflow
@@ -153,13 +153,9 @@ statefulset.apps/airflow-triggerer   1/1     9h
 statefulset.apps/airflow-worker      1/1     9h
 ```
 
-## Accessing Airflow Web UI via Port Forwarding
-
-To access the Airflow Web UI from your local machine, you can port-forward the service to a local port:
+## Accessing Airflow Web UI via NodePort
 
 ```bash
 # Forward Airflow Web UI service to localhost:8080
-kubectl port-forward service/airflow-webserver 8080:8080 -n airflow
+make -f infra/services/airflow/Makefile create-web-nodeport
 ```
-
-Once the port forwarding is active, you can open ``http://localhost:8080`` in your browser to access the Airflow dashboard.
