@@ -2,7 +2,7 @@ existingSecret: ssl-secret
 
 env:
   - name: KAFKA_CLUSTERS_0_NAME
-    value: kafka-cluster
+    value: lakehouse
   - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
     value: kafka.kafka.svc.cluster.local:9092
 
@@ -24,7 +24,7 @@ env:
   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_TYPE
     value: JKS
 
-  # --- SSL passwords từ Secret ---
+  # --- SSL passwords from Secret ---
   - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -37,9 +37,9 @@ env:
         name: ssl-secret
         key: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
 
-  # --- Tắt hostname verification (tạm thời) ---
-  - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
-    value: ""
+  # # --- Tắt hostname verification (tạm thời) ---
+  # - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
+  #   value: ""
 
 volumeMounts:
   - name: ssl-files
@@ -54,7 +54,4 @@ volumes:
 service:
   type: NodePort
   port: 8080
-  nodePort: 30089  # Bạn có thể đổi sang port khác nếu bị trùng
-
-ingress:
-  enabled: false  # Đảm bảo không xung đột nếu bạn đang dùng ingress
+  nodePort: 30089
