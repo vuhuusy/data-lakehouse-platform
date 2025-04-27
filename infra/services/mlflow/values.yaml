@@ -343,7 +343,7 @@ extraFlags: []
   # artifactsOnly
 
 # -- Extra environment variables
-extraEnvVars: {}
+extraEnvVars:
   # MLFLOW_S3_IGNORE_TLS: true
   # MLFLOW_S3_UPLOAD_EXTRA_ARGS: '{"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": "1234"}'
   # AWS_DEFAULT_REGION: my_region
