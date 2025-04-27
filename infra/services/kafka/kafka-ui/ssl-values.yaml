@@ -1,3 +1,4 @@
+apiVersion: v1
 existingSecret: ssl-secret
 
 env:
@@ -39,7 +40,6 @@ env:
 
   # # --- Tắt hostname verification (tạm thời) ---
   # - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
-  #   value: ""
 
 volumeMounts:
   - name: ssl-files
