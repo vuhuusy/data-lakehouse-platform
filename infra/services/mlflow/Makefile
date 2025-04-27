@@ -10,7 +10,7 @@ install-mlflow:
 	make apply-mlflow-service
 
 # Create MLflow Service with fixed NodePort
-apply-mlflow-service:
+expose-mlflow-service:
 	@set -e; \
 	kubectl apply -f infra/services/mlflow/mlflow-svc.yaml
 
