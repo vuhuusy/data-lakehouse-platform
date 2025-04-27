@@ -1,9 +1,11 @@
 # Makefile for Kafka Connect
 
 NAMESPACE ?= kafka
+CONNECT_HOST ?= 103.179.172.171:30083
 
 # Optional targets for specific components
-.PHONY: install uninstall build-custom-dockerfile list-plugins create-postgres-connector
+.PHONY: install uninstall build-custom-dockerfile list-plugins create-postgres-connector \
+	expose-nodeport
 
 build-custom-dockerfile:
 	@set -ex; \
@@ -40,22 +42,25 @@ uninstall:
 	helm uninstall --namespace $(NAMESPACE) \
 		kafka-connect
 
+expose-nodeport:
+	@kubectl apply -f infra/services/kafka/kafka-connect/kafka-connect-nodeport.yaml
+
 list-plugins:
 	@set -ex; \
-	curl -sS localhost:8083/connector-plugins
+	curl -sS http://$(CONNECT_HOST)/connector-plugins
 
 create-postgres-connector:
 	@set -ex; \
 	curl -i -X POST \
 		-H "Accept:application/json" \
 		-H  "Content-Type:application/json" \
-		http://localhost:8083/connectors/ -d @infra/services/kafka/kafka-connect/postgres-connector.json
+		http://$(CONNECT_HOST)/connectors/ -d @infra/services/kafka/kafka-connect/postgres-connector.json
 
 delete-postgres-connector:
 	@set -ex; \
 	curl -i -X DELETE \
-		http://localhost:8083/connectors/inventory-connector
+		http://$(CONNECT_HOST)/connectors/financial-ops-connector
 
 get-all-connectors:
 	@set -ex; \
-	curl -i -X GET http://localhost:8083/connectors/
+	curl -i -X GET http://$(CONNECT_HOST)/connectors/
