@@ -23,12 +23,12 @@ create-secrets:
 
 install:
 	@set -e; \
-	helm upgrade --install datahub-prerequisites $(DATAHUB_PREREQ_CHART) -n $(NAMESPACE) --create-namespace; \
-	helm upgrade --install datahub $(DATAHUB_CHART) -n $(NAMESPACE)
+	helm upgrade --install prerequisites $(DATAHUB_PREREQ_CHART) -n $(NAMESPACE) --create-namespace -f infra/services/datahub/prerequisites/values.yaml ; \
+	helm upgrade --install datahub $(DATAHUB_CHART) -n $(NAMESPACE) -f infra/services/datahub/values.yaml
 
 create-web-nodeport:
 	@set -e; \
-	kubectl apply -f infra/services/datahub/web-nodeport.yaml
+	kubectl apply -f infra/services/datahub/web-nodeport.yaml -n datahub
 
 uninstall:
 	@set -e; \
