@@ -34,3 +34,13 @@ make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile CONN
 make -f infra/services/kafka/kafka-connect/Makefile release-docker-image CONNECT_HOST=103.179.172.171:30083
 
 make -f infra/services/kafka/kafka-connect/Makefile install CONNECT_HOST=103.179.172.171:30083
+
+## Kafka UI
+
+helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
+
+kubectl create configmap ssl-files --from-file=infra/services/kafka/kafka.truststore.jks --from-file=infra/services/kafka/kafka.keystore.jks -n kafka
+
+helm install kafka-ui kafka-ui/kafka-ui -f infra/services/kafka/kafka-ui/ssl-values.yaml -n kafka
+
+make -f infra/services/kafka/kafka-ui install-kafka-ui
