@@ -16,7 +16,7 @@ with DAG(
 ) as dag:
     spark_job = SparkKubernetesOperator(
         task_id="spark-job",
-        application_file="/opt/airflow/dags/repo/source_code/airflow/dags/spark-jobs/spark-pi.yaml",
+        application_file="{{ '/opt/airflow/dags/repo/source_code/airflow/dags/spark-jobs/spark-pi.yaml' }}",
         namespace="spark-jobs",
         kubernetes_conn_id="kubernetes_default"
     )
