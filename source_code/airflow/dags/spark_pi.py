@@ -12,7 +12,7 @@ with DAG(
     catchup=False,
     dagrun_timeout=pendulum.duration(minutes=1),
     tags=["spark-pi"],
-    template_searchpath=Variable.get("template_searchpath")
+  #  template_searchpath=Variable.get("template_searchpath")
 ) as dag:
     spark_job = SparkKubernetesOperator(
         task_id="spark-job",
