@@ -1,4 +1,5 @@
 .PHONY: install-kafka-ui uninstall-kafka-ui
+NAMESPACE ?= kafka
 
 # Install Kafka UI
 install-kafka-ui:
