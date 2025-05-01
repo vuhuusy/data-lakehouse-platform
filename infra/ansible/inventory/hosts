@@ -1,10 +1,10 @@
 [ranchers]
-rancher-01 ansible_host=103.82.21.64 ansible_user=root ansible_ssh_pass=gYv87Kzdemv99fyJ
+rancher-01 ansible_host=103.179.172.187 ansible_user=root ansible_ssh_pass=U3cn457H60wSogun
 
 [masters]
-master-01 ansible_host=103.82.21.142 ansible_user=root ansible_ssh_pass=gt44Ob6AYOStp71Z
+master-01 ansible_host=103.179.172.2 ansible_user=root ansible_ssh_pass=3cmWe0EUhGOf5jRT
 
 [workers]
-worker-01 ansible_host=103.82.21.133 ansible_user=root ansible_ssh_pass=uX8Qc9K15vXmWQ36
-worker-02 ansible_host=103.82.21.130 ansible_user=root ansible_ssh_pass=xd53u6nkw1jMkhb9
-worker-03 ansible_host=103.82.21.150 ansible_user=root ansible_ssh_pass=ZsTu191o1o5Z9xM7
+worker-01 ansible_host=103.179.172.171 ansible_user=root ansible_ssh_pass=Mn25K94y0m19d5GT
+worker-02 ansible_host=103.179.172.252 ansible_user=root ansible_ssh_pass=Esq3bJQtj0M9dFEW
+worker-03 ansible_host=103.179.172.242 ansible_user=root ansible_ssh_pass=f8FdbmS8dH57C4SN
