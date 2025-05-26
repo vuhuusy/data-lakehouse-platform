@@ -23,12 +23,17 @@ API_ENDPOINT = "/data/2023/acs/acs5"
 VARS = "B01003_001E,B01002_001E,B19013_001E,B17001_002E,B23025_005E"
 TEMP_FILE = "/tmp/census_raw.csv"
 
-
 def check_api_available():
     hook = HttpHook(method='GET', http_conn_id='census_api_conn')
-    response = hook.run("/")
+    api_key = hook.get_connection('census_api_conn').extra_dejson.get("api_key")
+    params = {
+        "get": "NAME",
+        "for": "state:01",
+        "key": api_key
+    }
+    response = hook.run(endpoint=API_ENDPOINT, data=params)
     if response.status_code != 200:
-        raise Exception("Census API not available")
+        raise Exception(f"Census API not available: {response.status_code}")
 
 
 def extract_data():
