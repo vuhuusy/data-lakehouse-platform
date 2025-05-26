@@ -25,7 +25,9 @@ TEMP_FILE = "/tmp/census_raw.csv"
 
 def check_api_available():
     hook = HttpHook(method='GET', http_conn_id='census_api_conn')
-    api_key = hook.get_connection('census_api_conn').extra_dejson.get("api_key")
+    conn = hook.get_connection(hook.http_conn_id)
+    api_key = conn.extra_dejson["api_key"]
+
     params = {
         "get": "NAME",
         "for": "state:01",
@@ -38,7 +40,9 @@ def check_api_available():
 
 def extract_data():
     hook = HttpHook(method='GET', http_conn_id='census_api_conn')
-    api_key = hook.get_connection('census_api_conn').extra_dejson.get("api_key")
+    conn = hook.get_connection(hook.http_conn_id)
+    api_key = conn.extra_dejson["api_key"]
+
 
     all_data = []
     for fips, abbrev in STATE_MAP.items():
