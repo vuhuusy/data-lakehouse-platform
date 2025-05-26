@@ -1,2 +1,4 @@
 requests==2.32.3
 apache-airflow-providers-cncf-kubernetes==10.1.0
+boto3
+pyarrow
