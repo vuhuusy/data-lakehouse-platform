@@ -6,7 +6,7 @@ from airflow.utils.dates import days_ago
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 
 with DAG(
-    dag_id="spark-pi",
+    dag_id="spark-read-minio",
     schedule=None,
     start_date=days_ago(2),
     catchup=False,
