@@ -10,7 +10,7 @@ with DAG(
     schedule=None,
     start_date=days_ago(2),
     catchup=False,
-    dagrun_timeout=pendulum.duration(minutes=10),
+    dagrun_timeout=pendulum.duration(minutes=100),
     tags=["spark-pi"],
     template_searchpath=Variable.get("template_searchpath")
 ) as dag:
