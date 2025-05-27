@@ -17,10 +17,14 @@ spec:
     cores: 1
     memory: "512m"
     serviceAccount: spark-operator-spark
+    labels:
+      version: "3.5.3"
   executor:
     cores: 1
     instances: 2
     memory: "1g"
+    labels:
+      version: "3.5.3"
   deps:
     jars:
       - "local:///opt/spark/jars/hadoop-aws-3.3.4.jar"
