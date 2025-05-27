@@ -18,5 +18,6 @@ with DAG(
         task_id="spark-job-read-minio",
         application_file="spark-jobs/spark-read-minio.yaml",
         namespace="spark-operator",
-        kubernetes_conn_id="kubernetes_default"
+        kubernetes_conn_id="kubernetes_default",
+        execution_timeout=pendulum.duration(minutes=15)
     )
