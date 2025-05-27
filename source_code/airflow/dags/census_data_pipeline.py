@@ -1,5 +1,5 @@
-from airflow.operators.dummy import DummyOperator
 from airflow import DAG
+from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime
@@ -7,7 +7,7 @@ import pandas as pd
 import sys
 sys.path.append("/opt/airflow/dags/repo/source_code/airflow/python")
 
-from census_etl import check_api_availability, extract, transform, write_parquet_to_minio
+from census_etl import check_api_availability, extract, transform, load
 
 default_args = {
     'start_date': datetime(2025, 5, 26),
@@ -33,10 +33,10 @@ with DAG(
         df_t = transform(df)
         context['ti'].xcom_push(key="transformed_df", value=df_t.to_json())
 
-    def save_to_minio(**context):
+    def load(**context):
         df_json = context['ti'].xcom_pull(task_ids='extract_transform', key="transformed_df")
         df = pd.read_json(df_json)
-        write_parquet_to_minio(
+        load(
             df=df,
             bucket_name="gold-zone",
             object_name="features/online_store/state_features.parquet",
@@ -48,7 +48,7 @@ with DAG(
     start = DummyOperator(task_id="start")
     check_api_task = PythonOperator(task_id="check_api", python_callable=check_api)
     extract_transform_task = PythonOperator(task_id="extract_transform", python_callable=extract_and_transform)
-    save_task = PythonOperator(task_id="save_to_minio", python_callable=save_to_minio)
+    save_task = PythonOperator(task_id="load_to_minio", python_callable=load)
     end = DummyOperator(task_id="end")
 
     start >> check_api_task >> extract_transform_task >> save_task >> end

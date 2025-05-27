@@ -11,7 +11,7 @@ def check_api_availability(api_key: str) -> bool:
     BASE_URL = 'https://api.census.gov/data/2023/acs/acs5'
     params = {
         'get': 'B01003_001E',  # Total population
-        'for': 'state:*',
+        'for': 'state:01',
         'key': api_key
     }
     
@@ -74,8 +74,6 @@ def extract(api_key: str) -> pd.DataFrame:
     numeric_cols = ["total_population", "median_age", "median_household_income", "poverty_count", "unemployment_count"]
     df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric)
 
-    print(df.head())
-
     return df
 
 def transform(df: pd.DataFrame) -> pd.DataFrame:
@@ -112,7 +110,7 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
         "norm_poverty_rate", "norm_unemployment_rate", "norm_poverty_per_unemployed"
     ]]
 
-def write_parquet_to_minio(
+def load(
     df: pd.DataFrame,
     bucket_name: str,
     object_name: str,
