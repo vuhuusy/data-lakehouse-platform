@@ -88,13 +88,13 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
     df["population_level"] = pd.cut(
         df["total_population"],
         bins=[-1, 5_000_000, 15_000_000, np.inf],
-        labels=["Low", "Medium", "High"]
+        labels=[0, 1, 2]
     )
 
     df["income_level"] = pd.cut(
         df["median_household_income"],
         bins=[-1, 50_000, 90_000, np.inf],
-        labels=["Low", "Medium", "High"]
+        labels=[0, 1, 2]
     )
 
     df["is_young_state"] = (df["median_age"] < 38).astype(int)
