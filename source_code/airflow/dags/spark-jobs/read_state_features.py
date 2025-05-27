@@ -1,12 +1,19 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import current_timestamp
 
 spark = SparkSession.builder \
-    .appName("Read State Features from MinIO") \
+    .appName("StreamToMinIO") \
     .getOrCreate()
 
-# MinIO S3 URL (s3a://bucket/path)
-df = spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet")
+df_stream = spark.readStream.format("rate").option("rowsPerSecond", 10).load()
 
-df.show(5, truncate=False)
+df_transformed = df_stream.withColumn("ingest_time", current_timestamp())
 
-spark.stop()
+query = df_transformed.writeStream \
+    .format("parquet") \
+    .option("path", "s3a://gold-zone/streamed_output/") \
+    .option("checkpointLocation", "s3a://gold-zone/streamed_output/_checkpoints/") \
+    .outputMode("append") \
+    .start()
+
+query.awaitTermination()
