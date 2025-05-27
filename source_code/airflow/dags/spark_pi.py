@@ -17,6 +17,6 @@ with DAG(
     spark_job = SparkKubernetesOperator(
         task_id="spark-job",
         application_file="spark-jobs/spark_pi.yaml",
-        namespace="spark-jobs",
+        namespace="spark-operator",
         kubernetes_conn_id="kubernetes_default"
     )
