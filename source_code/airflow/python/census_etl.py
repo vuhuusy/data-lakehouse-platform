@@ -81,6 +81,10 @@ def extract(api_key: str) -> pd.DataFrame:
 def transform(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
+    df["poverty_rate"] = df["poverty_count"] / df["total_population"].replace(0, np.nan)
+    df["unemployment_rate"] = df["unemployment_count"] / df["total_population"].replace(0, np.nan)
+    df["poverty_per_unemployed"] = df["poverty_count"] / df["unemployment_count"].replace(0, np.nan)
+
     df["population_level"] = pd.cut(
         df["total_population"],
         bins=[-1, 5_000_000, 15_000_000, np.inf],
