@@ -39,7 +39,7 @@ make -f infra/services/kafka/kafka-connect/Makefile install CONNECT_HOST=103.179
 
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts
 
-kubectl create configmap ssl-files --from-file=infra/services/kafka/kafka.truststore.jks --from-file=infra/services/kafka/kafka.keystore.jks -n kafka
+kubectl create configmap ssl-files --from-file=infra/services/kafka/certs/kafka.truststore.jks --from-file=infra/services/kafka/certs/kafka.keystore.jks -n kafka
 
 helm install kafka-ui kafka-ui/kafka-ui -f infra/services/kafka/kafka-ui/ssl-values.yaml -n kafka
 
