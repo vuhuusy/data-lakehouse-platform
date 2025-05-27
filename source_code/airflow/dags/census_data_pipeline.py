@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime
 import sys
-sys.path.append("/opt/airflow/dags/repo/source_code/airflow/dags/python")
+sys.path.append("/opt/airflow/dags/repo/source_code/airflow/python")
 
 from census_etl import check_api_availability, extract, transform, write_parquet_to_minio
 
