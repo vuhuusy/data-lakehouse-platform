@@ -131,7 +131,7 @@ def write_parquet_to_minio(
     # Connect to MinIO S3-compatible storage
     s3 = boto3.client(
         's3',
-        endpoint_url = minio_endpoint
+        endpoint_url = minio_endpoint,
         aws_access_key_id=access_key,
         aws_secret_access_key=secret_key,
         region_name=region,
