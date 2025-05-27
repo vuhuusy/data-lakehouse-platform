@@ -2,33 +2,38 @@ apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
   name: read-state-features
-  namespace: default
+  namespace: spark-operator
 spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "gcr.io/spark-operator/spark-py:v3.3.1"  # hoặc image phù hợp
+  image: huusy/spark-application:3.5.3
   imagePullPolicy: Always
-  mainApplicationFile: "local:///opt/spark/work-dir/read_state_features.py"
-  sparkVersion: "3.3.1"
+  mainApplicationFile: "local:///opt/spark-jobs/read_state_features.py"
+  sparkVersion: "3.5.3"
   restartPolicy:
     type: Never
   driver:
     cores: 1
     memory: "512m"
-    serviceAccount: spark
+    serviceAccount: spark-operator-spark
   executor:
     cores: 1
     instances: 2
     memory: "1g"
   deps:
     jars:
-      - "local:///opt/spark/jars/hadoop-aws-3.3.1.jar"
-      - "local:///opt/spark/jars/aws-java-sdk-bundle-1.11.1026.jar"
+      - "local:///opt/spark/jars/hadoop-aws-3.3.4.jar"
+      - "local:///opt/spark/jars/aws-java-sdk-bundle-1.12.172.jar"
+      - "local:///opt/spark/jars/spark-hadoop-cloud_2.12-3.3.4.jar"
+      - "local:///opt/spark/jars/delta-spark_2.12-3.3.0.jar"
+      - "local:///opt/spark/jars/delta-storage-3.3.0.jar"
   sparkConf:
     "spark.hadoop.fs.s3a.access.key": "minio"
     "spark.hadoop.fs.s3a.secret.key": "minio123"
-    "spark.hadoop.fs.s3a.endpoint": "http://<minio-service>:9000"
+    "spark.hadoop.fs.s3a.endpoint": "http://minio.spark-operator.svc.cluster.local:9000"
     "spark.hadoop.fs.s3a.path.style.access": "true"
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
     "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
+    "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
+    "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
