@@ -9,7 +9,7 @@ spec:
   mode: cluster
   image: huusy/spark-application:3.5.3
   imagePullPolicy: Always
-  mainApplicationFile: "local:///opt/spark-jobs/spark-read-minio.yaml"
+  mainApplicationFile: "local:///opt/spark-jobs/read_state_features.py"
   sparkVersion: "3.5.3"
   restartPolicy:
     type: Never
