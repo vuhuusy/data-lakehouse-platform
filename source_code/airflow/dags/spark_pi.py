@@ -5,9 +5,6 @@ from airflow.models import Variable
 from airflow.utils.dates import days_ago
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 
-with open("/opt/airflow/dags/repo/source_code/airflow/dags/spark-jobs/spark_pi.yaml") as f:
-    spark_app_dict = yaml.safe_load(f)
-
 with DAG(
     dag_id="spark-pi",
     schedule=None,
@@ -19,7 +16,7 @@ with DAG(
 ) as dag:
     spark_job = SparkKubernetesOperator(
         task_id="spark-job",
-        application_file=spark_app_dict,
+        application_file="spark-jobs/spark_pi.yaml",
         namespace="spark-jobs",
         kubernetes_conn_id="kubernetes_default"
     )
