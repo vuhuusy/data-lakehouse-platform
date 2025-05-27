@@ -4,10 +4,11 @@ from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime
 import pandas as pd
+from io import StringIO
 import sys
 sys.path.append("/opt/airflow/dags/repo/source_code/airflow/python")
 
-from census_etl import check_api_availability, extract, transform, load
+from census_etl import check_api_availability, extract, transform, load as load_to_minio
 
 default_args = {
     'start_date': datetime(2025, 5, 26),
@@ -27,16 +28,17 @@ with DAG(
         if not check_api_availability(api_key):
             raise ValueError("Census API is not available")
 
-    def extract_and_transform(**context):
+    def extract_and_transform(ti, **kwargs):
         api_key = Variable.get("CENSUS_API_KEY", default_var=None)
         df = extract(api_key)
         df_t = transform(df)
-        context['ti'].xcom_push(key="transformed_df", value=df_t.to_json())
+        ti.xcom_push(key="transformed_df", value=df_t.to_json())
 
-    def load(**context):
-        df_json = context['ti'].xcom_pull(task_ids='extract_transform', key="transformed_df")
-        df = pd.read_json(df_json)
-        load(
+    def load(ti, **kwargs):
+        df_json = ti.xcom_pull(task_ids='extract_transform', key="transformed_df")
+        df = pd.read_json(StringIO(df_json))
+
+        load_to_minio(
             df=df,
             bucket_name="gold-zone",
             object_name="features/online_store/state_features.parquet",
@@ -45,6 +47,7 @@ with DAG(
             secret_key=Variable.get("SECRET_KEY"),
             use_ssl=False
         )
+
     start = DummyOperator(task_id="start")
     check_api_task = PythonOperator(task_id="check_api", python_callable=check_api)
     extract_transform_task = PythonOperator(task_id="extract_transform", python_callable=extract_and_transform)
