@@ -3,6 +3,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from datetime import datetime
+import pandas as pd
 import sys
 sys.path.append("/opt/airflow/dags/repo/source_code/airflow/python")
 
