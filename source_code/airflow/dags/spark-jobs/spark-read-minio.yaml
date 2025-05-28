@@ -9,7 +9,7 @@ spec:
   mode: cluster
   image: huusy/spark-application:3.5.3
   imagePullPolicy: Always
-  mainApplicationFile: "s3a://share/spark/repo/read_state_features_2.py"
+  mainApplicationFile: "s3a://share/spark/repo/read_state_features.py"
   sparkVersion: "3.5.3"
   restartPolicy:
     type: Never
