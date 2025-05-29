@@ -1,3 +1,4 @@
+helm repo add trino https://trinodb.github.io/charts
 make -f infra/services/trino/Makefile build-trino-custom-dockerfile
 make -f infra/services/trino/Makefile release-docker-images
 make -f infra/services/trino/Makefile install
