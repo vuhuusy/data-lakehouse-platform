@@ -1,4 +1,4 @@
-FROM flink:16
+FROM flink:1.16
 
 USER root
 
