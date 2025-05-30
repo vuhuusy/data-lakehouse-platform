@@ -7,11 +7,17 @@ spec:
   image: huusy/flink:1.20-scala_2.12
   flinkVersion: v1_20
   serviceAccount: flink
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
   job:
     jarURI: "s3a://share/flink/repo/job_kafka_to_minio.py"
-    entryClass: ''
-    args: []
-    parallelism: 1
+    parallelism: 2
     upgradeMode: stateless
   podTemplate:
     spec:
