@@ -158,4 +158,6 @@ statefulset.apps/airflow-worker      1/1     9h
 ```bash
 # Forward Airflow Web UI service to localhost:8080
 make -f infra/services/airflow/Makefile create-web-nodeport
+make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-applications
 ```
+
