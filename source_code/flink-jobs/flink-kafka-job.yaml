@@ -18,9 +18,7 @@ spec:
       cpu: 1
   job:
     parallelism: 2
-    args:
-      - --python
-      - s3a://share/flink/repo/job_kafka_to_minio.py
+    args: ["-pyclientexec", "/usr/local/bin/python3", "-py", "s3a://share/flink/repo/job_kafka_to_minio.py"]
     entryClass: org.apache.flink.client.python.PythonDriver
     upgradeMode: stateless
   podTemplate:
