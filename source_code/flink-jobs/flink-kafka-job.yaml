@@ -42,7 +42,7 @@ spec:
     fs.s3a.access.key: minio
     fs.s3a.secret.key: minio123
     fs.s3a.path.style.access: "true"
-    # fs.s3a.connection.ssl.enabled: "false"
+    fs.s3a.connection.ssl.enabled: "true"
     state.backend: filesystem
     state.checkpoints.dir: s3a://raw-zone/checkpoints/
     state.savepoints.dir: s3a://raw-zone/savepoints/
