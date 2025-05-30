@@ -18,8 +18,7 @@ spec:
   job:
     jarURI: "s3a://share/flink/repo/job_kafka_to_minio.py"
     parallelism: 2
-    args:
-      - /opt/flink/workdir/job_kafka_to_minio.py
+    entryClass: org.apache.flink.client.python.PythonDriver
     upgradeMode: stateless
   podTemplate:
     spec:
