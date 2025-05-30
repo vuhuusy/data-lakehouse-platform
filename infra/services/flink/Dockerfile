@@ -9,7 +9,7 @@ ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.3.4/hadoop-
 ADD https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-hadoop/1.20.0/flink-s3-fs-hadoop-1.20.0.jar /opt/flink/lib/
 
 # Kafka connector for Flink
-ADD https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/1.20.0/flink-connector-kafka-1.20.0.jar /opt/flink/lib/
+ADD https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/3.4.0-1.20/flink-connector-kafka-3.4.0-1.20.jar /opt/flink/lib/
 
 
 WORKDIR /opt/flink/workdir
