@@ -16,8 +16,10 @@ spec:
       memory: "2048m"
       cpu: 1
   job:
-    jarURI: "s3a://share/flink/repo/job_kafka_to_minio.py"
     parallelism: 2
+    args:
+      - --pyfs
+      - s3a://share/flink/repo/job_kafka_to_minio.py
     entryClass: org.apache.flink.client.python.PythonDriver
     upgradeMode: stateless
   podTemplate:
