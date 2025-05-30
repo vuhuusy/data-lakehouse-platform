@@ -5,7 +5,7 @@ metadata:
   namespace: flink
 spec:
   image: huusy/flink:1.20-scala_2.12
-  flinkVersion: v1_20
+  flinkVersion: v1_16
   serviceAccount: flink
   jobManager:
     resource:
