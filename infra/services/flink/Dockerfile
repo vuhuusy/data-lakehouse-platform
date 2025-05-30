@@ -1,4 +1,4 @@
-FROM flink:1.20-scala_2.12
+FROM flink:16
 
 USER root
 
@@ -29,7 +29,7 @@ ln -s /usr/local/bin/python3 /usr/local/bin/python && \
 apt-get clean && \
 rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir apache-flink==1.20.0
+RUN pip3 install "apache-flink>=1.16.0,<1.17.1"
 
 # Certificate import
 COPY infra/services/minio/selfsigned.crt /usr/local/share/ca-certificates/
