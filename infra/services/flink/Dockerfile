@@ -15,10 +15,21 @@ ADD https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/3.4.0-
 
 WORKDIR /opt/flink/workdir
 
-RUN apt-get update && \
-    apt-get install -y curl python3 python3-pip && \
-    pip3 install --upgrade pip setuptools && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && \
+apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev libffi-dev && \
+wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz && \
+tar -xvf Python-3.7.9.tgz && \
+cd Python-3.7.9 && \
+./configure --without-tests --enable-shared && \
+make -j6 && \
+make install && \
+ldconfig /usr/local/lib && \
+cd .. && rm -f Python-3.7.9.tgz && rm -rf Python-3.7.9 && \
+ln -s /usr/local/bin/python3 /usr/local/bin/python && \
+apt-get clean && \
+rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir apache-flink==1.20.0
 
 # Certificate import
 COPY infra/services/minio/selfsigned.crt /usr/local/share/ca-certificates/
