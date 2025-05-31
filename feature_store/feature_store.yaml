@@ -1,6 +1,0 @@
-project: feature_store
-registry: s3://feast-registry/registry.db
-provider: local
-online_store:
-  type: redis
-  connection_string: redis-master.redis.svc.cluster.local:6379
