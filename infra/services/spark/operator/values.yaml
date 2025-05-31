@@ -34,7 +34,7 @@ image:
   repository: kubeflow/spark-operator
   # -- Image tag.
   # @default -- If not set, the chart appVersion will be used.
-  tag: ""
+  tag: "latest"
   # -- Image pull policy.
   pullPolicy: IfNotPresent
   # -- Image pull secrets for private image registry.

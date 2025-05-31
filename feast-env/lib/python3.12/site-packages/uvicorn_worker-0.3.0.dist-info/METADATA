@@ -1,0 +1,74 @@
+Metadata-Version: 2.4
+Name: uvicorn-worker
+Version: 0.3.0
+Summary: Uvicorn worker for Gunicorn! ✨
+Project-URL: Changelog, https://github.com/Kludex/uvicorn-worker/releases
+Project-URL: Funding, https://github.com/sponsors/Kludex
+Project-URL: Source, https://github.com/Kludex/uvicorn-worker
+Author-email: Marcelo Trylesinski <marcelotryle@gmail.com>
+License-Expression: BSD-3-Clause
+License-File: LICENSE.md
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.9
+Requires-Dist: gunicorn>=20.1.0
+Requires-Dist: uvicorn>=0.15.0
+Description-Content-Type: text/markdown
+
+# Uvicorn Worker
+
+The **Uvicorn Worker** is a package designed for the mature and comprehensive server and process manager, [Gunicorn][gunicorn].
+This package allows you to run ASGI applications, leverages [Uvicorn][uvicorn]'s high-performance capabilities, and provides Gunicorn's
+robust process management.
+
+By using this package, you can dynamically adjust the number of worker processes, restart them gracefully, and execute server
+upgrades without any service interruption.
+
+## Getting Started
+
+### Installation
+
+You can easily install the Uvicorn Worker package using pip:
+
+```bash
+pip install uvicorn-worker
+```
+
+## Deployment
+
+For production environments, it's recommended to utilize Gunicorn with the Uvicorn worker class.
+Below is an example of how to do this:
+
+```bash
+gunicorn example:app -w 4 -k uvicorn_worker.UvicornWorker
+```
+
+In the above command, `-w 4` instructs Gunicorn to initiate 4 worker processes, and `-k uvicorn_worker.UvicornWorker` flag tells
+Gunicorn to use the Uvicorn worker class.
+
+If you're working with a [PyPy][pypy] compatible configuration, you should use `uvicorn_worker.UvicornH11Worker`.
+
+### Development
+
+During development, you can directly run Uvicorn as follows:
+
+```bash
+uvicorn example:app --reload
+```
+
+The `--reload` flag will automatically reload the server when you make changes to your code.
+
+For more information read the [Uvicorn documentation](https://www.uvicorn.org/).
+
+[gunicorn]: https://gunicorn.org/
+[uvicorn]: https://www.uvicorn.org/
+[pypy]: https://www.pypy.org/

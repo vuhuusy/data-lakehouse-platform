@@ -4,23 +4,28 @@ metadata:
   name: kafka-to-minio-job
   namespace: flink
 spec:
-  image: huusy/flink:1.16
-  imagePullPolicy: Always
-  flinkVersion: v1_16
+  image: huusy/flink:1.20.0-scala_2.12
+  imagePullPolicy: IfNotPresent
+  flinkVersion: v1_20
   serviceAccount: flink
+#  mode: native
+
   jobManager:
     resource:
       memory: "2048m"
       cpu: 1
+
   taskManager:
     resource:
       memory: "2048m"
       cpu: 1
+
   job:
+    jarURI: s3a://share/flink/repo/flink-jobs-assembly-0.1.0-SNAPSHOT.jar
+    entryClass: hust.fami.datn.fraud.detection.KafkaToKafkaJob
     parallelism: 2
-    args: ["-pyclientexec", "/usr/local/bin/python3", "-py", "s3a://share/flink/repo/job_kafka_to_minio.py"]
-    entryClass: org.apache.flink.client.python.PythonDriver
     upgradeMode: stateless
+
   podTemplate:
     spec:
       containers:
@@ -32,6 +37,7 @@ spec:
         - name: kafka-truststore
           secret:
             secretName: kafka-jks
+
   flinkConfiguration:
     taskmanager.numberOfTaskSlots: "1"
     s3.access.key: minio
@@ -42,6 +48,8 @@ spec:
     fs.s3a.secret.key: minio123
     fs.s3a.path.style.access: "true"
     fs.s3a.connection.ssl.enabled: "true"
+    fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
     state.backend: filesystem
     state.checkpoints.dir: s3a://raw-zone/checkpoints/
     state.savepoints.dir: s3a://raw-zone/savepoints/
+ #   $internal.application.program-args: ""

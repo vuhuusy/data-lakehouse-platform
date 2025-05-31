@@ -1,4 +1,4 @@
-.PHONY: install-mlflow uninstall-mlflow apply-mlflow-service
+.PHONY: install-mlflow uninstall-mlflow expose-mlflow-service create-minio-ca-configmap
 
 # Install MLflow
 install-mlflow:
@@ -11,7 +11,13 @@ install-mlflow:
 # Create MLflow Service with fixed NodePort
 expose-mlflow-service:
 	@set -e; \
-	kubectl apply -f infra/services/mlflow/mlflow-nodeport.yaml
+	kubectl apply -f infra/services/mlflow/mlflow-nodeport.yaml -n mlflow
+
+create-minio-ca-configmap:
+	@set -e; \
+	kubectl create configmap minio-ca-configmap \
+	  --from-file=ca.crt=infra/services/minio/selfsigned.crt \
+	  -n mlflow
 
 # Uninstall MLflow
 uninstall-mlflow:

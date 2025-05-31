@@ -8,9 +8,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: flink
+    app: kafka-to-minio-job
     component: jobmanager
-    deployment-name: kafka-to-minio-job
   ports:
     - name: rest
       port: 8081

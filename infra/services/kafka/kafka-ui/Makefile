@@ -4,7 +4,7 @@ NAMESPACE ?= kafka
 # Install Kafka UI
 install-kafka-ui:
 	@set -e; \
-	kubectl apply -f secret.yaml
+	kubectl apply -f infra/services/kafka/kafka-ui/secret.yaml
 	kubectl delete configmap ssl-files -n $(NAMESPACE) || true; \
 	kubectl create configmap ssl-files \
 		--from-file=kafka.truststore.jks=infra/services/kafka/certs/kafka.truststore.jks \
