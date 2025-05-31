@@ -4,11 +4,10 @@ metadata:
   name: kafka-to-minio-job
   namespace: flink
 spec:
-  image: huusy/flink:1.20.0-scala_2.12
-  imagePullPolicy: IfNotPresent
+  image: huusy/flink:1.20.0-java11
+  imagePullPolicy: Always
   flinkVersion: v1_20
   serviceAccount: flink
-#  mode: native
 
   jobManager:
     resource:
@@ -21,8 +20,8 @@ spec:
       cpu: 1
 
   job:
-    jarURI: s3a://share/flink/repo/flink-jobs-assembly-0.1.0-SNAPSHOT.jar
-    entryClass: hust.fami.datn.fraud.detection.KafkaToKafkaJob
+    jarURI: s3a://share/flink/repo/KafkaToKafka-1.0-SNAPSHOT.jar
+    entryClass: KafkaToKafkaJob
     parallelism: 2
     upgradeMode: stateless
 
@@ -52,4 +51,7 @@ spec:
     state.backend: filesystem
     state.checkpoints.dir: s3a://raw-zone/checkpoints/
     state.savepoints.dir: s3a://raw-zone/savepoints/
- #   $internal.application.program-args: ""
+    classloader.resolve-order: parent-first
+    env.java.opts: "-XX:MaxDirectMemorySize=512m"
+    #pipeline.jars: s3a://share/flink/repo/flink-jobs-assembly-0.1.0-SNAPSHOT.jar
+    $internal.application.program-args: ""
