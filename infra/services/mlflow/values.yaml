@@ -193,7 +193,7 @@ artifactRoot:
     # -- S3 bucket name
     bucket: "mlflow" # required
     # -- S3 bucket folder. If you want to use root level, please don't set anything.
-    path: "" # optional
+    path: "model/fraud_detection" # optional
     # -- AWS IAM user AWS_ACCESS_KEY_ID which has attached policy for access to the S3 bucket
     awsAccessKeyId: "minio" # (awsAccessKeyId and awsSecretAccessKey) or roleArn serviceaccount annotation required
     # -- AWS IAM user AWS_SECRET_ACCESS_KEY which has attached policy for access to the S3 bucket
@@ -343,7 +343,7 @@ extraFlags: []
 
 # -- Extra environment variables
 extraEnvVars:
-  # MLFLOW_S3_IGNORE_TLS: true
+  MLFLOW_S3_IGNORE_TLS: true
   # MLFLOW_S3_UPLOAD_EXTRA_ARGS: '{"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": "1234"}'
   # AWS_DEFAULT_REGION: my_region
   MLFLOW_S3_ENDPOINT_URL: https://minio.minio.svc.cluster.local:443
