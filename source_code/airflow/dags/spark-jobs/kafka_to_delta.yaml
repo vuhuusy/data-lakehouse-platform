@@ -32,6 +32,7 @@ spec:
       - "local:///opt/bitnami/spark/jars/spark-hadoop-cloud_2.12-3.3.4.jar"
       - "local:///opt/bitnami/spark/jars/delta-spark_2.12-3.3.0.jar"
       - "local:///opt/bitnami/spark/jars/delta-storage-3.3.0.jar"
+      - "local:///opt/bitnami/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar"
   sparkConf:
     "spark.hadoop.fs.s3a.access.key": "minio"
     "spark.hadoop.fs.s3a.secret.key": "minio123"
