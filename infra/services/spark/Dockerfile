@@ -13,6 +13,10 @@ RUN apt-get update && \
     # Clean up pip cache
     rm -rf /root/.cache && rm -rf /var/cache/apt/* && rm -rf /var/lib/apt/lists/*
 
+# Add Spark Kafka connector for Spark 3.5.3
+ADD https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.1/spark-sql-kafka-0-10_2.12-3.5.1.jar $SPARK_HOME/jars
+ADD https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.1/spark-token-provider-kafka-0-10_2.12-3.5.1.jar $SPARK_HOME/jars
+
 # Add Delta Lake
 ADD https://repo1.maven.org/maven2/io/delta/delta-spark_2.12/3.3.0/delta-spark_2.12-3.3.0.jar $SPARK_HOME/jars
 ADD https://repo1.maven.org/maven2/io/delta/delta-storage/3.3.0/delta-storage-3.3.0.jar $SPARK_HOME/jars
