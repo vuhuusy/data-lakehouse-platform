@@ -2,10 +2,12 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType
 
-# 1️⃣ Init Spark Session with Delta + Hive support
+# 1️⃣ Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
-    .appName("KafkaToDeltaStream") \
-    .config("spark.sql.catalogImplementation", "hive") \
+    .appName("KafkaToDelta") \
+    .config("spark.jars.packages",
+            "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,"
+            "io.delta:delta-core_2.12:2.4.0") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
@@ -16,25 +18,24 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-# 2️⃣ Kafka + Delta config
+# 2️⃣ Kafka and Delta config
 KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
 TOPIC = "financial-ops.core.merchant"
 DELTA_PATH = "s3a://raw-zone/delta/merchant"
 CHECKPOINT_PATH = "s3a://raw-zone/checkpoints/merchant"
-TABLE_NAME = "delta_lake.default.merchant_delta"
 
-# 3️⃣ Define schema of Kafka message
-after_schema = StructType([
-    StructField("id", StringType()),
-    StructField("name", StringType()),
-    StructField("category", StringType())
-])
-
+# 3️⃣ Define correct schema for Debezium envelope
 envelope_schema = StructType([
-    StructField("after", after_schema)
+    StructField("payload", StructType([
+        StructField("after", StructType([
+            StructField("id", StringType()),
+            StructField("name", StringType()),
+            StructField("category", StringType())
+        ]))
+    ]))
 ])
 
-# 4️⃣ Read from Kafka (streaming)
+# 4️⃣ Read from Kafka
 df_kafka = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
@@ -52,10 +53,10 @@ df_kafka = spark.readStream \
     .option("kafka.ssl.keystore.type", "JKS") \
     .load()
 
-# 5️⃣ Parse JSON payload
-df_after = df_kafka.selectExpr("CAST(value AS STRING) AS json") \
+# 5️⃣ Parse Debezium JSON and extract after.*
+df_after = df_kafka.selectExpr("CAST(value AS STRING) as json") \
     .select(from_json(col("json"), envelope_schema).alias("data")) \
-    .select("data.after.*") \
+    .select("data.payload.after.*") \
     .where("id IS NOT NULL")
 
 # 6️⃣ Create or replace Delta table schema (only once)
