@@ -33,6 +33,7 @@ spec:
       - "local:///opt/bitnami/spark/jars/delta-spark_2.12-3.3.0.jar"
       - "local:///opt/bitnami/spark/jars/delta-storage-3.3.0.jar"
       - "local:///opt/bitnami/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar"
+      - "local:///opt/bitnami/spark/jars/kafka-clients-3.4.0.jar"
   sparkConf:
     "spark.hadoop.fs.s3a.access.key": "minio"
     "spark.hadoop.fs.s3a.secret.key": "minio123"
@@ -42,4 +43,3 @@ spec:
     # "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
     "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
     "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-    # "spark.jars.packages": "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3"
