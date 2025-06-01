@@ -31,6 +31,7 @@ ADD https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.12/3.3.
 RUN chmod -R 644 $SPARK_HOME/jars/*
 
 COPY infra/services/kafka/certs/kafka.truststore.jks /opt/spark/secrets/kafka.truststore.jks
+COPY infra/services/kafka/certs/kafka.keystore.jks /opt/spark/secrets/kafka.keystore.jks
 
 # Certificate import
 COPY infra/services/minio/selfsigned.crt /usr/local/share/ca-certificates/
