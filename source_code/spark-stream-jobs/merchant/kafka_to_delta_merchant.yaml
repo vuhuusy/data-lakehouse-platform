@@ -8,7 +8,7 @@ spec:
   pythonVersion: "3"
   mode: cluster
   image: huusy/spark-application:3.5.3
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
   mainApplicationFile: "s3a://share/spark/repo/cdc_merchant.py"
   sparkVersion: "3.5.3"
   restartPolicy:
