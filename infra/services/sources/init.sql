@@ -19,7 +19,7 @@ CREATE TABLE core.customer (
     lat FLOAT,
     lon FLOAT,
     job VARCHAR(100),
-    dob DATE,
+    dob VARCHAR(10),
     acct_num VARCHAR(50),
     area_type VARCHAR(50)
 );
