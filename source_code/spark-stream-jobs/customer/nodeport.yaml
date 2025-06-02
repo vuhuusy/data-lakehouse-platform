@@ -5,7 +5,7 @@ metadata:
   namespace: spark-operator
   labels:
     spark-role: driver
-    spark-app-selector: kafka-to-delta-customer
+    spark-app-name: kafka-to-delta-customer
 spec:
   type: NodePort
   selector:
