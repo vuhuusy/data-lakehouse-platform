@@ -5,11 +5,8 @@ from pyspark.sql.types import StructType, StructField, StringType, DoubleType, L
 # 1️⃣ Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
     .appName("KafkaToDelta") \
-    .config("spark.jars.packages",
-            "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,"
-            "org.apache.kafka:kafka-clients:3.4.0,"
-            "io.delta:delta-core_2.12:2.4.0,"
-            "org.apache.commons:commons-pool2:2.11.1") \
+    .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
+    .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
