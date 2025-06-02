@@ -56,7 +56,7 @@ df_customer = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
-    .option("startingOffsets", "earliest") \
+    .option("startingOffsets", "latest") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
     .option("kafka.sasl.jaas.config",
