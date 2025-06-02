@@ -1,10 +1,10 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.functions import from_json, col, to_date, date_format
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, DateType, FloatType, TimeType
 
-# Init Spark Session with Delta + S3 support
+# Init SparkSession with Delta + S3 support
 spark = SparkSession.builder \
-    .appName("CDC-Merchant") \
+    .appName("CDC-Transaction") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
@@ -18,37 +18,40 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-# Define the schema for the Kafka messages
-merchant_after_schema = StructType([
+# Define schema for transaction
+transaction_after_schema = StructType([
     StructField("id", StringType()),
-    StructField("name", StringType()),
-    StructField("category", StringType())
+    StructField("date", StringType()),
+    StructField("time", StringType()),
+    StructField("amt", DoubleType()),
+    StructField("lat", FloatType()),
+    StructField("lon", FloatType()),
+    StructField("customer_id", StringType()),
+    StructField("merchant_id", StringType())
 ])
 
-merchant_envelope_schema = StructType([
-    StructField("after", merchant_after_schema)
+transaction_envelope_schema = StructType([
+    StructField("after", transaction_after_schema)
 ])
 
-# Variables configuration
+# Kafka Configs
 KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
-TOPIC = "financial-ops.core.merchant"
-DELTA_PATH = "s3a://raw-zone/merchant"
-CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/merchant"
-TABLE_NAME = "merchant"
+TOPIC = "financial-ops.core.transaction"
+DELTA_PATH = "s3a://raw-zone/transaction"
+CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/transaction"
+TABLE_NAME = "transaction"
 DATABASE_NAME = "default"
 
-
-
-df_merchant = spark.readStream \
+# Read from Kafka
+df_transaction = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
-    .option("startingOffsets", "latest") \
+    .option("startingOffsets", "earliest") \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
-    .option("kafka.sasl.jaas.config",
-            'org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka";') \
+    .option("kafka.sasl.jaas.config", 'org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka";') \
     .option("kafka.ssl.truststore.location", "/opt/spark/secrets/kafka.truststore.jks") \
     .option("kafka.ssl.truststore.password", "changeit") \
     .option("kafka.ssl.truststore.type", "JKS") \
@@ -57,29 +60,39 @@ df_merchant = spark.readStream \
     .option("kafka.ssl.keystore.type", "JKS") \
     .load()
 
-merchant = df_merchant.selectExpr("CAST(value AS STRING) AS json") \
-    .select(from_json(col("json"), merchant_envelope_schema).alias("data")) \
+# Parse & transform
+transaction = df_transaction.selectExpr("CAST(value AS STRING) AS json") \
+    .select(from_json(col("json"), transaction_envelope_schema).alias("data")) \
     .select("data.after.*") \
-    .where("id IS NOT NULL")
+    .where("id IS NOT NULL") \
+    .withColumn("partition", date_format(to_date(col("date"), "yyyy-MM-dd"), "yyyyMMdd"))
 
-spark.sql("CREATE DATABASE IF NOT EXISTS default")
+# Ensure database exists
+spark.sql(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
 
+# Create Delta table if not exists
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {DATABASE_NAME}.{TABLE_NAME} (
         id STRING,
-        name STRING,
-        category STRING
+        date STRING,
+        time STRING,
+        amt DOUBLE,
+        lat FLOAT,
+        lon FLOAT,
+        customer_id STRING,
+        merchant_id STRING
     )
     USING DELTA
+    PARTITIONED BY (partition)
     LOCATION '{DELTA_PATH}'
 """)
 
-
-query = merchant.writeStream \
+# Write to Delta
+query = transaction.writeStream \
     .format("delta") \
     .outputMode("append") \
+    .partitionBy("partition") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .option("path", DELTA_PATH) \
-    .start()
+    .start(DELTA_PATH)
 
 query.awaitTermination()
