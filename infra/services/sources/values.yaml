@@ -479,15 +479,15 @@ primary:
   resourcesPreset: "nano"
   ## @param primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 2
+      memory: 512Mi
+    limits:
+      cpu: 3
+      memory: 1024Mi
   ##
-  resources: {}
+  # resources: {}
   ## Pod Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param primary.podSecurityContext.enabled Enable security context
@@ -952,15 +952,15 @@ readReplicas:
   resourcesPreset: "nano"
   ## @param readReplicas.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 2
+      memory: 512Mi
+    limits:
+      cpu: 3
+      memory: 1024Mi
   ##
-  resources: {}
+  # resources: {}
   ## Pod Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param readReplicas.podSecurityContext.enabled Enable security context
@@ -1396,14 +1396,14 @@ backup:
     resourcesPreset: "nano"
     ## @param backup.cronjob.resources Set container requests and limits for different resources like CPU or memory
     ## Example:
-    resources: {}
-    ## resources:
-    ##   requests:
-    ##     cpu: 1
-    ##     memory: 512Mi
-    ##   limits:
-    ##     cpu: 2
-    ##     memory: 1024Mi
+    # resources: {}
+    resources:
+      requests:
+        cpu: 1
+        memory: 512Mi
+      limits:
+        cpu: 2
+        memory: 1024Mi
     networkPolicy:
       ## @param backup.cronjob.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
       ##

@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, to_date, date_format
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, DateType, FloatType, TimeType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, FloatType
 
 # Init SparkSession with Delta + S3 support
 spark = SparkSession.builder \
@@ -48,6 +48,7 @@ df_transaction = spark.readStream \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
     .option("startingOffsets", "earliest") \
+    .option("maxOffsetsPerTrigger", 1000) \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
@@ -80,7 +81,8 @@ spark.sql(f"""
         lat FLOAT,
         lon FLOAT,
         customer_id STRING,
-        merchant_id STRING
+        merchant_id STRING,
+        partition STRING
     )
     USING DELTA
     PARTITIONED BY (partition)
