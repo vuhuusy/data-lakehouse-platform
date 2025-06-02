@@ -2,9 +2,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
 
-# 1️⃣ Init Spark Session with Delta + S3 support
+# Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
-    .appName("KafkaToDelta") \
+    .appName("CDC-Customer") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
@@ -18,7 +18,8 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-after_schema = StructType([
+# Define the schema for the Kafka messages
+customer_after_schema = StructType([
     StructField("id", StringType()),
     StructField("ssn", StringType()),
     StructField("cc_num", StringType()),
@@ -30,25 +31,28 @@ after_schema = StructType([
     StructField("state", StringType()),
     StructField("zip", StringType()),
     StructField("lat", DoubleType()),
-    StructField("long", DoubleType()),
+    StructField("lon", DoubleType()),
     StructField("job", StringType()),
     StructField("dob", LongType()),
     StructField("acct_num", StringType()),
     StructField("area_type", StringType())
 ])
 
-envelope_schema = StructType([
-    StructField("after", after_schema)
+customer_envelope_schema = StructType([
+    StructField("after", customer_after_schema)
 ])
 
+# Variables configuration
 KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
 TOPIC = "financial-ops.core.customer"
-DELTA_PATH = "s3a://raw-zone/delta/customer"
-CHECKPOINT_PATH = "s3a://raw-zone/checkpoints/customer"
+DELTA_PATH = "s3a://raw-zone/customer"
+CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/customer"
 TABLE_NAME = "customer"
 DATABASE_NAME = "default"
 
-df_kafka = spark.readStream \
+
+
+df_customer = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
@@ -65,12 +69,12 @@ df_kafka = spark.readStream \
     .option("kafka.ssl.keystore.type", "JKS") \
     .load()
 
-df_after = df_kafka.selectExpr("CAST(value AS STRING) AS json") \
-    .select(from_json(col("json"), envelope_schema).alias("data")) \
+customer = df_customer.selectExpr("CAST(value AS STRING) AS json") \
+    .select(from_json(col("json"), customer_envelope_schema).alias("data")) \
     .select("data.after.*") \
     .where("id IS NOT NULL")
 
-spark.sql("CREATE DATABASE IF NOT EXISTS default").show()
+spark.sql("CREATE DATABASE IF NOT EXISTS default")
 
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {DATABASE_NAME}.{TABLE_NAME} (
@@ -85,9 +89,9 @@ spark.sql(f"""
         state STRING,
         zip STRING,
         lat DOUBLE,
-        long DOUBLE,
+        lon DOUBLE,
         job STRING,
-        dob BIGINT,
+        dob STRING,
         acct_num STRING,
         area_type STRING
     )
@@ -95,10 +99,11 @@ spark.sql(f"""
     LOCATION '{DELTA_PATH}'
 """)
 
-query = df_after.writeStream \
+query = customer.writeStream \
     .format("delta") \
     .outputMode("append") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .start(DELTA_PATH)
+    .option("path", DELTA_PATH) \
+    .start()
 
 query.awaitTermination()

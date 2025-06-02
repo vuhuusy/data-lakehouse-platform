@@ -6,7 +6,7 @@ from datetime import datetime
 import pandas as pd
 from io import StringIO
 import sys
-sys.path.append("/opt/airflow/dags/repo/source_code/airflow/python")
+sys.path.append("/opt/airflow/dags/repo/source_code/airflow/census_api")
 
 from census_etl import check_api_availability, extract, transform, load as load_to_minio
 
@@ -16,7 +16,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="census_api_etl_pipeline",
+    dag_id="dag_census_api_etl_pipeline",
     schedule_interval="@yearly",
     catchup=False,
     default_args=default_args,

@@ -1,5 +1,4 @@
 import pendulum
-import yaml
 from airflow.models.dag import DAG
 from airflow.models import Variable
 from airflow.utils.dates import days_ago
