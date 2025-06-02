@@ -33,7 +33,7 @@ customer_after_schema = StructType([
     StructField("lat", DoubleType()),
     StructField("lon", DoubleType()),
     StructField("job", StringType()),
-    StructField("dob", LongType()),
+    StructField("dob", StringType()),
     StructField("acct_num", StringType()),
     StructField("area_type", StringType())
 ])
