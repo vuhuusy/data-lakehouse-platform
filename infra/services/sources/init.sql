@@ -34,9 +34,9 @@ CREATE TABLE core.merchant (
 -- 3. Transaction table
 CREATE TABLE core.transaction (
     id VARCHAR(50) PRIMARY KEY,
-    date DATE,
-    time TIME,
-    amt NUMERIC,
+    date VARCHAR(10),
+    time VARCHAR(8),
+    amt FLOAT,
     lat FLOAT,
     lon FLOAT,
     customer_id VARCHAR(50),

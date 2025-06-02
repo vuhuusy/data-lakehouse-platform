@@ -23,7 +23,7 @@ transaction_after_schema = StructType([
     StructField("id", StringType()),
     StructField("date", StringType()),
     StructField("time", StringType()),
-    StructField("amt", DoubleType()),
+    StructField("amt", FloatType()),
     StructField("lat", FloatType()),
     StructField("lon", FloatType()),
     StructField("customer_id", StringType()),
