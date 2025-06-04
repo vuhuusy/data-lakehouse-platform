@@ -48,3 +48,4 @@ CREATE TABLE core.transaction (
 -- insert data into tables --
 COPY core.customer FROM '/workdir/customers.csv' DELIMITER '|' CSV HEADER;
 COPY core.merchant FROM '/workdir/merchants.csv' DELIMITER '|' CSV HEADER;
+COPY core.transaction FROM '/workdir/transactions.csv' DELIMITER '|' CSV HEADER;
