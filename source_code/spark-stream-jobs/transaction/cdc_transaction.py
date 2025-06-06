@@ -7,6 +7,7 @@ spark = SparkSession.builder \
     .appName("CDC-Transaction") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
+    .config("spark.sql.shuffle.partitions", "5") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
@@ -95,6 +96,7 @@ query = transaction.writeStream \
     .outputMode("append") \
     .partitionBy("partition") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
+    .trigger(processingTime="10 seconds") \
     .start(DELTA_PATH)
 
 query.awaitTermination()

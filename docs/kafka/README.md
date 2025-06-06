@@ -35,6 +35,10 @@ make -f infra/services/kafka/kafka-connect/Makefile release-docker-image CONNECT
 
 make -f infra/services/kafka/kafka-connect/Makefile install CONNECT_HOST=103.82.133.158:30083
 
+make -f infra/services/kafka/kafka-connect/Makefile expose-nodeport CONNECT_HOST=103.82.133.158:30083
+
+make -f infra/services/kafka/kafka-connect/Makefile create-postgres-connector CONNECT_HOST=103.82.133.158:30083
+
 ## Kafka UI
 
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts

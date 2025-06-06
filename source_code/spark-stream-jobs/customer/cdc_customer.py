@@ -104,6 +104,7 @@ query = customer.writeStream \
     .format("delta") \
     .outputMode("append") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
+    .trigger(processingTime="60 seconds") \
     .start(DELTA_PATH)
 
 query.awaitTermination()
