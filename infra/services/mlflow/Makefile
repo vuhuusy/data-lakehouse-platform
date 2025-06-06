@@ -28,8 +28,8 @@ uninstall-mlflow:
 server:
 	@set -e; \
 	docker run -p 5001:8080 \
-	-e MLFLOW_TRACKING_URI=http://103.82.20.169:30500 \
-	-e MLFLOW_S3_ENDPOINT_URL=https://103.82.20.169:30900 \
+	-e MLFLOW_TRACKING_URI=http://103.82.133.158:30500 \
+	-e MLFLOW_S3_ENDPOINT_URL=https://103.82.133.158:30900 \
 	-e AWS_ACCESS_KEY_ID=minio \
 	-e AWS_SECRET_ACCESS_KEY=minio123 \
 	-e MLFLOW_S3_IGNORE_TLS=true \
