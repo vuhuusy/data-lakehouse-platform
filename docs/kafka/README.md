@@ -29,11 +29,11 @@ LIST:
 
 ## Kafka Connect
 
-make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile CONNECT_HOST=103.179.172.171:30083
+make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile CONNECT_HOST=103.82.133.158:30083
 
-make -f infra/services/kafka/kafka-connect/Makefile release-docker-image CONNECT_HOST=103.179.172.171:30083
+make -f infra/services/kafka/kafka-connect/Makefile release-docker-image CONNECT_HOST=103.82.133.158:30083
 
-make -f infra/services/kafka/kafka-connect/Makefile install CONNECT_HOST=103.179.172.171:30083
+make -f infra/services/kafka/kafka-connect/Makefile install CONNECT_HOST=103.82.133.158:30083
 
 ## Kafka UI
 
