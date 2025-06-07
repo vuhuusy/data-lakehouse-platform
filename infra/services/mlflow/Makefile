@@ -36,3 +36,11 @@ server:
 	-v ~/.mlflow:/root/.mlflow \
 	huusy/mlflow:v2.12.1 \
 	mlflow models serve -m "runs:/ac6b711d418f48d4abef42374c9b50c2/model" --no-conda --host 0.0.0.0 --port 8080
+
+build-image:
+	@set -e; \
+	docker build -t huusy/mlflow:v2.12.1 infra/services/mlflow/.
+
+release-image:
+	@set -e; \
+	docker push huusy/mlflow:v2.12.1
