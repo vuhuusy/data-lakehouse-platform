@@ -1,4 +1,5 @@
 from airflow.models.dag import DAG
+from airflow.operators.dummy import DummyOperator
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from datetime import datetime
@@ -24,3 +25,8 @@ with DAG(
         namespace="spark-operator",
         kubernetes_conn_id="kubernetes_default"
     )
+
+    start = DummyOperator(task_id="start")
+    end = DummyOperator(task_id="end")
+
+    start >> spark_job >> end
