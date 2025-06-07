@@ -22,9 +22,9 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Read Delta tables and Parquet files
-merchant = spark.read.format("delta").table("delta_lake.default.merchant")
-customer = spark.read.format("delta").table("delta_lake.default.customer")
-transaction = spark.read.format("delta").table("delta_lake.default.transaction")
+merchant = spark.read.format("delta").table("default.merchant")
+customer = spark.read.format("delta").table("default.customer")
+transaction = spark.read.format("delta").table("default.transaction")
 state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet")
 
 # Calculate customer features
@@ -32,7 +32,7 @@ customer = customer.withColumn('dob', to_date(col('dob').cast('string'), 'yyyy-M
 
 reference_date = spark.sql("SELECT current_date()").collect()[0][0]
 
-customer = customer.withColumn('age', (datediff(lit(reference_date), col('dob')) // 365).cast(IntegerType()))
+customer = customer.withColumn('age', floor(datediff(lit(reference_date), col('dob')) / 365).cast(IntegerType()))
 
 customer = customer.withColumn('age_group', when(col('age') < 25, '<25')
                                     .when((col('age') >= 25) & (col('age') < 40), '25–40')
@@ -40,7 +40,22 @@ customer = customer.withColumn('age_group', when(col('age') < 25, '<25')
                                     .otherwise('60+'))
 
 
-le_dict = joblib.load('s3a://gold-zone/features/online_store/label_encoders.pkl')
+import joblib
+import pyarrow.fs as fs
+import s3fs
+
+# Kết nối với MinIO thông qua s3fs hoặc pyarrow
+s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123', endpoint_url='https://minio.minio.svc.cluster.local:443')
+
+# Đường dẫn đến file trên MinIO
+file_path = 'gold-zone/features/online_store/label_encoders.pkl'
+
+# Đọc tệp pickle trực tiếp từ MinIO sử dụng pyarrow và joblib
+with s3.open(file_path, 'rb') as f:
+    le_dict = joblib.load(f)
+
+# Kiểm tra các encoder đã tải
+print(le_dict)
 
 # UDF to apply label encoding
 def label_encoding(feature_name, value):

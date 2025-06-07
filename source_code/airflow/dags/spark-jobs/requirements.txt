@@ -1,3 +1,5 @@
 pyspark==3.5.3
 delta-spark==3.3.0
 joblib
+pyarrow
+s3fs
