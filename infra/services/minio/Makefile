@@ -76,6 +76,7 @@ register-self-signed-cert:
 
 create-nodeport:
 	@kubectl apply -f infra/services/minio/console-nodeport.yaml
+	@kubectl apply -f infra/services/minio/api-nodeport.yaml
 
 delete-nodeport:
 	@kubectl delete service minio-console-nodeport --namespace $(NAMESPACE) || true
