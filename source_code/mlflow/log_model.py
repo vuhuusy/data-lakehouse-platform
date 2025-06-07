@@ -30,6 +30,15 @@ model = joblib.load(BytesIO(model_data))
 # Cấu hình tracking URI
 mlflow.set_tracking_uri("http://103.82.133.158:30500")
 
+from mlflow.tracking import MlflowClient
+
+client = MlflowClient()
+try:
+    # Bỏ verify SSL cho artifact S3
+    client._tracking_client.store.artifact_repo.s3_client.meta.config.verify = False
+except Exception as e:
+    print("⚠ Không thể bỏ verify SSL cho boto3 trong MLflow:", e)
+
 # Tạo experiment nếu chưa tồn tại
 experiment_name = "FraudDetection"
 mlflow.set_experiment(experiment_name)

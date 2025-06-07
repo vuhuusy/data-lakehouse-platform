@@ -9,7 +9,8 @@ os.environ['MLFLOW_TRACKING_URI'] = 'http://103.82.133.158:30500'
 os.environ['MLFLOW_S3_ENDPOINT_URL'] = 'https://103.82.133.158:30900'
 os.environ["AWS_ACCESS_KEY_ID"] = "minio"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "minio123"
-
+os.environ["MLFLOW_S3_IGNORE_TLS"] = "true"
+os.environ["BOTO_VERIFY_SSL"] = "0"
 # Cấu hình MinIO
 s3 = boto3.client(
     's3',
