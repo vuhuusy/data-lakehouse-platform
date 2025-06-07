@@ -1,11 +1,11 @@
 apiVersion: flink.apache.org/v1beta1
 kind: FlinkDeployment
 metadata:
-  name: kafka-to-minio-job
+  name: kafka-to-kafka
   namespace: flink
 spec:
   image: huusy/flink:1.20.0-java11
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   flinkVersion: v1_20
   serviceAccount: flink
 
@@ -15,6 +15,7 @@ spec:
       cpu: 1
 
   taskManager:
+    replicas: 2
     resource:
       memory: "2048m"
       cpu: 1
@@ -52,6 +53,5 @@ spec:
     state.checkpoints.dir: s3a://raw-zone/checkpoints/
     state.savepoints.dir: s3a://raw-zone/savepoints/
     classloader.resolve-order: parent-first
-    env.java.opts: "-XX:MaxDirectMemorySize=512m"
-    #pipeline.jars: s3a://share/flink/repo/flink-jobs-assembly-0.1.0-SNAPSHOT.jar
+    env.java.opts: "-XX:MaxDirectMemorySize=2048m"
     $internal.application.program-args: ""
