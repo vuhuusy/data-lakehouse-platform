@@ -1,22 +1,26 @@
-import pendulum
 from airflow.models.dag import DAG
 from airflow.models import Variable
-from airflow.utils.dates import days_ago
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
+from datetime import datetime
+import sys
+
+sys.path.append("/opt/airflow/dags/repo/source_code/airflow/dags")
+
+default_args = {
+    'start_date': datetime(2025, 6, 1),
+    'retries': 10
+}
 
 with DAG(
-    dag_id="kafka_to_delta",
-    schedule=None,
-    start_date=days_ago(2),
+    dag_id="dag_cal_customer_and_merchant_features_daily",
+    schedule_interval='5 0 * * *',
     catchup=False,
-    dagrun_timeout=pendulum.duration(minutes=100),
-    tags=["kafka_to_delta"],
-    template_searchpath=Variable.get("template_searchpath")
+    default_args=default_args,
+    tags=["online_store", "features", "daily", "customer", "merchant"],
 ) as dag:
     spark_job = SparkKubernetesOperator(
-        task_id="kafka_to_delta",
-        application_file="spark-jobs/kafka_to_delta.yaml",
+        task_id="cal_customer_and_merchant_features_daily",
+        application_file="spark-jobs/cal_features_daily.yaml",
         namespace="spark-operator",
-        kubernetes_conn_id="kubernetes_default",
-        execution_timeout=pendulum.duration(minutes=15)
+        kubernetes_conn_id="kubernetes_default"
     )

@@ -1,10 +1,13 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.functions import *
+from pyspark.sql.types import IntegerType
+
+import joblib
+
 
 # Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
-    .appName("CDC-Merchant") \
+    .appName("Calculate Customer and Merchant Features") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
@@ -18,67 +21,49 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
-# Define the schema for the Kafka messages
-merchant_after_schema = StructType([
-    StructField("id", StringType()),
-    StructField("name", StringType()),
-    StructField("category", StringType())
-])
+# Read Delta tables and Parquet files
+merchant = spark.read.format("delta").table("delta_lake.default.merchant")
+customer = spark.read.format("delta").table("delta_lake.default.customer")
+transaction = spark.read.format("delta").table("delta_lake.default.transaction")
+state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet")
 
-merchant_envelope_schema = StructType([
-    StructField("after", merchant_after_schema)
-])
+# Calculate customer features
+customer = customer.withColumn('dob', to_date(col('dob').cast('string'), 'yyyy-MM-dd'))
 
-# Variables configuration
-KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
-TOPIC = "financial-ops.core.merchant"
-DELTA_PATH = "s3a://raw-zone/merchant"
-CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/merchant"
-TABLE_NAME = "merchant"
-DATABASE_NAME = "default"
+reference_date = spark.sql("SELECT current_date()").collect()[0][0]
 
+customer = customer.withColumn('age', (datediff(lit(reference_date), col('dob')) // 365).cast(IntegerType()))
+
+customer = customer.withColumn('age_group', when(col('age') < 25, '<25')
+                                    .when((col('age') >= 25) & (col('age') < 40), '25–40')
+                                    .when((col('age') >= 40) & (col('age') < 60), '40–60')
+                                    .otherwise('60+'))
 
 
-df_merchant = spark.readStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
-    .option("subscribe", TOPIC) \
-    .option("startingOffsets", "earliest") \
-    .option("kafka.security.protocol", "SASL_SSL") \
-    .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
-    .option("kafka.sasl.jaas.config",
-            'org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka";') \
-    .option("kafka.ssl.truststore.location", "/opt/spark/secrets/kafka.truststore.jks") \
-    .option("kafka.ssl.truststore.password", "changeit") \
-    .option("kafka.ssl.truststore.type", "JKS") \
-    .option("kafka.ssl.keystore.location", "/opt/spark/secrets/kafka.keystore.jks") \
-    .option("kafka.ssl.keystore.password", "changeit") \
-    .option("kafka.ssl.keystore.type", "JKS") \
-    .load()
+le_dict = joblib.load('s3a://gold-zone/features/online_store/label_encoders.pkl')
 
-merchant = df_merchant.selectExpr("CAST(value AS STRING) AS json") \
-    .select(from_json(col("json"), merchant_envelope_schema).alias("data")) \
-    .select("data.after.*") \
-    .where("id IS NOT NULL")
+# UDF to apply label encoding
+def label_encoding(feature_name, value):
+    encoder = le_dict.get(feature_name)
+    if encoder:
+        return encoder.transform([value])[0]
+    else:
+        return None
 
-spark.sql("CREATE DATABASE IF NOT EXISTS default")
+apply_label_encoding_udf = udf(label_encoding, IntegerType())
 
-spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS {DATABASE_NAME}.{TABLE_NAME} (
-        id STRING,
-        name STRING,
-        category STRING
-    )
-    USING DELTA
-    LOCATION '{DELTA_PATH}'
-""")
+customer = customer.withColumn("age_group_encoded", apply_label_encoding_udf(lit("age_group"), col("age_group")))
+
+merchant = merchant.withColumn("category_encoded", apply_label_encoding_udf(lit("category"), col("category")))
+
+d_customer = customer.join(state_features, customer['state'] == state_features['state_abbreviation'], how='left')
 
 
-query = merchant.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", CHECKPOINT_PATH) \
-    .option("path", DELTA_PATH) \
-    .start()
 
-query.awaitTermination()
+d_customer.select('*').show()
+merchant.select('*').show()
+
+
+
+# Stop Spark session
+spark.stop()

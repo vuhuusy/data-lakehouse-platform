@@ -96,7 +96,7 @@ query = transaction.writeStream \
     .outputMode("append") \
     .partitionBy("partition") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .trigger(processingTime="10 seconds") \
+    .trigger(processingTime="120 seconds") \
     .start(DELTA_PATH)
 
 query.awaitTermination()
