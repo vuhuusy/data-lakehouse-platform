@@ -20,7 +20,7 @@ s3 = boto3.client(
 )
 
 bucket_name = 'mlflow'
-object_key = 'model/fraud_detection/model/catboost/catboost_fraud_model.cbm'
+object_key = 'fraud_detection/model/catboost/catboost_fraud_model.cbm'
 
 # Tải mô hình CatBoost từ MinIO
 response = s3.get_object(Bucket=bucket_name, Key=object_key)
