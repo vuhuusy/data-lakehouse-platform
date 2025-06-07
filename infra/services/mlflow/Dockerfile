@@ -6,7 +6,11 @@ RUN apt-get update && apt-get install -y curl && \
     /opt/conda/bin/conda install python=3.12
 
 
-RUN ln -sf /usr/bin/python3.12 /usr/bin/python
+RUN ln -sf /opt/conda/bin/python /usr/bin/python
+
+RUN /opt/conda/bin/python -m ensurepip --default-pip
+RUN /opt/conda/bin/python -m pip install --upgrade pip
+
 
 RUN apt-get update && apt-get install -y libgomp1
 
