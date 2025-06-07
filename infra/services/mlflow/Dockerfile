@@ -1,5 +1,12 @@
 FROM ghcr.io/mlflow/mlflow:v2.12.1
 
+
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y python3.12 python3.12-distutils
+
+RUN ln -sf /usr/bin/python3.12 /usr/bin/python
+
 RUN apt-get update && apt-get install -y libgomp1
 
 RUN pip install boto3 lightgbm==4.3.0 pandas==2.2.2 numpy==2.2.6 \
