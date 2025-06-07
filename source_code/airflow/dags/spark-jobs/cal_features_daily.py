@@ -45,7 +45,9 @@ import pyarrow.fs as fs
 import s3fs
 
 # Kết nối với MinIO thông qua s3fs hoặc pyarrow
-s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123', endpoint_url='https://minio.minio.svc.cluster.local:443')
+s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123', endpoint_url='https://minio.minio.svc.cluster.local:443',
+                       use_ssl=True,
+                       client_kwargs={'verify': False})
 
 # Đường dẫn đến file trên MinIO
 file_path = 'gold-zone/features/online_store/label_encoders.pkl'
