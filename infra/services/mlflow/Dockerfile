@@ -1,9 +1,10 @@
 FROM ghcr.io/mlflow/mlflow:v2.12.1
 
+RUN apt-get update && apt-get install -y curl && \
+    curl -sSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh && \
+    bash miniconda.sh -b -p /opt/conda && rm miniconda.sh && \
+    /opt/conda/bin/conda install python=3.12
 
-RUN apt-get update && apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && apt-get install -y python3.12 python3.12-distutils
 
 RUN ln -sf /usr/bin/python3.12 /usr/bin/python
 
