@@ -1,6 +1,8 @@
 FROM ghcr.io/mlflow/mlflow:v2.12.1
 
-RUN apt-get update && apt-get install -y libgomp1
+RUN apt-get update && apt-get install -y libgomp1 python3.11 python3.11-distutils
+
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python
 
 RUN pip install --no-cache-dir boto3 lightgbm==4.3.0 pandas==2.2.2 numpy==2.3.0 \
     scikit-learn==1.6.1 matplotlib==3.10.3 scipy==1.15.3 \
