@@ -16,17 +16,10 @@ online_store:
 
 offline_store:
   type: trino
-  connector:
-    type: trino
-    config:
-      host: trino-coordinator.trino.svc.cluster.local
-      port: "8080"
-      catalog: delta_lake
-      schema: default
-  auth:
-    type: basic
-    config:
-      user: trino
-      password: trino123
+  host: trino-coordinator.trino.svc.cluster.local
+  port: "8080"
+  catalog: delta_lake
+  schema: default
+  user: trino
 
 entity_key_serialization_version: 3
