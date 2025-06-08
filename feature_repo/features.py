@@ -16,10 +16,10 @@ customer = Entity(
 # 2. Khai bÃ¡o FileSource trá» vá» MinIO
 customer_feature_source = FileSource(
     name="d_customer_feature_source",
-    path="s3://feast-offline-store/gold-zone/fraud_detection/d_customer_feature/partition=20250608",
+    path="s3://gold-zone/fraud_detection/d_customer_feature/partition=20250608",
     file_format=ParquetFormat(),
-#    timestamp_field="event_timestamp",  # í ½í»‘ File pháº£i cÃ³ cá»™t nÃ y (kiá»ƒu timestamp)
- #   partition_column="partition"        # í ½í¿¡ partition=YYYYMMDD trong path
+#    timestamp_field="event_timestamp",  # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ File pháº£i cÃ³ cá»™t nÃ y (kiá»ƒu timestamp)
+ #   partition_column="partition"        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ partition=YYYYMMDD trong path
 )
 
 # 3. Khai bÃ¡o FeatureView

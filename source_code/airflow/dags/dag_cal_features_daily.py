@@ -1,5 +1,5 @@
 from airflow.models.dag import DAG
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.dummy import DummyOperator, BashOperator
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from datetime import datetime
@@ -17,7 +17,7 @@ with DAG(
     schedule_interval='5 0 * * *',
     catchup=False,
     default_args=default_args,
-    tags=["online_store", "features", "daily", "customer", "merchant"],
+    tags=["features", "feature_store", "daily", "customer", "merchant"],
 ) as dag:
     spark_job = SparkKubernetesOperator(
         task_id="cal_customer_and_merchant_features_daily",
@@ -26,7 +26,15 @@ with DAG(
         kubernetes_conn_id="kubernetes_default"
     )
 
+    feast_materialize = BashOperator(
+        task_id="feast_materialize_incremental",
+        bash_command=(
+            "cd /opt/airflow/dags/repo/feature_repo && "
+            "feast materialize-incremental {{ ds }}T00:00:00"
+        ),
+    )
+
     start = DummyOperator(task_id="start")
     end = DummyOperator(task_id="end")
 
-    start >> spark_job >> end
+    start >> spark_job >> feast_materialize >> end
