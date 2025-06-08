@@ -30,8 +30,8 @@ with DAG(
     feast_materialize = BashOperator(
         task_id="materialize_features_to_online_store",
         bash_command=(
-            "source ../feature_store/fraud_detection/venv/bin/activate && "
-            "cd ../feature_store/fraud_detection/feature_repo && "
+            "source /opt/airflow/dags/repo/source_code/airflow/feature_store/fraud_detection/venv/bin/activate && "
+            "cd /opt/airflow/dags/repo/source_code/airflow/feature_store/fraud_detection/feature_repo && "
             "feast materialize-incremental {{ ds }}"
         )
     )
