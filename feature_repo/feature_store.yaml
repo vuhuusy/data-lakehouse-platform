@@ -15,13 +15,15 @@ online_store:
   connection_string: redis.feast.svc.cluster.local:6379
 
 offline_store:
-  type: trino
-  host: trino-coordinator.trino.svc.cluster.local
-  port: 8080
-  catalog: delta_lake
-  schema: default
-  user: trino
-  password: trino123
-  http_scheme: http
+  type: feast_trino.trino.TrinoOfflineStore
+  config:
+    host: trino-coordinator.trino.svc.cluster.local
+    port: 8080
+    catalog: delta_lake
+    schema: default
+    user: trino
+    password: trino123
+    http_scheme: http
+
 
 entity_key_serialization_version: 3
