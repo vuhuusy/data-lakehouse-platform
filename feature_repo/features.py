@@ -1,11 +1,12 @@
 from datetime import timedelta
 from feast import FeatureView, FileSource, Entity, Field
 from feast.types import Float32, Int64, String, Bool
+from feast.value_type import ValueType
 
 # 1. Khai báo Entity
 customer = Entity(
     name="customer_id",
-    dtype=String,
+    dtype=ValueType.STRING,
     description="Mã định danh khách hàng"
 )
 
