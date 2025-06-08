@@ -1,3 +1,4 @@
+from feast.data_format import ParquetFormat
 from datetime import timedelta
 from feast import FeatureView, FileSource, Entity, Field
 from feast.types import Float32, Int64, String, Bool
@@ -9,6 +10,8 @@ customer = Entity(
     value_type=ValueType.STRING,
     description="Mã định danh khách hàng"
 )
+
+file_format=ParquetFormat()
 
 # 2. Khai báo FileSource trỏ về MinIO
 customer_feature_source = FileSource(
