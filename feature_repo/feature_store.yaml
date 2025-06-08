@@ -9,7 +9,7 @@ registry:
 provider: local
 online_store:
     type: redis
-    connection_string: "${REDIS_HOST:=localhost}:6379"
+    connection_string: redis.feast.svc.cluster.local:6379
 offline_store:
   type: file
 entity_key_serialization_version: 2
