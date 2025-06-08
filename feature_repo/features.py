@@ -6,7 +6,7 @@ from feast.value_type import ValueType
 # 1. Khai b√°o Entity
 customer = Entity(
     name="customer_id",
-    dtype=ValueType.STRING,
+    value_type=ValueType.STRING,
     description="M√£ ƒë·ªãnh danh kh√°ch h√†ng"
 )
 
@@ -15,8 +15,8 @@ customer_feature_source = FileSource(
     name="d_customer_feature_source",
     path="s3://feast-offline-store/gold-zone/fraud_detection/d_customer_feature/",
     file_format="parquet",
-    timestamp_field="event_timestamp",  # Ì†ΩÌªë B·∫Øt bu·ªôc file Parquet ph·∫£i c√≥ c·ªôt n√†y
-    partition_column="partition"
+    timestamp_field="event_timestamp",  # Ì†ΩÌªë File ph·∫£i c√≥ c·ªôt n√†y (ki·ªÉu timestamp)
+    partition_column="partition"        # Ì†ΩÌø° partition=YYYYMMDD trong path
 )
 
 # 3. Khai b√°o FeatureView
