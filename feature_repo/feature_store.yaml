@@ -16,14 +16,10 @@ online_store:
 
 offline_store:
   type: feast_trino.trino.TrinoOfflineStore
-  config:
-    host: trino-coordinator.trino.svc.cluster.local
-    port: 8080
-    catalog: delta_lake
-    schema: default
-    user: trino
-    password: trino123
-    http_scheme: http
-
+  host: trino-coordinator.trino.svc.cluster.local
+  port: 8080
+  catalog: delta_lake
+  schema: default
+  user: trino
 
 entity_key_serialization_version: 3
