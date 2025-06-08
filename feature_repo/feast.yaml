@@ -19,7 +19,7 @@ stringData:
   # MinIO / S3 config (used via env vars)
   AWS_ACCESS_KEY_ID: minio
   AWS_SECRET_ACCESS_KEY: minio123
-  S3_ENDPOINT_URL: http://minio.minio.svc.cluster.local:9000
+  S3_ENDPOINT_URL: https://103.82.133.158:30943
   S3_BUCKET: gold-zone
 #  AWS_REGION: us-east-1
 ---
