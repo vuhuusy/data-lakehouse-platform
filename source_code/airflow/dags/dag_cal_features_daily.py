@@ -1,5 +1,6 @@
 from airflow.models.dag import DAG
 from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from datetime import datetime
@@ -26,15 +27,16 @@ with DAG(
         kubernetes_conn_id="kubernetes_default"
     )
 
-    # feast_materialize = BashOperator(
-    #     task_id="feast_materialize_incremental",
-    #     bash_command=(
-    #         "cd /opt/airflow/dags/repo/feature_repo && "
-    #         "feast materialize-incremental {{ ds }}T00:00:00"
-    #     ),
-    # )
+    feast_materialize = BashOperator(
+        task_id="materialize_features_to_online_store",
+        bash_command=(
+            "source ../feature_store/fraud_detection/venv/bin/activate && "
+            "cd ../feature_store/fraud_detection/feature_repo && "
+            "feast materialize-incremental {{ ds }}"
+        )
+    )
 
     start = DummyOperator(task_id="start")
     end = DummyOperator(task_id="end")
 
-    start >> spark_job >> end
+    start >> spark_job >> feast_materialize >> end

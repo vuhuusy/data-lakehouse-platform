@@ -180,5 +180,22 @@ d_customer.select(
 
 ####################################################################################################
 
+# Create views for customer and merchant features
+spark.sql(f"""
+    CREATE OR REPLACE VIEW default.vw_d_customer_feature AS
+    SELECT *, current_timestamp() AS event_timestamp
+    FROM default.d_customer_feature
+    WHERE partition = '{partition}'
+""")
+
+spark.sql(f"""
+    CREATE OR REPLACE VIEW default.vw_d_merchant_feature AS
+    SELECT *, current_timestamp() AS event_timestamp
+    FROM default.d_merchant_feature
+    WHERE partition = '{partition}'
+""")
+
+####################################################################################################
+
 # Stop the Spark session
 spark.stop()
