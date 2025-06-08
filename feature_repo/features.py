@@ -25,7 +25,7 @@ customer_feature_source = FileSource(
 # 3. Khai báo FeatureView
 customer_feature_view = FeatureView(
     name="d_customer_feature",
-    entities=["customer_id"],
+    entities=[customer],
     ttl=timedelta(days=1),
     schema=[
         Field(name="age", dtype=Int64),
