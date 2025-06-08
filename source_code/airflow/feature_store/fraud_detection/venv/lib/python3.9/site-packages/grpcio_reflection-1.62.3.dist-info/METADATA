@@ -1,0 +1,40 @@
+Metadata-Version: 2.1
+Name: grpcio-reflection
+Version: 1.62.3
+Summary: Standard Protobuf Reflection Service for gRPC
+Home-page: https://grpc.io
+Author: The gRPC Authors
+Author-email: grpc-io@googlegroups.com
+License: Apache License 2.0
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: License :: OSI Approved :: Apache Software License
+Requires-Python: >=3.6
+License-File: LICENSE
+Requires-Dist: protobuf >=4.21.6
+Requires-Dist: grpcio >=1.62.3
+
+gRPC Python Reflection package
+==============================
+
+Reference package for reflection in GRPC Python.
+
+Supported Python Versions
+-------------------------
+Python >= 3.7
+
+Dependencies
+------------
+
+Depends on the `grpcio` package, available from PyPI via `pip install grpcio`.
+

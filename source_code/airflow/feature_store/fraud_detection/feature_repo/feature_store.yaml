@@ -1,0 +1,17 @@
+project: fraud_detection
+
+registry: data/registry.db
+
+provider: local
+
+online_store:
+  type: redis
+  connection_string: 103.82.133.158:30379
+
+offline_store:
+  type: feast_trino.trino.TrinoOfflineStore
+  host: 103.82.133.158
+  port: 30081
+  catalog: delta_lake
+  connector:
+    schema: memory
