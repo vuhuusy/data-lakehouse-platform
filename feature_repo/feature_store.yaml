@@ -1,7 +1,7 @@
 project: fraud_detection
 registry: 
     registry_type: sql
-    path: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres.feast.svc.cluster.local:5432/${POSTGRES_DB}
+    path: postgresql+psycopg://feast:feast@postgres.feast.svc.cluster.local:5432/feast
     cache_ttl_seconds: 60
     sqlalchemy_config_kwargs:
         echo: false
