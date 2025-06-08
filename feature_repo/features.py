@@ -1,32 +1,19 @@
-from feast.data_format import ParquetFormat
-from datetime import timedelta
-from feast import FeatureView, FileSource, Entity, Field
+from feast import Field, FeatureView
 from feast.types import Float32, Int64, String, Bool
-from feast.value_type import ValueType
+from feast_trino import TrinoSource
 
-# 1. Khai báo Entity
-customer = Entity(
-    name="customer_id",
-    value_type=ValueType.STRING,
-    description="Mã định danh khách hàng"
-)
-
-# file_format=ParquetFormat()
-
-# 2. Khai báo FileSource trỏ về MinIO
-customer_feature_source = FileSource(
+# Khai báo nguồn Trino view
+d_customer_source = TrinoSource(
     name="d_customer_feature_source",
-    path="s3://gold-zone/fraud_detection/d_customer_feature/partition=20250608",
-    file_format=ParquetFormat(),
-#    timestamp_field="event_timestamp",  # ������ File phải có cột này (kiểu timestamp)
- #   partition_column="partition"        # ������ partition=YYYYMMDD trong path
+    table="delta_lake.default.vw_d_customer_feature",
+    timestamp_field="event_timestamp",
 )
 
-# 3. Khai báo FeatureView
-customer_feature_view = FeatureView(
+# Khai báo Feature View
+d_customer_fv = FeatureView(
     name="d_customer_feature",
-    entities=[customer],
-    ttl=timedelta(days=1),
+    entities=["customer_id"],
+    ttl=None,
     schema=[
         Field(name="age", dtype=Int64),
         Field(name="age_group_encoded", dtype=Int64),
@@ -49,6 +36,5 @@ customer_feature_view = FeatureView(
         Field(name="sum_amt_last_7d", dtype=Float32),
         Field(name="num_txn_last_7d", dtype=Int64),
     ],
-    source=customer_feature_source,
-    online=True,
+    source=d_customer_source,
 )
