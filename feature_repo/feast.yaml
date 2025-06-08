@@ -16,12 +16,20 @@ stringData:
         echo: false
         pool_pre_ping: true
 
-  # MinIO / S3 config (used via env vars)
-  AWS_ACCESS_KEY_ID: minio
-  AWS_SECRET_ACCESS_KEY: minio123
-  S3_ENDPOINT_URL: https://103.82.133.158:30943
-  S3_BUCKET: gold-zone
-#  AWS_REGION: us-east-1
+  # Trino config (used for offline store)
+  trino: |
+    connector:
+      type: trino
+      config:
+        host: trino-coordinator.trino.svc.cluster.local
+        port: "8080"
+        catalog: delta_lake
+        schema: default
+    auth:
+      type: basic
+      config:
+        user: trino
+        password: trino123
 ---
 apiVersion: feast.dev/v1alpha1
 kind: FeatureStore
@@ -37,8 +45,10 @@ spec:
   services:
     offlineStore:
       persistence:
-        file:
-          type: file
+        store:
+          type: trino
+          secretRef:
+            name: feast-data-stores
     onlineStore:
       persistence:
         store:
