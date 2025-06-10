@@ -2,7 +2,7 @@ from airflow.models.dag import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from datetime import datetime
 import sys
 
