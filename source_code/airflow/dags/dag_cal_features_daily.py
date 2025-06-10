@@ -35,7 +35,7 @@ with DAG(
         cmds=["bash", "-c"],
         arguments=["feast apply && feast materialize-incremental $(date +%F)"],
         env_vars={"FEAST_USAGE": "False"},
-        working_dir="/app",
+        # working_dir="/app",
         is_delete_operator_pod=True,
         get_logs=True,
         kubernetes_conn_id="kubernetes_default"
