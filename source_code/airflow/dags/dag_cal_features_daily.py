@@ -32,7 +32,7 @@ with DAG(
         name="feast-materialize-job",
         namespace="feast",
         image="huusy/feast:0.16.1",
-        image_pull_policy="IfNotPresent",
+        image_pull_policy="Always",
         cmds=["bash", "-c"],
         arguments=["feast apply && feast materialize-incremental $(date +%F)T23:59:59"],
         env_vars={"FEAST_USAGE": "False"},
