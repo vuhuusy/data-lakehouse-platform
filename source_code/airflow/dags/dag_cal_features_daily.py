@@ -34,7 +34,7 @@ with DAG(
         image="huusy/feast:0.16.1",
         image_pull_policy="Always",
         cmds=["bash", "-c"],
-        arguments=["feast apply && feast materialize-incremental $(date +%F)T23:59:59"],
+        arguments=["ls -l /app && pwd && feast apply && feast materialize-incremental $(date +%F)T23:59:59"],
         env_vars={      "FEAST_USAGE": "False",
                         "AWS_ACCESS_KEY_ID": "minio",
                         "AWS_SECRET_ACCESS_KEY": "minio123",
