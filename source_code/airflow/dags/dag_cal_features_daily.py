@@ -2,6 +2,7 @@ from airflow.models.dag import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from datetime import datetime
 import sys
 
@@ -26,7 +27,22 @@ with DAG(
         kubernetes_conn_id="kubernetes_default"
     )
 
+    feast_apply_materialize = KubernetesPodOperator(
+        task_id="feast_apply_materialize",
+        name="feast-materialize-job",
+        namespace="feast",
+        image="huusy/feast:0.16.1",
+        image_pull_policy="IfNotPresent",
+        cmds=["bash", "-c"],
+        arguments=["feast apply && feast materialize-incremental $(date +%F)"],
+        env_vars={"FEAST_USAGE": "False"},
+        # working_dir="/app",
+        is_delete_operator_pod=True,
+        get_logs=True,
+        kubernetes_conn_id="kubernetes_default"
+    )
+
     start = DummyOperator(task_id="start")
     end = DummyOperator(task_id="end")
 
-    start >> spark_job >> end
+    start >> spark_job >> feast_apply_materialize >> end

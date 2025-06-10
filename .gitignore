@@ -4,3 +4,4 @@ venv
 infra/services/minio/*.crt
 infra/services/minio/*.key
 infra/services/sources/data-source/transaction.csv
+.vscode
