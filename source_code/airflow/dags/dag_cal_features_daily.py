@@ -35,9 +35,13 @@ with DAG(
         image_pull_policy="Always",
         cmds=["bash", "-c"],
         arguments=["feast apply && feast materialize-incremental $(date +%F)T23:59:59"],
-        env_vars={"FEAST_USAGE": "False"},
+        env_vars={  "FEAST_USAGE": "False",
+                    "AWS_ACCESS_KEY_ID": "minio",
+                    "AWS_SECRET_ACCESS_KEY": "minio123",
+                    "AWS_REGION": "us-east-1",
+                    "AWS_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443"},
         # working_dir="/app",
-        is_delete_operator_pod=False,
+        is_delete_operator_pod=True,
         get_logs=True,
         kubernetes_conn_id="kubernetes_default"
     )
