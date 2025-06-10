@@ -41,7 +41,7 @@ with DAG(
                         "AWS_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443",
                         "S3_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443",
                         "AWS_REGION": "us-east-1",
-                        "AWS_CA_BUNDLE": "/app/minio.minio.svc.cluster.download.crt"},
+                        "AWS_CA_BUNDLE": "/app/selfsigned.crt"},
         is_delete_operator_pod=True,
         get_logs=True,
         kubernetes_conn_id="kubernetes_default"
