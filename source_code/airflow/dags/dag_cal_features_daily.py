@@ -42,7 +42,8 @@ with DAG(
                         "S3_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443",
                         "AWS_REGION": "us-east-1",
                         "AWS_SSL_VERIFY": "false",
-                        "S3_VERIFY_SSL": "false"},
+                        "S3_VERIFY_SSL": "false",
+                        "PYTHONHTTPSVERIFY": "0"},
         is_delete_operator_pod=True,
         get_logs=True,
         kubernetes_conn_id="kubernetes_default"
