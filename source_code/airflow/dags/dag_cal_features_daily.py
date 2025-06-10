@@ -34,7 +34,7 @@ with DAG(
         image="huusy/feast:0.16.1",
         image_pull_policy="IfNotPresent",
         cmds=["bash", "-c"],
-        arguments=["feast apply && feast materialize-incremental $(date +%F)"],
+        arguments=["feast apply && feast materialize-incremental $(date +%F)T23:59:59"],
         env_vars={"FEAST_USAGE": "False"},
         # working_dir="/app",
         is_delete_operator_pod=True,
