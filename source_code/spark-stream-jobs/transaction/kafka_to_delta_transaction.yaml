@@ -12,7 +12,7 @@ spec:
   mainApplicationFile: "s3a://share/spark/repo/cdc_transaction.py"
   sparkVersion: "3.5.3"
   restartPolicy:
-    type: Never
+    type: Always
   driver:
     cores: 1
     memory: "512m"
