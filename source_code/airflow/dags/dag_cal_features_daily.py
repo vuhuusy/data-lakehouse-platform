@@ -41,6 +41,7 @@ with DAG(
                         "AWS_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443",
                         "S3_ENDPOINT_URL": "https://minio.minio.svc.cluster.local:443",
                         "AWS_REGION": "us-east-1",
+                        "AWS_SSL_VERIFY": "false",
                         "S3_VERIFY_SSL": "false"},
         is_delete_operator_pod=True,
         get_logs=True,
