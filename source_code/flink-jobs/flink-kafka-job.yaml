@@ -4,7 +4,7 @@ metadata:
   name: kafka-to-kafka
   namespace: flink
 spec:
-  image: huusy/flink:1.17
+  image: syvh/flink:1.17
   imagePullPolicy: Always
   flinkVersion: v1_17
   serviceAccount: flink
