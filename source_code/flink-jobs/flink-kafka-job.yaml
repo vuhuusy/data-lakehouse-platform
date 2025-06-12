@@ -6,7 +6,7 @@ metadata:
 spec:
   image: huusy/flink:1.17
   imagePullPolicy: Always
-  flinkVersion: v1_20
+  flinkVersion: v1_17
   serviceAccount: flink
 
   jobManager:
