@@ -4,7 +4,7 @@ metadata:
   name: kafka-to-kafka
   namespace: flink
 spec:
-  image: huusy/flink:1.20.0-java11
+  image: huusy/flink:1.17
   imagePullPolicy: IfNotPresent
   flinkVersion: v1_20
   serviceAccount: flink
@@ -21,9 +21,14 @@ spec:
       cpu: 1
 
   job:
-    jarURI: s3a://share/flink/repo/KafkaToKafka-1.0-SNAPSHOT.jar
-    entryClass: KafkaToKafkaJob
+    jarURI: local:///opt/flink/opt/flink-python-1.17.2.jar
+    entryClass: "org.apache.flink.client.python.PythonDriver"
     parallelism: 2
+    args:
+      - "-pyclientexec"
+      - "/usr/local/bin/python3"
+      - "-py"
+      - "/opt/flink/usrlib/flink-job.py"
     upgradeMode: stateless
 
   podTemplate:
