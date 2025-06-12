@@ -40,7 +40,7 @@ spec:
               mountPath: /opt/flink/secrets
           envFrom:
             - secretRef:
-              name: aws-credentials
+                name: aws-credentials
       volumes:
         - name: kafka-truststore
           secret:
