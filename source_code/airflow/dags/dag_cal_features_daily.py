@@ -4,6 +4,7 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from datetime import datetime
+import pendulum
 import sys
 
 sys.path.append("/opt/airflow/dags/repo/source_code/airflow/dags")
@@ -16,6 +17,7 @@ default_args = {
 with DAG(
     dag_id="dag_cal_customer_and_merchant_features_daily",
     schedule_interval='5 0 * * *',
+    start_date=pendulum.datetime(2025, 6, 11, tz="Asia/Ho_Chi_Minh"),
     catchup=False,
     default_args=default_args,
     tags=["features", "feature_store", "daily", "customer", "merchant"],

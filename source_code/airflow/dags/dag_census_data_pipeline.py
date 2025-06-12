@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 from io import StringIO
 import sys
+import pendulum
 sys.path.append("/opt/airflow/dags/repo/source_code/airflow/census_api")
 
 from census_etl import check_api_availability, extract, transform, load as load_to_minio
@@ -17,7 +18,8 @@ default_args = {
 
 with DAG(
     dag_id="dag_census_api_etl_pipeline",
-    schedule_interval="@yearly",
+    schedule_interval="5 0 1 1 *",
+    start_date=pendulum.datetime(2025, 1, 1, tz="Asia/Ho_Chi_Minh"),
     catchup=False,
     default_args=default_args,
     tags=["census", "api"]
