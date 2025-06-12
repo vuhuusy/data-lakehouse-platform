@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-ui-predicted-transaction
+  namespace: spark-operator
+  labels:
+    spark-role: driver
+    spark-app-selector: predicted-transaction
+spec:
+  type: NodePort
+  selector:
+    spark-role: driver
+    spark-app-selector: predicted-transaction
+  ports:
+    - name: web-ui
+      port: 4040
+      targetPort: 4040
+      protocol: TCP
+      nodePort: 30443
