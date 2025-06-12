@@ -5,7 +5,7 @@ metadata:
   namespace: flink
 spec:
   image: huusy/flink:1.17
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
   flinkVersion: v1_20
   serviceAccount: flink
 
