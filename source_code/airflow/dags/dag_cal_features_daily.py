@@ -29,13 +29,6 @@ with DAG(
         kubernetes_conn_id="kubernetes_default"
     )
 
-    create_view = SparkKubernetesOperator(
-        task_id="create_view",
-        application_file="spark-jobs/create_view.yaml",
-        namespace="spark-operator",
-        kubernetes_conn_id="kubernetes_default"
-    )
-
     feast_apply_materialize = KubernetesPodOperator(
         task_id="feast_apply_materialize",
         name="feast-materialize-job",
@@ -58,4 +51,4 @@ with DAG(
     start = DummyOperator(task_id="start")
     end = DummyOperator(task_id="end")
 
-    start >> spark_job >> create_view >> feast_apply_materialize >> end
+    start >> spark_job >> feast_apply_materialize >> end
