@@ -1,9 +1,17 @@
+import sys
+import datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 import joblib
 import s3fs
+
+####################################################################################################
+
+# Parse execution_date from Airflow or CLI argument
+execution_date = datetime.datetime.strptime(sys.argv[1], '%Y-%m-%d').date()
+partition_str = execution_date.strftime('%Y%m%d')  # e.g. "20250612"
 
 ####################################################################################################
 
@@ -35,12 +43,10 @@ state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state
 ####################################################################################################
 
 # Calculate customer features
-today = current_date()
-
 customer = customer \
     .withColumnRenamed('id', 'customer_id') \
     .withColumn('dob', to_date(col('dob').cast('string'), 'yyyy-MM-dd')) \
-    .withColumn('age', floor(datediff(lit(today), col('dob')) / 365).cast(IntegerType())) \
+    .withColumn('age', floor(datediff(lit(execution_date), col('dob')) / 365).cast(IntegerType())) \
     .withColumn('age_group', when(col('age') < 25, '<25')
                 .when((col('age') >= 25) & (col('age') < 40), '25–40')
                 .when((col('age') >= 40) & (col('age') < 60), '40–60')
@@ -72,7 +78,7 @@ category_map = dict_to_map(category_mapping)
 
 ####################################################################################################
 
-# Join customer with state features to get state-related features
+# Join customer with state features
 d_customer = customer.join(broadcast(state_features), customer['state'] == state_features['state_abbreviation'], how='left')
 
 d_customer = d_customer.withColumn("age_group_encoded", age_group_map[col("age_group")]) \
@@ -87,32 +93,34 @@ d_merchant = merchant.withColumn("category_encoded", category_map[col("category"
 
 ####################################################################################################
 
-# Calculate features for transactions (joined with customer info)
+# Calculate 7-day transaction features
 txn_last_7d = transaction \
     .withColumn('txn_date', to_date(col('date'), 'yyyy-MM-dd')) \
-    .filter(datediff(current_date(), col('txn_date')).between(1, 7)) \
+    .filter(datediff(lit(execution_date), col('txn_date')).between(1, 7)) \
     .join(d_customer, transaction['customer_id'] == d_customer['customer_id'], 'left') \
     .groupBy('transaction.customer_id') \
     .agg(
-        count('transaction.id').alias('num_txn_last_7d'),  # Total number of transactions in last 7 days
-        avg('amt').alias('avg_amt_last_7d'),   # Average amount of transactions in last 7 days
-        sum('amt').alias('sum_amt_last_7d')    # Total sum of transactions in last 7 days
+        count('transaction.id').alias('num_txn_last_7d'),
+        avg('amt').alias('avg_amt_last_7d'),
+        sum('amt').alias('sum_amt_last_7d')
     )
 
-txn_last_7d = txn_last_7d.withColumn('avg_txn_last_7d', col('sum_amt_last_7d') / col('num_txn_last_7d')) \
-                    .withColumn('avg_txn_last_7d', col('avg_txn_last_7d').cast(DoubleType())) \
-                    .withColumn('sum_amt_last_7d', col('sum_amt_last_7d').cast(DoubleType())) \
-                    .withColumn('num_txn_last_7d', col('num_txn_last_7d').cast(DoubleType()))
+txn_last_7d = txn_last_7d \
+    .withColumn('avg_txn_last_7d', col('sum_amt_last_7d') / col('num_txn_last_7d')) \
+    .withColumn('avg_txn_last_7d', col('avg_txn_last_7d').cast(DoubleType())) \
+    .withColumn('sum_amt_last_7d', col('sum_amt_last_7d').cast(DoubleType())) \
+    .withColumn('num_txn_last_7d', col('num_txn_last_7d').cast(DoubleType()))
 
 ####################################################################################################
 
-d_customer = d_customer \
-    .join(txn_last_7d, 'customer_id', 'left')
+# Join transaction features
+d_customer = d_customer.join(txn_last_7d, 'customer_id', 'left')
 
-partition = date_format(today, "yyyyMMdd")
-d_merchant = d_merchant.withColumn('partition', lit(partition))
-d_customer = d_customer.withColumn('partition', lit(partition))
+# Add partition column
+d_merchant = d_merchant.withColumn('partition', lit(partition_str))
+d_customer = d_customer.withColumn('partition', lit(partition_str))
 
+# Fill missing values
 d_customer = d_customer.fillna(0)
 d_merchant = d_merchant.fillna(0)
 
@@ -162,12 +170,13 @@ spark.sql(f"""
 
 ####################################################################################################
 
-# Write the transformed data to Delta tables
+# Write to Delta with correct partition filtering
 d_merchant.select('merchant_id', 'category_encoded', 'partition') \
     .coalesce(2) \
     .write \
     .format("delta") \
     .mode("overwrite") \
+    .option("replaceWhere", f"partition = '{partition_str}'") \
     .partitionBy("partition") \
     .saveAsTable("default.d_merchant_feature")
 
@@ -176,15 +185,16 @@ d_customer.select(
     'is_urban', 'population_level', 'income_level', 'is_young_state', 'norm_poverty_rate', 'norm_unemployment_rate',
     'norm_poverty_per_unemployed', 'avg_txn_last_7d', 'avg_amt_last_7d', 'sum_amt_last_7d', 'num_txn_last_7d',
     'partition'
-)   \
+) \
     .coalesce(8) \
     .write \
     .format("delta") \
     .mode("overwrite") \
+    .option("replaceWhere", f"partition = '{partition_str}'") \
     .partitionBy("partition") \
     .saveAsTable("default.d_customer_feature")
 
 ####################################################################################################
 
-# Stop the Spark session
+# Stop Spark session
 spark.stop()

@@ -26,6 +26,7 @@ with DAG(
         task_id="cal_customer_and_merchant_features_daily",
         application_file="spark-jobs/cal_features_daily.yaml",
         namespace="spark-operator",
+        application_args=["{{ ds }}"],
         kubernetes_conn_id="kubernetes_default"
     )
 
