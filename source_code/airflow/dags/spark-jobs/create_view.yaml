@@ -14,7 +14,7 @@ spec:
   restartPolicy:
     type: Never
   driver:
-    cores: 0.5
+    cores: 1
     memory: "512m"
     serviceAccount: spark-operator-spark
     labels:
