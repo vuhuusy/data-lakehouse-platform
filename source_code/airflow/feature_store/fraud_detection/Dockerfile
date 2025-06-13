@@ -14,10 +14,12 @@ RUN pip install --no-cache-dir \
     "regex" \
     "pandas" \
     "feast[redis]" \
+    "feast[aws]" \
     "git+https://github.com/shopify/feast-trino.git@main"
 
 RUN pip uninstall protobuf -y
 RUN pip install protobuf==3.20.3
+RUN pip install psycopg2-binary
 
 WORKDIR /app
 

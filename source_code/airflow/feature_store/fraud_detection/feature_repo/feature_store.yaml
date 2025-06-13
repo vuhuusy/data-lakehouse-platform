@@ -1,17 +1,21 @@
 project: fraud_detection
 
-registry: data/registry.db
+registry:
+  path: s3://feast-feature-registry/registry.db
+  s3:
+    region_name: us-east-1
+    endpoint_url: https://s3.us-east-1.amazonaws.com
 
 provider: local
 
 online_store:
   type: redis
-  connection_string: 103.82.133.158:30379
+  connection_string: redis.feast.svc.cluster.local:6379
 
 offline_store:
   type: feast_trino.trino.TrinoOfflineStore
-  host: 103.82.133.158
-  port: 30081
+  host: trino.trino.svc.cluster.local
+  port: 8080
   catalog: delta_lake
   connector:
     schema: memory
