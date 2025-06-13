@@ -8,7 +8,7 @@ from collections import deque
 
 from pyflink.common.serialization import SimpleStringSchema
 from pyflink.common.typeinfo import Types
-from pyflink.datastream import StreamExecutionEnvironment, KeyedProcessFunction, RuntimeContext, OutputTag
+from pyflink.datastream import StreamExecutionEnvironment, KeyedProcessFunction, RuntimeContext
 from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
 from pyflink.datastream.state import MapStateDescriptor
 
@@ -27,7 +27,6 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 
 MLFLOW_PREDICT_URL = "http://103.82.133.158:30051/invocations"
-fraud_output_tag = OutputTag('fraud', Types.STRING())
 
 
 class FeatureEngineeringFunction(KeyedProcessFunction):
@@ -36,7 +35,7 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         state_desc = MapStateDescriptor("txn_state", Types.STRING(), Types.PICKLED_BYTE_ARRAY())
         self.txn_state = runtime_context.get_map_state(state_desc)
         self.txn_window_secs = 7200
-        self.cache_ttl_secs = 3600  # TTL for feature cache: 1 hour
+        self.cache_ttl_secs = 3600  # TTL for feature cache: 5 minutes
         self.feature_cache = {}  # key: (customer_id, merchant_id) -> {"features": ..., "ts": ...}
         self.store = FeatureStore(repo_path="/opt/flink/feature_store/")
 
@@ -155,10 +154,7 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
             prediction = response.json()["predictions"][0]
             after["is_fraud"] = int(prediction)
 
-            output = json.dumps(after)
-            yield output
-            if after["is_fraud"] == 1:
-                ctx.output(fraud_output_tag, output)
+            yield json.dumps(after)
 
         except Exception as e:
             import traceback
@@ -192,7 +188,7 @@ def main():
         properties=kafka_props
     )
 
-    main_sink = FlinkKafkaProducer(
+    predicted_sink = FlinkKafkaProducer(
         topic='predicted-transaction',
         serialization_schema=SimpleStringSchema(),
         producer_config=kafka_props
@@ -204,12 +200,14 @@ def main():
         producer_config=kafka_props
     )
 
-    main_data_stream = env.add_source(source) \
+    processed = env.add_source(source) \
         .key_by(lambda x: json.loads(x).get("after", {}).get("customer_id", "")) \
         .process(FeatureEngineeringFunction(), output_type=Types.STRING())
 
-    main_data_stream.add_sink(main_sink)
-    main_data_stream.get_side_output(fraud_output_tag).add_sink(fraud_sink)
+    # Chia ra hai stream
+    processed.add_sink(predicted_sink)
+
+    processed.filter(lambda x: json.loads(x).get("is_fraud", 0) == 1).add_sink(fraud_sink)
 
     env.execute("Real-Time Credit Card Fraud Detection")
 
