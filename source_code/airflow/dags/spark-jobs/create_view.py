@@ -4,7 +4,7 @@ from pyspark.sql.types import *
 
 # Initialize Spark session
 spark = SparkSession.builder \
-    .appName("Calculate Customer and Merchant Features") \
+    .appName("Create View for Feast Trino Offline Store") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
