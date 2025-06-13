@@ -13,6 +13,7 @@ spark = SparkSession.builder \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.session.timeZone", "Asia/Ho_Chi_Minh") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
     .config("spark.hadoop.fs.s3a.access.key", "minio") \
