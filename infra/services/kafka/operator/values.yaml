@@ -792,15 +792,15 @@ controller:
   resourcesPreset: "small"
   ## @param controller.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
-  ##
-  resources: {}
+  resources:
+    requests:
+      cpu: 2
+      memory: 512Mi
+    limits:
+      cpu: 3
+      memory: 1024Mi
+  ## 
+  #  resources: {}
   ## Kafka pods' Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param controller.podSecurityContext.enabled Enable security context for the pods
@@ -1253,15 +1253,15 @@ broker:
   resourcesPreset: "small"
   ## @param broker.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 2
+      memory: 512Mi
+    limits:
+      cpu: 3
+      memory: 1024Mi
   ##
-  resources: {}
+  #  resources: {}
   ## Kafka pods' Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param broker.podSecurityContext.enabled Enable security context for the pods

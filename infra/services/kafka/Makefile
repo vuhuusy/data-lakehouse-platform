@@ -74,7 +74,15 @@ install-kafka:
 		--set controller.automountServiceAccountToken=true \
 		--set broker.automountServiceAccountToken=true \
 		--set serviceAccount.create=true \
-		--set rbac.create=true
+		--set rbac.create=true \
+		--set broker.resources.requests.cpu=500m \
+		--set broker.resources.requests.memory=512Mi \
+		--set broker.resources.limits.cpu=1500m \
+		--set broker.resources.limits.memory=2Gi \
+		--set controller.resources.requests.cpu=500m \
+		--set controller.resources.requests.memory=512Mi \
+		--set controller.resources.limits.cpu=1500m \
+		--set controller.resources.limits.memory=2Gi
 
 # Uninstall Kafka
 uninstall-kafka:
