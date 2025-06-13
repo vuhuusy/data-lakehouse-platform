@@ -23,12 +23,9 @@ spark = SparkSession.builder \
 merchant = spark.read.format("delta").table("default.merchant")
 customer = spark.read.format("delta").table("default.customer")
 transaction = spark.read.format("delta").table("default.transaction")
-state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet")
+state_features = broadcast(spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet"))
 
-# Broadcast state features to all nodes
-state_features = broadcast(state_features)
-
-# Calculate customer features
+# Feature engineering for customers
 customer = customer \
     .withColumnRenamed('id', 'customer_id') \
     .withColumn('dob', to_date(col('dob').cast('string'), 'yyyy-MM-dd')) \
@@ -46,8 +43,7 @@ customer = customer \
 s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123',
                        endpoint_url='https://minio.minio.svc.cluster.local:443',
                        use_ssl=True, client_kwargs={'verify': False})
-file_path = 'gold-zone/features/online_store/label_encoders.pkl'
-with s3.open(file_path, 'rb') as f:
+with s3.open('gold-zone/features/online_store/label_encoders.pkl', 'rb') as f:
     le_dict = joblib.load(f)
 
 def dict_to_map(mapping):
@@ -58,7 +54,7 @@ age_group_map = dict_to_map(dict(zip(le_dict['age_group'].classes_,
 category_map = dict_to_map(dict(zip(le_dict['category'].classes_,
                                     le_dict['category'].transform(le_dict['category'].classes_))))
 
-# Join + encode
+# Join with state features + encode
 d_customer = customer.join(state_features, customer['state'] == state_features['state_abbreviation'], 'left') \
     .withColumn("age_group_encoded", age_group_map[col("age_group")].cast(IntegerType())) \
     .withColumn("population_level", col("population_level").cast(IntegerType())) \
@@ -69,7 +65,7 @@ d_merchant = merchant \
     .withColumn("category_encoded", category_map[col("category")].cast(IntegerType())) \
     .withColumnRenamed('id', 'merchant_id')
 
-# Calculate transaction features
+# Transaction features
 txn_last_7d = transaction \
     .withColumn('txn_date', to_date(col('date'), 'yyyy-MM-dd')) \
     .filter(datediff(current_date(), col('txn_date')).between(1, 7)) \
@@ -86,20 +82,19 @@ txn_last_7d = transaction \
                 "CAST(sum_amt_last_7d AS DOUBLE)",
                 "CAST(avg_txn_last_7d AS DOUBLE)")
 
-# Join transaction features with customer features
-d_customer = d_customer.join(txn_last_7d, 'customer_id', 'left') \
-    .fillna(0)
+# Merge transaction features
+d_customer = d_customer.join(txn_last_7d, 'customer_id', 'left').fillna(0)
 
-# Add partition column
+# Partition
 partition = spark.sql("SELECT date_format(current_date(), 'yyyyMMdd')").collect()[0][0]
 d_customer = d_customer.withColumn('partition', lit(partition))
 d_merchant = d_merchant.withColumn('partition', lit(partition))
 
-# Create Delta tables if not exists
+# Create Delta tables if not exist
 spark.sql("""
     CREATE TABLE IF NOT EXISTS default.d_customer_feature (
         customer_id STRING,
-        age INT,
+        age BIGINT,
         age_group_encoded INT,
         is_young INT,
         is_elder INT,
@@ -137,22 +132,20 @@ spark.sql("""
     LOCATION 's3a://gold-zone/fraud_detection/d_merchant_feature'
 """)
 
-# Write to Delta tables
+# Write data
 d_customer.coalesce(8).write \
     .format("delta") \
     .mode("overwrite") \
     .partitionBy("partition") \
-    .option("overwriteSchema", "true") \
     .saveAsTable("default.d_customer_feature")
 
 d_merchant.coalesce(2).write \
     .format("delta") \
     .mode("overwrite") \
     .partitionBy("partition") \
-    .option("overwriteSchema", "true") \
     .saveAsTable("default.d_merchant_feature")
 
-# Create views
+# Create or replace views
 spark.sql("DROP VIEW IF EXISTS default.vw_d_customer_feature")
 spark.sql("DROP VIEW IF EXISTS default.vw_d_merchant_feature")
 
