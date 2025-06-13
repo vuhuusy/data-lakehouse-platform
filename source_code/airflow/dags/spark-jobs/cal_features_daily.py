@@ -35,12 +35,12 @@ state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state
 ####################################################################################################
 
 # Calculate customer features
-reference_date = spark.sql("SELECT current_date()").collect()[0][0]
+today = current_date()
 
 customer = customer \
     .withColumnRenamed('id', 'customer_id') \
     .withColumn('dob', to_date(col('dob').cast('string'), 'yyyy-MM-dd')) \
-    .withColumn('age', floor(datediff(lit(reference_date), col('dob')) / 365).cast(IntegerType())) \
+    .withColumn('age', floor(datediff(lit(today), col('dob')) / 365).cast(IntegerType())) \
     .withColumn('age_group', when(col('age') < 25, '<25')
                 .when((col('age') >= 25) & (col('age') < 40), '25–40')
                 .when((col('age') >= 40) & (col('age') < 60), '40–60')
@@ -53,7 +53,8 @@ customer = customer \
 ####################################################################################################
 
 # Connect to MinIO using s3fs
-s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123', endpoint_url='https://minio.minio.svc.cluster.local:443',
+s3 = s3fs.S3FileSystem(anon=False, key='minio', secret='minio123', 
+                       endpoint_url='https://minio.minio.svc.cluster.local:443',
                        use_ssl=True, client_kwargs={'verify': False})
 
 file_path = 'gold-zone/features/online_store/label_encoders.pkl'
@@ -108,7 +109,7 @@ txn_last_7d = txn_last_7d.withColumn('avg_txn_last_7d', col('sum_amt_last_7d') /
 d_customer = d_customer \
     .join(txn_last_7d, 'customer_id', 'left')
 
-partition = spark.sql("SELECT date_format(current_date(), 'yyyyMMdd')").collect()[0][0]
+partition = date_format(today, "yyyyMMdd")
 d_merchant = d_merchant.withColumn('partition', lit(partition))
 d_customer = d_customer.withColumn('partition', lit(partition))
 
