@@ -167,7 +167,6 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
 
 def main():
     env = StreamExecutionEnvironment.get_execution_environment()
-    env.set_parallelism(4)
 
     kafka_props = {
         'bootstrap.servers': 'kafka.kafka.svc.cluster.local:9092',
