@@ -20,20 +20,21 @@ spark = SparkSession.builder \
 
 # Create views
 partition = spark.sql("SELECT date_format(current_date(), 'yyyyMMdd')").collect()[0][0]
-spark.sql("DROP VIEW IF EXISTS default.vw_d_customer_feature")
-spark.sql("DROP VIEW IF EXISTS default.vw_d_merchant_feature")
+
+spark.sql(f"""DROP TABLE IF EXISTS default.v_d_customer_feature""")
+spark.sql(f"""DROP TABLE IF EXISTS default.v_d_merchant_feature""")
 
 spark.sql(f"""
-    CREATE OR REPLACE VIEW default.vw_d_customer_feature AS
+    CREATE TABLE IF NOT EXISTS default.v_d_customer_feature AS
     SELECT *, current_timestamp() AS event_timestamp
     FROM default.d_customer_feature
     WHERE partition = '{partition}'
 """)
 
 spark.sql(f"""
-    CREATE OR REPLACE VIEW default.vw_d_merchant_feature AS
+    CREATE TABLE IF NOT EXISTS default.v_d_customer_feature AS
     SELECT *, current_timestamp() AS event_timestamp
-    FROM default.d_merchant_feature
+    FROM default.d_customer_feature
     WHERE partition = '{partition}'
 """)
 
