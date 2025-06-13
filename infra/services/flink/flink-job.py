@@ -12,7 +12,7 @@ from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
 from pyflink.datastream.state import MapStateDescriptor
 
 from feast import FeatureStore
-
+import time
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     R = 6371
@@ -37,6 +37,7 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         self.store = FeatureStore(repo_path="/opt/flink/feature_store/")
 
     def process_element(self, value, ctx: 'KeyedProcessFunction.Context'):
+        start_time = time.time()
         try:
             event = json.loads(value)
             after = event.get("after", {})
@@ -143,6 +144,10 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         except Exception as e:
             import traceback
             print(f"[ERROR] {str(e)}\n{traceback.format_exc()}")
+        finally:
+            end_time = time.time()
+            latency_ms = (end_time - start_time) * 1000
+            print(f"[INFO] Processed record in {latency_ms:.2f} ms")
 
 
 def main():
