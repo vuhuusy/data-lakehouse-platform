@@ -1,16 +1,16 @@
-# features.py
+from datetime import timedelta
 from google.protobuf.duration_pb2 import Duration
 from feast import Entity, Feature, FeatureView, ValueType
 from feast_trino import TrinoSource
 
 # Define TrinoSources
 d_customer_source = TrinoSource(
-    table_ref="delta_lake.default.vw_d_customer_feature",
+    table_ref="delta_lake.default.v_d_customer_feature",
     event_timestamp_column="event_timestamp",
 )
 
 d_merchant_source = TrinoSource(
-    table_ref="delta_lake.default.vw_d_merchant_feature",
+    table_ref="delta_lake.default.v_d_merchant_feature",
     event_timestamp_column="event_timestamp",
 )
 
@@ -31,7 +31,7 @@ d_merchant_entity = Entity(
 d_customer_fv = FeatureView(
     name="d_customer_feature",
     entities=["customer_id"],
-    ttl=None,
+    ttl=timedelta(days=1),
     features=[
         Feature(name="age", dtype=ValueType.INT64),
         Feature(name="age_group_encoded", dtype=ValueType.INT64),
@@ -61,7 +61,7 @@ d_customer_fv = FeatureView(
 d_merchant_fv = FeatureView(
     name="d_merchant_feature",
     entities=["merchant_id"],
-    ttl=None,
+    ttl=timedelta(days=1),
     features=[
         Feature(name="category_encoded", dtype=ValueType.INT64)
     ],
