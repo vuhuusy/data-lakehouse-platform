@@ -83,6 +83,7 @@ class AsyncFraudDetector(AsyncFunction):
             return int(result["predictions"][0])
 
     async def async_invoke(self, input_value, result_future):
+        start_time = asyncio.get_event_loop().time()
         try:
             event = json.loads(input_value)
             after = event.get("after", {})
@@ -134,6 +135,11 @@ class AsyncFraudDetector(AsyncFunction):
             result_future.complete(json.dumps(after))
         except Exception as e:
             result_future.complete(json.dumps({"error": str(e)}))
+        
+        finally:
+            end_time = asyncio.get_event_loop().time()
+            latency_ms = (end_time - start_time) * 1000
+            print(f"[INFO] Processed record in {latency_ms:.2f} ms")
 
 
 def main():
@@ -164,6 +170,13 @@ def main():
         producer_config=kafka_props
     )
 
+    fraud_sink = FlinkKafkaProducer(
+        topic='fraud-transaction',
+        serialization_schema=SimpleStringSchema(),
+        producer_config=kafka_props
+    )
+
+
     stream = env.add_source(source)
 
     processed = AsyncDataStream.unordered_wait(
@@ -173,8 +186,14 @@ def main():
         capacity=100
     )
 
+    fraud_only = processed.filter(
+        lambda record: json.loads(record).get("is_fraud") == 1
+    )
+
+
     processed.add_sink(sink)
-    env.execute("Async Fraud Detection")
+    fraud_only.add_sink(fraud_sink)
+    env.execute("Realtime Async Fraud Detection")
 
 
 if __name__ == '__main__':
