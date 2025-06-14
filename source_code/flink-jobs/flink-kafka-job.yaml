@@ -17,8 +17,8 @@ spec:
   taskManager:
     replicas: 3
     resource:
-      memory: "2048m"
-      cpu: 1.5
+      memory: "4096m"
+      cpu: 2
 
   job:
     jarURI: local:///opt/flink/opt/flink-python-1.17.2.jar

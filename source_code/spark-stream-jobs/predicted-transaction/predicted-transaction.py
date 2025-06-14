@@ -77,7 +77,7 @@ df = spark.readStream \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
     .option("startingOffsets", "earliest") \
-    .option("maxOffsetsPerTrigger", 5000) \
+    .option("maxOffsetsPerTrigger", 1000) \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \

@@ -15,14 +15,14 @@ spec:
     type: Always
   driver:
     cores: 1
-    memory: "512m"
+    memory: "1024m"
     serviceAccount: spark-operator-spark
     labels:
       version: "3.5.3"
   executor:
     cores: 2
     instances: 2
-    memory: "4g"
+    memory: "4096m"
     labels:
       version: "3.5.3"
   deps:
