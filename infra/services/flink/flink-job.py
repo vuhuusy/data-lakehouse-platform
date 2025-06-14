@@ -163,7 +163,7 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         finally:
             end_time = time.time()
             latency_ms = (end_time - start_time) * 1000
-            if random.random() < 0.1:
+            if random.random() < 0.01:
                 print(f"[INFO] Processed record in {latency_ms:.2f} ms")
 
 
