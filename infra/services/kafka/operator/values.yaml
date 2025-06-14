@@ -794,10 +794,10 @@ controller:
   ## Example:
   resources:
     requests:
-      cpu: 2
+      cpu: 1
       memory: 512Mi
     limits:
-      cpu: 3
+      cpu: 2
       memory: 1024Mi
   ## 
   #  resources: {}
@@ -1255,10 +1255,10 @@ broker:
   ## Example:
   resources:
     requests:
-      cpu: 2
+      cpu: 1
       memory: 512Mi
     limits:
-      cpu: 3
+      cpu: 2
       memory: 1024Mi
   ##
   #  resources: {}
