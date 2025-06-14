@@ -55,7 +55,7 @@ RUN apt-get update -y && \
   ln -s /usr/local/bin/python3 /usr/local/bin/python && \
   python3 -m ensurepip && \
   python3 -m pip install --upgrade pip && \
-  python3 -m pip install --no-cache-dir requests && \
+  python3 -m pip install --no-cache-dir requests aiohttp && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
