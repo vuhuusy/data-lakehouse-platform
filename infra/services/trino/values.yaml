@@ -616,7 +616,13 @@ coordinator:
   #    protocol: TCP
   # ```
 
-  resources: {}
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
   # coordinator.resources -- It is recommended not to specify default resources
   # and to leave this as a conscious choice for the user. This also increases
   # chances charts run on environments with little resources, such as Minikube.
@@ -779,7 +785,14 @@ worker:
   #    protocol: TCP
   # ```
 
-  resources: {}
+  resources:
+    resources: 
+    limits:
+      cpu: 1000m
+      memory: 2048Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
   # worker.resources -- It is recommended not to specify default resources and
   # to leave this as a conscious choice for the user. This also increases
   # chances charts run on environments with little resources, such as Minikube.
