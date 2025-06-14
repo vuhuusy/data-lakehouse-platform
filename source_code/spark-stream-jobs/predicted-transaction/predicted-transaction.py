@@ -9,6 +9,8 @@ spark = SparkSession.builder \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.shuffle.partitions", "5") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.adaptive.enabled", "true") \
+    .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
     .config("spark.hadoop.fs.s3a.access.key", "minio") \
@@ -109,7 +111,8 @@ spark.sql(f"""
 """)
 
 # Ghi stream
-parsed.writeStream \
+parsed.coalesce(2) \
+    .writeStream \
     .format("delta") \
     .outputMode("append") \
     .partitionBy("partition") \

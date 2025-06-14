@@ -13,6 +13,8 @@ spark = SparkSession.builder \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", True) \
+    .spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") \
     .config("spark.sql.session.timeZone", "Asia/Ho_Chi_Minh") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
@@ -24,12 +26,14 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
+spark.conf.set("spark.sql.shuffle.partitions", 32)
+spark.conf.set("spark.sql.adaptive.enabled", True)
 ####################################################################################################
 
 # Read Delta tables and Parquet files
 merchant = spark.read.format("delta").table("default.merchant")
-customer = spark.read.format("delta").table("default.customer")
-transaction = spark.read.format("delta").table("default.transaction")
+customer = spark.read.format("delta").table("default.customer").coalesce(4)
+transaction = spark.read.format("delta").table("default.transaction").coalesce(16)
 state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state_features.parquet")
 
 ####################################################################################################
@@ -163,7 +167,7 @@ spark.sql(f"""
 
 # Write the transformed data to Delta tables
 d_merchant.select('merchant_id', 'category_encoded', 'partition') \
-    .coalesce(2) \
+    .coalesce(4) \
     .write \
     .format("delta") \
     .mode("overwrite") \
@@ -177,7 +181,7 @@ d_customer.select(
     'norm_poverty_per_unemployed', 'avg_txn_last_7d', 'avg_amt_last_7d', 'sum_amt_last_7d', 'num_txn_last_7d',
     'partition'
 )   \
-    .coalesce(8) \
+    .coalesce(16) \
     .write \
     .format("delta") \
     .mode("overwrite") \

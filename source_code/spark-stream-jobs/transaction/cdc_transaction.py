@@ -7,7 +7,9 @@ spark = SparkSession.builder \
     .appName("CDC-Transaction") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
-    .config("spark.sql.shuffle.partitions", "5") \
+    .config("spark.sql.shuffle.partitions", "2") \
+    .config("spark.sql.adaptive.enabled", "true") \
+    .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
@@ -91,12 +93,13 @@ spark.sql(f"""
 """)
 
 # Write to Delta
-query = transaction.writeStream \
+query = transaction.coalesce(2) \
+    .writeStream \
     .format("delta") \
     .outputMode("append") \
     .partitionBy("partition") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .trigger(processingTime="10 seconds") \
+    .trigger(processingTime="30 seconds") \
     .start(DELTA_PATH)
 
 query.awaitTermination()
