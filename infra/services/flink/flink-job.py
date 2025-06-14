@@ -1,3 +1,4 @@
+import random
 import math
 import json
 import pickle
@@ -162,7 +163,8 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         finally:
             end_time = time.time()
             latency_ms = (end_time - start_time) * 1000
-            print(f"[INFO] Processed record in {latency_ms:.2f} ms")
+            if random.random() < 0.1:
+                print(f"[INFO] Processed record in {latency_ms:.2f} ms")
 
 
 def main():

@@ -167,6 +167,7 @@ d_merchant.select('merchant_id', 'category_encoded', 'partition') \
     .write \
     .format("delta") \
     .mode("overwrite") \
+    .option("replaceWhere", f"partition = '{partition}'") \
     .partitionBy("partition") \
     .saveAsTable("default.d_merchant_feature")
 
@@ -180,6 +181,7 @@ d_customer.select(
     .write \
     .format("delta") \
     .mode("overwrite") \
+    .option("replaceWhere", f"partition = '{partition}'") \
     .partitionBy("partition") \
     .saveAsTable("default.d_customer_feature")
 
