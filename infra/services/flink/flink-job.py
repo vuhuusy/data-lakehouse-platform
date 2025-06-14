@@ -173,7 +173,7 @@ def main():
     kafka_props = {
         'bootstrap.servers': 'kafka.kafka.svc.cluster.local:9092',
         'group.id': 'flink.fraud-detection.prediction',
-        'auto.offset.reset': 'latest',
+        'auto.offset.reset': 'earliest',
         'security.protocol': 'SASL_SSL',
         'sasl.mechanism': 'SCRAM-SHA-256',
         'sasl.jaas.config': 'org.apache.kafka.common.security.scram.ScramLoginModule required username="kafka" password="kafka";',
