@@ -13,8 +13,6 @@ spark = SparkSession.builder \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", True) \
-    .spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true") \
     .config("spark.sql.session.timeZone", "Asia/Ho_Chi_Minh") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
@@ -26,6 +24,8 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
+spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", True)
+spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
 spark.conf.set("spark.sql.shuffle.partitions", 32)
 spark.conf.set("spark.sql.adaptive.enabled", True)
 ####################################################################################################

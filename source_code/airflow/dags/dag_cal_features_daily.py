@@ -48,7 +48,14 @@ with DAG(
         kubernetes_conn_id="kubernetes_default"
     )
 
+    compact_delta_partition = SparkKubernetesOperator(
+        task_id="compact_delta_partition",
+        application_file="spark-jobs/compact_delta_partition.yaml",
+        namespace="spark-operator",
+        kubernetes_conn_id="kubernetes_default"
+    )
+
     start = DummyOperator(task_id="start")
     end = DummyOperator(task_id="end")
 
-    start >> spark_job >> feast_apply_materialize >> end
+    start >> spark_job >> feast_apply_materialize >> compact_delta_partition >> end
