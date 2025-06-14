@@ -619,7 +619,7 @@ coordinator:
   resources: 
     limits:
       cpu: 1000m
-      memory: 1024Mi
+      memory: 2048Mi
     requests:
       cpu: 500m
       memory: 528Mi
@@ -789,7 +789,7 @@ worker:
     resources: 
     limits:
       cpu: 1000m
-      memory: 2048Mi
+      memory: 4096Mi
     requests:
       cpu: 500m
       memory: 512Mi
