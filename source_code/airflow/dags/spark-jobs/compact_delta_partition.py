@@ -1,19 +1,9 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import lit
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-# === Config ===
-DELTA_TABLE_PATH = "s3a://gold-zone/fraud_detection/d_customer_feature"
-TABLE_NAME = "default.d_customer_feature"
-PARTITION_COLUMN = "partition"
+from delta.tables import DeltaTable
 
-# === Date to compact ===
-vietnam_time = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
-compact_partition = (vietnam_time - timedelta(days=1)).strftime('%Y%m%d')
-
-# === Init Spark session ===
+# === Init Spark ===
 spark = SparkSession.builder \
-    .appName("Compact Delta Partition") \
+    .appName("CompactDeltaTables") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.sql.session.timeZone", "Asia/Ho_Chi_Minh") \
@@ -24,24 +14,46 @@ spark = SparkSession.builder \
     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
     .getOrCreate()
 
-spark.conf.set("spark.sql.shuffle.partitions", 16)
+# === Spark tuning ===
+spark.conf.set("spark.sql.shuffle.partitions", 8)
 spark.conf.set("spark.sql.adaptive.enabled", "true")
 spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", "true")
+# spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "false")  # allow vacuum 0h
 
-# === Load data for specific partition ===
-df = spark.read.format("delta").load(DELTA_TABLE_PATH) \
-    .filter(f"{PARTITION_COLUMN} = '{compact_partition}'")
+# === Get partition N-1 (Vietnam time) ===
+compact_partition = spark.sql("""
+SELECT DATE_FORMAT(DATEADD(MONTH, -1, CURRENT_DATE()), 'yyyy-MM') AS partition
+""").collect()[0]['partition']
 
-# === Coalesce to reduce small files ===
-df = df.coalesce(4)
+# === Table info: {table_name: coalesce_num}
+tables = {
+    "default.transaction": 16,
+    "default.d_customer_feature": 4,
+    "default.d_merchant_feature": 2,
+    "default.f_transaction_predictions": 16,
+}
 
-# === Overwrite back the same partition ===
-df.write \
-    .format("delta") \
-    .mode("overwrite") \
-    .option("replaceWhere", f"{PARTITION_COLUMN} = '{compact_partition}'") \
-    .option("dataChange", "false") \
-    .partitionBy(PARTITION_COLUMN) \
-    .save(DELTA_TABLE_PATH)
+# === Process each table ===
+for table, coalesce_num in tables.items():
+    print(f"\n>>> Compacting table: {table} | partition={compact_partition}")
+    try:
+        df = spark.table(table).filter(f"partition = '{compact_partition}'").coalesce(coalesce_num)
+
+        df.write \
+            .format("delta") \
+            .mode("overwrite") \
+            .option("replaceWhere", f"partition = '{compact_partition}'") \
+            .partitionBy("partition") \
+            .saveAsTable(table)
+
+        print(f">>> ✅ Compacted: {table} into {coalesce_num} file(s)")
+
+        print(f">>> 🧹 Running vacuum on {table} ...")
+        delta_table = DeltaTable.forName(spark, table)
+        delta_table.vacuum(retentionHours=48)
+        print(f">>> ✅ Vacuumed: {table}")
+
+    except Exception as e:
+        print(f">>> ❌ Error processing table {table}: {e}")
 
 spark.stop()

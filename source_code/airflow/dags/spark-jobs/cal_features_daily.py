@@ -167,7 +167,7 @@ spark.sql(f"""
 
 # Write the transformed data to Delta tables
 d_merchant.select('merchant_id', 'category_encoded', 'partition') \
-    .coalesce(4) \
+    .coalesce(2) \
     .write \
     .format("delta") \
     .mode("overwrite") \
@@ -181,7 +181,7 @@ d_customer.select(
     'norm_poverty_per_unemployed', 'avg_txn_last_7d', 'avg_amt_last_7d', 'sum_amt_last_7d', 'num_txn_last_7d',
     'partition'
 )   \
-    .coalesce(16) \
+    .coalesce(4) \
     .write \
     .format("delta") \
     .mode("overwrite") \
