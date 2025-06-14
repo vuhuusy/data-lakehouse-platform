@@ -29,7 +29,7 @@ spec:
       - "/usr/local/bin/python3"
       - "-py"
       - "/opt/flink/usrlib/flink-job.py"
-    upgradeMode: stateless
+    upgradeMode: last-state
 
   podTemplate:
     spec:
@@ -52,7 +52,7 @@ spec:
     state.backend.incremental: "true"
     state.checkpoints.dir: s3a://work-zone/flink/checkpoints/predicted-transaction
     state.savepoints.dir: s3a://work-zone/flink/savepoints/predicted-transaction
-    execution.checkpointing.interval: "120000"
+    execution.checkpointing.interval: "180000"
     execution.checkpointing.mode: EXACTLY_ONCE
     execution.checkpointing.timeout: "180000"
     s3.access.key: minio

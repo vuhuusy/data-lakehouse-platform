@@ -9,10 +9,9 @@ from collections import deque
 
 from pyflink.common.serialization import SimpleStringSchema
 from pyflink.common.typeinfo import Types
-from pyflink.datastream import StreamExecutionEnvironment, KeyedProcessFunction, RuntimeContext
+from pyflink.datastream import StreamExecutionEnvironment, KeyedProcessFunction, RuntimeContext, CheckpointingMode
 from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
 from pyflink.datastream.state import MapStateDescriptor
-
 from feast import FeatureStore
 
 
@@ -169,6 +168,9 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
 
 def main():
     env = StreamExecutionEnvironment.get_execution_environment()
+    env.enable_checkpointing(180000)
+    env.get_checkpoint_config().set_checkpointing_mode(CheckpointingMode.EXACTLY_ONCE)
+    env.get_checkpoint_config().set_checkpoint_timeout(180000)
 
     kafka_props = {
         'bootstrap.servers': 'kafka.kafka.svc.cluster.local:9092',
