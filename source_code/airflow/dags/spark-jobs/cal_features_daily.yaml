@@ -20,7 +20,7 @@ spec:
     labels:
       version: "3.5.3"
   executor:
-    cores: 2
+    cores: 1
     instances: 3
     memory: "4g"
     labels:

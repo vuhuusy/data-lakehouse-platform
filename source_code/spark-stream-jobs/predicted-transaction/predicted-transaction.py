@@ -111,7 +111,7 @@ spark.sql(f"""
 """)
 
 # Ghi stream
-parsed.coalesce(2) \
+parsed.coalesce(3) \
     .writeStream \
     .format("delta") \
     .outputMode("append") \
