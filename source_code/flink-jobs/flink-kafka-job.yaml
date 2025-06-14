@@ -11,19 +11,19 @@ spec:
 
   jobManager:
     resource:
-      memory: "2048m"
+      memory: "1024m"
       cpu: 1
 
   taskManager:
-    replicas: 4
+    replicas: 2
     resource:
-      memory: "4096m"
+      memory: "2048m"
       cpu: 1.5
 
   job:
     jarURI: local:///opt/flink/opt/flink-python-1.17.2.jar
     entryClass: "org.apache.flink.client.python.PythonDriver"
-    parallelism: 12
+    parallelism: 6
     args:
       - "-pyclientexec"
       - "/usr/local/bin/python3"
