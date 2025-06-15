@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: transaction-replayer
+  namespace: ingestion
+spec:
+  restartPolicy: Never
+  containers:
+    - name: replayer
+      image: huusy/transaction-replay:latest
+      command: ["/app/entrypoint.sh"]
+      env:
+        - name: PGHOST
+          value: "postgres-financial-ops-postgresql.financial-ops.svc.cluster.local"
+        - name: PGPORT
+          value: "5432"
+        - name: PGDATABASE
+          value: "financial_ops"
+        - name: PGUSER
+          value: "postgres"
+        - name: PGPASSWORD
+          value: "postgres"
+        - name: REPLAY_SKIP_SLEEP
+          value: "false"

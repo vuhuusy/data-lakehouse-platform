@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-model-serving
+spec:
+  replicas: 1  # Số lượng Pod có thể scale theo nhu cầu
+  selector:
+    matchLabels:
+      app: mlflow-serving
+  template:
+    metadata:
+      labels:
+        app: mlflow-serving
+    spec:
+      containers:
+        - name: mlflow-serving
+          image: huusy/mlflow:v2.12.1
+          imagePullPolicy: Always
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: "http://103.82.133.158:30500"
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: "https://103.82.133.158:30900"
+            - name: AWS_ACCESS_KEY_ID
+              value: "minio"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "minio123"
+            - name: MLFLOW_S3_IGNORE_TLS
+              value: "true"
+          ports:
+            - containerPort: 8080
+          command: ["/bin/sh", "-c"]
+          args:
+            - "mlflow models serve -w 3 -m 'runs:/9eb55fcee4be47c2906e57c1e6779809/model' --no-conda --host 0.0.0.0 --port 8080"
