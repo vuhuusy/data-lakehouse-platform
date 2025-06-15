@@ -1,0 +1,54 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: optimize-partiton
+  namespace: spark-operator
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: huusy/spark-application:3.5.3
+  imagePullPolicy: IfNotPresent
+  mainApplicationFile: "s3a://share/spark/repo/optimize.py"
+  sparkVersion: "3.5.3"
+  restartPolicy:
+    type: Never
+  driver:
+    cores: 1
+    memory: "1024m"
+    serviceAccount: spark-operator-spark
+    labels:
+      version: "3.5.3"
+  executor:
+    cores: 2
+    instances: 2
+    memory: "4g"
+    labels:
+      version: "3.5.3"
+  deps:
+    jars:
+      - "local:///opt/bitnami/spark/jars/hadoop-aws-3.3.4.jar"
+      - "local:///opt/bitnami/spark/jars/aws-java-sdk-bundle-1.12.172.jar"
+      - "local:///opt/bitnami/spark/jars/spark-hadoop-cloud_2.12-3.3.4.jar"
+      - "local:///opt/bitnami/spark/jars/delta-spark_2.12-3.3.0.jar"
+      - "local:///opt/bitnami/spark/jars/delta-storage-3.3.0.jar"
+      - "local:///opt/bitnami/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar"
+      - "local:///opt/bitnami/spark/jars/kafka-clients-3.4.0.jar"
+      - "local:///opt/bitnami/spark/jars/commons-pool2-2.11.1.jar"
+      # - "s3a://share/spark/jars/hadoop-aws-3.3.4.jar"
+      # - "s3a://share/spark/jars/aws-java-sdk-bundle-1.12.172.jar"
+      # - "s3a://share/spark/jars/spark-hadoop-cloud_2.12-3.3.4.jar"
+      # - "s3a://share/spark/jars/delta-spark_2.12-3.3.0.jar"
+      # - "s3a://share/spark/jars/delta-storage-3.3.0.jar"
+      # - "s3a://share/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar"
+      # - "s3a://share/spark/jars/kafka-clients-3.4.0.jar"
+      # - "s3a://share/spark/jars/commons-pool2-2.11.1.jar"
+  sparkConf:
+    "spark.hadoop.fs.s3a.access.key": "minio"
+    "spark.hadoop.fs.s3a.secret.key": "minio123"
+    "spark.hadoop.fs.s3a.endpoint": "https://minio.minio.svc.cluster.local:443"
+    "spark.hadoop.fs.s3a.path.style.access": "true"
+    "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "spark.hadoop.fs.s3a.connection.ssl.enabled": "true"
+    "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension"
+    "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog"
