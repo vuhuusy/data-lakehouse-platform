@@ -76,11 +76,11 @@ install-kafka:
 		--set serviceAccount.create=true \
 		--set rbac.create=true \
 		--set broker.resources.requests.cpu=200m \
-		--set broker.resources.requests.memory=512Mi \
+		--set broker.resources.requests.memory=1024Mi \
 		--set broker.resources.limits.cpu=1000m \
 		--set broker.resources.limits.memory=2Gi \
 		--set controller.resources.requests.cpu=200m \
-		--set controller.resources.requests.memory=512Mi \
+		--set controller.resources.requests.memory=1024Mi \
 		--set controller.resources.limits.cpu=1000m \
 		--set controller.resources.limits.memory=2Gi
 
