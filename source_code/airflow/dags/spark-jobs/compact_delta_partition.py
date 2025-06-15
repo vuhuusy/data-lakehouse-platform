@@ -3,27 +3,32 @@ from delta.tables import DeltaTable
 
 # === Init Spark ===
 spark = SparkSession.builder \
-    .appName("CompactDeltaTables") \
+    .appName("Calculate Customer and Merchant Features") \
+    .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
+    .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.sql.session.timeZone", "Asia/Ho_Chi_Minh") \
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
     .config("spark.hadoop.fs.s3a.endpoint", "https://minio.minio.svc.cluster.local:443") \
     .config("spark.hadoop.fs.s3a.access.key", "minio") \
     .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .config("hive.metastore.uris", "thrift://hive-metastore.hive.svc.cluster.local:9083") \
+    .enableHiveSupport() \
     .getOrCreate()
 
 # === Spark tuning ===
 spark.conf.set("spark.sql.shuffle.partitions", 8)
 spark.conf.set("spark.sql.adaptive.enabled", "true")
 spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", "true")
-# spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "false")  # allow vacuum 0h
+spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "false")  # allow vacuum 0h
 
 # === Get partition N-1 (Vietnam time) ===
 compact_partition = spark.sql("""
-SELECT DATE_FORMAT(DATEADD(MONTH, -1, CURRENT_DATE()), 'yyyy-MM') AS partition
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), 1), 'yyyyMMdd') AS partition
 """).collect()[0]['partition']
+print(f">>> 🕒 Processing partition = {compact_partition}")
 
 # === Table info: {table_name: coalesce_num}
 tables = {
@@ -50,7 +55,7 @@ for table, coalesce_num in tables.items():
 
         print(f">>> 🧹 Running vacuum on {table} ...")
         delta_table = DeltaTable.forName(spark, table)
-        delta_table.vacuum(retentionHours=48)
+        delta_table.vacuum(0)
         print(f">>> ✅ Vacuumed: {table}")
 
     except Exception as e:

@@ -22,7 +22,7 @@ spec:
   executor:
     cores: 1
     instances: 3
-    memory: "4g"
+    memory: "3g"
     labels:
       version: "3.5.3"
   deps:
