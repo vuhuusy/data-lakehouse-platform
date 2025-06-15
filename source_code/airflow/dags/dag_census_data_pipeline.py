@@ -20,7 +20,7 @@ with DAG(
     dag_id="dag_census_api_etl_pipeline",
     schedule_interval="5 0 1 1 *",
     start_date=pendulum.datetime(2025, 1, 1, tz="Asia/Ho_Chi_Minh"),
-    catchup=True,
+    catchup=False,
     default_args=default_args,
     tags=["census", "api"]
 ) as dag:

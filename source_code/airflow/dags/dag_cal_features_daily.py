@@ -18,7 +18,7 @@ with DAG(
     dag_id="dag_cal_customer_and_merchant_features_daily",
     schedule_interval='5 0 * * *',
     start_date=pendulum.datetime(2025, 6, 11, tz="Asia/Ho_Chi_Minh"),
-    catchup=True,
+    catchup=False,
     default_args=default_args,
     tags=["features", "feature_store", "daily", "customer", "merchant"],
 ) as dag:

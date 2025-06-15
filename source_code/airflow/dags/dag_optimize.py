@@ -18,7 +18,7 @@ with DAG(
     dag_id="dag_optimize_partition",
     schedule_interval='5 * * * *',
     start_date=pendulum.datetime(2025, 6, 11, tz="Asia/Ho_Chi_Minh"),
-    catchup=True,
+    catchup=False,
     default_args=default_args,
     tags=["optimize", "partition"],
 ) as dag:
