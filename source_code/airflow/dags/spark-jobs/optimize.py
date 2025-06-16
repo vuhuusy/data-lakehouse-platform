@@ -20,7 +20,7 @@ spark = SparkSession.builder \
 
 # === Get partition N-1 (Vietnam time) ===
 partition = spark.sql("""
-    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), 1), 'yyyyMMdd') AS partition
+    SELECT DATE_FORMAT(CURRENT_DATE(), 'yyyyMMdd') AS partition
 """).collect()[0]['partition']
 print(f">>> 🕒 Optimizing partition = {partition}")
 
