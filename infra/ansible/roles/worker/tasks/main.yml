@@ -1,6 +1,6 @@
-- name: Register worker node to RKE2 cluster
+- name: Register worker nodes to RKE2 cluster
   shell: |
-    curl --insecure -fL {{ server_url }}/system-agent-install.sh | sudo sh -s - \
+    curl --insecure -fL {{ server_url }}/system-agent-install.sh | sh -s - \
       --server {{ server_url }} \
       --label 'cattle.io/os=linux' \
       --token {{ token }} \
