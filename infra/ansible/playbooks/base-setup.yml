@@ -1,27 +1,33 @@
-- name: "Setup all nodes: Update, Install Java, Disable Swap"
+---
+- name: Base setup for all hosts
   hosts: all
-  become: yes
-  tasks:
+  remote_user: root
+  environment:
+    DEBIAN_FRONTEND: noninteractive
 
+  tasks:
     - name: Update apt cache
       apt:
         update_cache: yes
-      environment:
-        DEBIAN_FRONTEND: noninteractive
+        cache_valid_time: 7200
 
     - name: Upgrade system packages
       apt:
         upgrade: dist
-      environment:
-        DEBIAN_FRONTEND: noninteractive
+        autoremove: yes
 
     - name: Install Java 11
       apt:
         name: openjdk-11-jdk
         state: present
+        update_cache: yes
+        cache_valid_time: 7200
 
     - name: Turn off swap immediately
       command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+      args:
+        warn: false
 
     - name: Disable swap in /etc/fstab
       replace:
