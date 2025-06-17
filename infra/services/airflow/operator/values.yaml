@@ -740,13 +740,13 @@ workers:
     #   memory: 128Mi
 
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 1000m
+    memory: 1024Mi
+   requests:
+    cpu: 200m
+    memory: 256Mi
 
   # Grace period for tasks to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 600
@@ -963,13 +963,13 @@ scheduler:
       maxUnavailable: 1
       # minAvailable: 1
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 1000m
+    memory: 1024Mi
+   requests:
+    cpu: 200m
+    memory: 256Mi
 
   # This setting tells kubernetes that its ok to evict
   # when it wants to scale a node down.
@@ -1324,13 +1324,13 @@ apiServer:
       ports:
         - port: "{{ .Values.ports.apiServer }}"
 
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1669,13 +1669,13 @@ triggerer:
     # Annotations to add to triggerer volumes
     annotations: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 1000m
+    memory: 1024Mi
+   requests:
+    cpu: 200m
+    memory: 256Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1869,13 +1869,13 @@ dagProcessor:
   # container level lifecycle hooks
   containerLifecycleHooks: {}
 
-  resources: {}
-  #  limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  #  requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  resources:
+   limits:
+    cpu: 1000m
+    memory: 1024Mi
+   requests:
+    cpu: 200m
+    memory: 256Mi
 
   # Grace period for dag processor to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -2155,13 +2155,13 @@ statsd:
 
   # Additional network policies as needed
   extraNetworkPolicies: []
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 128Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 128Mi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
   service:
     extraAnnotations: {}
@@ -2830,7 +2830,7 @@ dags:
     # Go-style duration string (e.g. "100ms" or "0.1s" = 100ms).
     # For backwards compatibility, wait will be used if it is specified.
     period: 30s
-    wait: 30
+    wait: 30s
     # add variables from secret into gitSync containers, such proxy-config
     envFrom: ~
     # envFrom: |
@@ -2867,13 +2867,13 @@ dags:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
-    resources: {}
-    #  limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    #  requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+    resources:
+     limits:
+      cpu: 500m
+      memory: 512Mi
+     requests:
+      cpu: 100m
+      memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
