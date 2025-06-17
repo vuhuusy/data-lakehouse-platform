@@ -1,10 +1,11 @@
 - name: Update apt cache
-  apt:
-    update_cache: yes
   environment:
     DEBIAN_FRONTEND: noninteractive
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200
 
-- name: Install nfs-common (Debian/Ubuntu)
+- name: Install nfs-common
   apt:
     name: nfs-common
     state: present
