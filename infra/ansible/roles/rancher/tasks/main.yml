@@ -1,9 +1,11 @@
 - name: Update apt
-  apt:
-    update_cache: yes
-    upgrade: dist
   environment:
     DEBIAN_FRONTEND: noninteractive
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200
+    upgrade: dist
+    autoremove: yes
 
 - name: Install Docker
   apt:
@@ -15,7 +17,7 @@
     name: build-essential
     state: present
 
-- name: Install Helm via official script
+- name: Install Helm
   shell: |
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
   args:
