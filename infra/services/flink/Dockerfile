@@ -25,10 +25,11 @@ RUN update-ca-certificates && \
     -storepass changeit -noprompt
 
 COPY infra/certs/kafka/kafka.truststore.jks /opt/flink/secrets/kafka.truststore.jks
+COPY infra/certs/kafka/kafka.keystore.jks /opt/flink/secrets/kafka.keystore.jks
 
 RUN chmod -R 644 /opt/flink/lib/*.jar && \
-    chmod 600 /opt/flink/secrets/kafka.truststore.jks
-
+    chmod 600 /opt/flink/secrets/kafka.truststore.jks && \
+    chmod 600 /opt/flink/secrets/kafka.keystore.jks
 
 # Install Python
 RUN apt-get update -y && \
