@@ -4,17 +4,18 @@ NAMESPACE ?= minio
 MINIO_OPERATOR ?= minio-operator/operator
 MINIO_TENANT ?= minio-operator/tenant
 
-.PHONY: install-minio install-operator install-tenant \
-		uninstall-minio uninstall-operator uninstall-tenant \
+.PHONY: install uninstall \
+		install-operator install-tenant \
+		uninstall-operator uninstall-tenant \
 		generate-self-signed-cert register-self-signed-cert  \
 		create-namespace  \
 		create-nodeport  \
 		delete-nodeport  \
 		help
 
-install-minio: create-namespace install-operator install-tenant
+install: create-namespace install-operator install-tenant
 
-uninstall-minio: uninstall-tenant uninstall-operator
+uninstall: uninstall-tenant uninstall-operator delete-nodeport
 
 create-namespace:
 	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
