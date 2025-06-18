@@ -93,8 +93,8 @@ delete-nodeport:
 
 help:
 	@echo "Makefile commands:"
-	@echo "make install-minio       		- Install MinIO Operator and Tenant"
-	@echo "make uninstall-minio     		- Uninstall MinIO Operator and Tenant"
+	@echo "make install			       		- Install MinIO Operator and Tenant"
+	@echo "make uninstall     				- Uninstall MinIO Operator and Tenant"
 	@echo "make install-operator    		- Install MinIO Operator"
 	@echo "make install-tenant      		- Install MinIO Tenant"
 	@echo "make uninstall-operator  		- Uninstall MinIO Operator"
