@@ -9,7 +9,7 @@ ENV PYTHON_VERSION=${PYTHON_VERSION}
 ENV FLINK_VERSION=${FLINK_VERSION}
 
 # Download connector libs
-ADD https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.1.0/kafka-clients-3.1.0.jar /opt/flink/lib/
+ADD https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.4.0/kafka-clients-3.4.0.jar /opt/flink/lib/
 ADD https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.3.4/hadoop-common-3.3.4.jar /opt/flink/lib/
