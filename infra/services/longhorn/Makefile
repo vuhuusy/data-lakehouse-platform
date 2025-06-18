@@ -1,6 +1,6 @@
-.PHONY: install-longhorn
+.PHONY: install
 
-install-longhorn:
+install:
 	@set -e; \
 	@echo "Installing Longhorn..."
 	helm repo list | grep -q longhorn || helm repo add longhorn https://charts.longhorn.io
