@@ -19,7 +19,7 @@ AIRFLOW_OPERATOR ?= apache-airflow/airflow
 	create-clusterrolebinding-for-spark-applications \
 	help
 
-install: create-namespace install-postgresql-redis install-airflow
+install: create-namespace install-postgresql-redis install-airflow create-web-nodeport
 
 uninstall: uninstall-airflow uninstall-postgresql-redis
 
