@@ -1,6 +1,6 @@
 FROM trinodb/trino:470
 
-COPY infra/services/minio/selfsigned.crt /etc/pki/ca-trust/source/anchors/
+COPY infra/certs/minio/selfsigned.crt /etc/pki/ca-trust/source/anchors/
 USER root
 RUN update-ca-trust extract
 RUN keytool -importcert -alias minio-ca -file /etc/pki/ca-trust/source/anchors/selfsigned.crt \

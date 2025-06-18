@@ -27,16 +27,15 @@ ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws
 ADD https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.172/aws-java-sdk-bundle-1.12.172.jar $SPARK_HOME/jars
 ADD https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.17.257/bundle-2.17.257.jar $SPARK_HOME/jars
 ADD https://repo1.maven.org/maven2/software/amazon/awssdk/url-connection-client/2.17.257/url-connection-client-2.17.257.jar $SPARK_HOME/jars
-# Support for S3 magic committer...
 ADD https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.12/3.3.4/spark-hadoop-cloud_2.12-3.3.4.jar $SPARK_HOME/jars
 
 RUN chmod -R 644 $SPARK_HOME/jars/*
 
-COPY infra/services/kafka/certs/kafka.truststore.jks /opt/spark/secrets/kafka.truststore.jks
-COPY infra/services/kafka/certs/kafka.keystore.jks /opt/spark/secrets/kafka.keystore.jks
+COPY infra/certs/kafka/kafka.truststore.jks /opt/spark/secrets/kafka.truststore.jks
+COPY infra/certs/kafka/kafka.keystore.jks /opt/spark/secrets/kafka.keystore.jks
 
 # Certificate import
-COPY infra/services/minio/selfsigned.crt /usr/local/share/ca-certificates/
+COPY infra/certs/minio/selfsigned.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates && \
     keytool -importcert -alias minio-ca -file /usr/local/share/ca-certificates/selfsigned.crt \
     -keystore $JAVA_HOME/lib/security/cacerts \
