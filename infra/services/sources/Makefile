@@ -1,5 +1,3 @@
-# Makefile for source systems
-
 NAMESPACE ?= financial-ops
 POSTGRES_CHART ?= bitnami/postgresql
 
@@ -38,7 +36,7 @@ install-postgres:
 expose-postgres-nodeport:
 	@kubectl apply -f infra/services/sources/postgres-nodeport.yaml
 
-uninstall-postgres:
+uninstall:
 	@set -e; \
 	helm uninstall --namespace $(NAMESPACE) \
 		postgres-financial-ops || true;\

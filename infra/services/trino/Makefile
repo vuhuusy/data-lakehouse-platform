@@ -1,9 +1,7 @@
-# Makefile for Trino deployment
+.DEFAULT_GOAL := help
 
 NAMESPACE ?= trino
 TRINO_OPERATOR ?= trino/trino
-
-.DEFAULT_GOAL := help
 
 .PHONY: \
 	help \
@@ -25,39 +23,32 @@ help:
 	@echo "  make help                            Show this help message"
 	@echo ""
 
+install: create-namespace install-trino create-coordinator-nodeport
+
 create-namespace:
 	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
 	kubectl create namespace $(NAMESPACE)
 
 build-trino-custom-dockerfile:
-	@set -ex; \
+	@set -e; \
 	docker build \
 		-t huusy/trino:470 \
 		-f infra/services/trino/Dockerfile .
 
 release-docker-images:
-	@set -ex; \
+	@set -e; \
 	docker push huusy/trino:470
 
-install:
-	@set -ex; \
-	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
+install-trino:
+	@set -e; \
 	helm upgrade --install --namespace $(NAMESPACE) \
 		trino $(TRINO_OPERATOR) \
 		-f infra/services/trino/values.yaml; \
 
-install-catalog:
-	@set -ex; \
-	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
-	helm upgrade --install --namespace $(NAMESPACE) \
-		trino $(TRINO_OPERATOR) \
-		-f infra/services/trino/catalogs.yaml; \
-
 create-coordinator-nodeport:
-	@set -ex; \
-	kubectl apply -n $(NAMESPACE) -f infra/services/trino/coordinator-nodeport.yaml || true; \
+	@set -e; \
+	kubectl apply -n $(NAMESPACE) -f infra/services/trino/coordinator-nodeport.yaml
 
 uninstall:
-	@set -ex; \
-	helm uninstall --namespace $(NAMESPACE) trino || true; \
-	kubectl delete service coordinator-nodeport -n $(NAMESPACE) --ignore-not-found
+	@set -e; \
+	helm uninstall --namespace $(NAMESPACE) trino || true
