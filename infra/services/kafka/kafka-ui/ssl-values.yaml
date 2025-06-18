@@ -38,8 +38,6 @@ env:
         name: ssl-secret
         key: KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD
 
-  # # --- Tắt hostname verification (tạm thời) ---
-  # - name: KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
 
 volumeMounts:
   - name: ssl-files
