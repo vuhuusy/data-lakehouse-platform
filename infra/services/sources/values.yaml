@@ -481,10 +481,10 @@ primary:
   ## Example:
   resources:
     requests:
-      cpu: 1
-      memory: 1024Mi
+      cpu: 500m
+      memory: 512Mi
     limits:
-      cpu: 3
+      cpu: 2000m
       memory: 4096Mi
   ##
   # resources: {}
@@ -955,11 +955,11 @@ readReplicas:
   ## Example:
   resources:
     requests:
-      cpu: 2
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
     limits:
-      cpu: 3
-      memory: 1024Mi
+      cpu: 500m
+      memory: 512Mi
   ##
   # resources: {}
   ## Pod Security Context
@@ -1400,11 +1400,11 @@ backup:
     # resources: {}
     resources:
       requests:
-        cpu: 1
-        memory: 512Mi
+        cpu: 200m
+        memory: 256Mi
       limits:
-        cpu: 2
-        memory: 1024Mi
+        cpu: 500m
+        memory: 512Mi
     networkPolicy:
       ## @param backup.cronjob.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
       ##
