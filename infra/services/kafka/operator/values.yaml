@@ -178,7 +178,7 @@ listeners:
   ## @param listeners.client.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.authType for this listener. Allowed values are 'none', 'requested' and 'required'
   client:
     containerPort: 9092
-    protocol: SASL_PLAINTEXT
+    protocol: SASL_SSL
     name: CLIENT
     sslClientAuth: ""
   ## @param listeners.controller.name Name for the Kafka controller listener
@@ -189,7 +189,7 @@ listeners:
   controller:
     name: CONTROLLER
     containerPort: 9093
-    protocol: SASL_PLAINTEXT
+    protocol: SSL
     sslClientAuth: ""
   ## @param listeners.interbroker.name Name for the Kafka inter-broker listener
   ## @param listeners.interbroker.containerPort Port for the Kafka inter-broker listener
@@ -197,7 +197,7 @@ listeners:
   ## @param listeners.interbroker.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.authType for this listener. Allowed values are 'none', 'requested' and 'required'
   interbroker:
     containerPort: 9094
-    protocol: SASL_PLAINTEXT
+    protocol: interbroker
     name: INTERNAL
     sslClientAuth: ""
   ## @param listeners.external.containerPort Port for the Kafka external listener
@@ -206,7 +206,7 @@ listeners:
   ## @param listeners.external.sslClientAuth Optional. If SASL_SSL is enabled, configure mTLS TLS authentication type. If SSL protocol is enabled, overrides tls.sslClientAuth for this listener. Allowed values are 'none', 'requested' and 'required'
   external:
     containerPort: 9095
-    protocol: SASL_PLAINTEXT
+    protocol: SASL_SSL
     name: EXTERNAL
     sslClientAuth: ""
   ## @param listeners.extraListeners Array of listener objects to be appended to already existing listeners
@@ -278,8 +278,8 @@ sasl:
   ##
   client:
     users:
-      - user1
-    passwords: ""
+      - kafka
+    passwords: "kafka"
   ## @param sasl.existingSecret Name of the existing secret containing credentials for client.users, interbroker.user and controller.user
   ## Create this secret running the command below where SECRET_NAME is the name of the secret you want to create:
   ##       kubectl create secret generic SECRET_NAME --from-literal=client-passwords=CLIENT_PASSWORD1,CLIENT_PASSWORD2 --from-literal=inter-broker-password=INTER_BROKER_PASSWORD --from-literal=inter-broker-client-secret=INTER_BROKER_CLIENT_SECRET --from-literal=controller-password=CONTROLLER_PASSWORD --from-literal=controller-client-secret=CONTROLLER_CLIENT_SECRET
@@ -343,7 +343,7 @@ tls:
   ##
   ## NOTE: Alternatively, a single key and certificate can be provided for all nodes under the keys 'tls.crt' and 'tls.key'. These certificates will be used by all nodes unless overridden by the 'kafka-<role>-X.key' and 'kafka-<role>-X.crt' files
   ##
-  existingSecret: ""
+  existingSecret: "kafka-jks"
   ## @param tls.passwordsSecret Name of the secret containing the password to access the JKS files or PEM key when they are password-protected. (`key`: `password`)
   ##
   passwordsSecret: ""
@@ -359,11 +359,11 @@ tls:
   ## @param tls.keystorePassword Password to access the JKS keystore when it is password-protected. Ignored when 'tls.passwordsSecret' is provided.
   ## When using tls.type=PEM, the generated keystore will use this password or randomly generate one.
   ##
-  keystorePassword: ""
+  keystorePassword: "changeit"
   ## @param tls.truststorePassword Password to access the JKS truststore when it is password-protected. Ignored when 'tls.passwordsSecret' is provided.
   ## When using tls.type=PEM, the generated keystore will use this password or randomly generate one.
   ##
-  truststorePassword: ""
+  truststorePassword: "changeit"
   ## @param tls.keyPassword Password to access the PEM key when it is password-protected.
   ## Note: ignored when using 'tls.passwordsSecret'
   ##
@@ -592,7 +592,7 @@ defaultInitContainers:
   autoDiscovery:
     ## @param defaultInitContainers.autoDiscovery.enabled Enable init container that auto-detects external IPs/ports by querying the K8s API
     ##
-    enabled: false
+    enabled: true
     ## Bitnami Kubectl image
     ## @param defaultInitContainers.autoDiscovery.image.registry [default: REGISTRY_NAME] "auto-discovery" init-containers' image registry
     ## @param defaultInitContainers.autoDiscovery.image.repository [default: REPOSITORY_NAME/os-shell] "auto-discovery" init-containers' image repository
@@ -797,7 +797,7 @@ controller:
       cpu: 500m
       memory: 512Mi
     limits:
-      cpu: 1
+      cpu: 1000m
       memory: 1024Mi
   ## 
   #  resources: {}
@@ -848,7 +848,7 @@ controller:
       drop: ["ALL"]
   ## @param controller.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param controller.hostAliases Kafka pods host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
@@ -1258,7 +1258,7 @@ broker:
       cpu: 500m
       memory: 512Mi
     limits:
-      cpu: 1
+      cpu: 1000m
       memory: 1024Mi
   ##
   #  resources: {}
@@ -1308,7 +1308,7 @@ broker:
       drop: ["ALL"]
   ## @param broker.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param broker.hostAliases Kafka pods host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
@@ -1688,7 +1688,7 @@ service:
 externalAccess:
   ## @param externalAccess.enabled Enable Kubernetes external cluster access to Kafka brokers
   ##
-  enabled: false
+  enabled: true
   ## Service settings
   controller:
     ## @param externalAccess.controller.forceExpose If set to true, force exposing controller-eligible nodes although they are configured as controller-only nodes
@@ -1700,7 +1700,7 @@ externalAccess:
     service:
       ## @param externalAccess.controller.service.type Kubernetes Service type for external access. It can be NodePort, LoadBalancer or ClusterIP
       ##
-      type: LoadBalancer
+      type: NodePort
       ## @param externalAccess.controller.service.ports.external Kafka port used for external access when service type is LoadBalancer
       ##
       ports:
@@ -1792,7 +1792,7 @@ externalAccess:
     service:
       ## @param externalAccess.broker.service.type Kubernetes Service type for external access. It can be NodePort, LoadBalancer or ClusterIP
       ##
-      type: LoadBalancer
+      type: NodePort
       ## @param externalAccess.broker.service.ports.external Kafka port used for external access when service type is LoadBalancer
       ##
       ports:
@@ -1968,7 +1968,7 @@ rbac:
   ## binding Kafka ServiceAccount to a role
   ## that allows Kafka pods querying the K8s API
   ##
-  create: false
+  create: true
 
 ## @section Metrics parameters
 
