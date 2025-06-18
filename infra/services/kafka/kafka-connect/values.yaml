@@ -2,12 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 2
 
 ## Image Info
 ## ref: https://hub.docker.com/r/confluentinc/cp-kafka/
-image: confluentinc/cp-kafka-connect
-imageTag: 6.1.0
+image: huusy/cp-kafka-connect
+imageTag: 7.9.0
 
 ## Specify a imagePullPolicy
 ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -33,7 +33,18 @@ configurationOverrides:
   "config.storage.replication.factor": "3"
   "offset.storage.replication.factor": "3"
   "status.storage.replication.factor": "3"
-
+  "security.protocol": "SASL_SSL"
+  "sasl.mechanism": "SCRAM-SHA-512"
+  "sasl.jaas.config": >-
+    org.apache.kafka.common.security.scram.ScramLoginModule required
+    username="kafka" password="kafka";
+  "ssl.truststore.type": "JKS"
+  "ssl.truststore.location": "/usr/share/confluent-hub-components/kafka.truststore.jks"
+  "ssl.truststore.password": "changeit"
+  "ssl.keystore.type": "JKS"
+  "ssl.keystore.location": "/usr/share/confluent-hub-components/kafka.keystore.jks"
+  "ssl.keystore.password": "changeit"
+  "connector.client.config.override.policy": "All"
 ## Kafka Connect JVM Heap Option
 heapOptions: "-Xms512M -Xmx512M"
 
@@ -48,11 +59,11 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-   cpu: 2000m
-   memory: 4096Mi
-  requests:
-   cpu: 1000m
+   cpu: 1500m
    memory: 2048Mi
+  requests:
+   cpu: 500m
+   memory: 512Mi
 
 ## Custom pod annotations
 podAnnotations: {}
@@ -94,7 +105,7 @@ prometheus:
 ## You can list load balanced service endpoint, or list of all brokers (which is hard in K8s).  e.g.:
 ## bootstrapServers: "PLAINTEXT://dozing-prawn-kafka-headless:9092"
 kafka:
-  bootstrapServers: ""
+  bootstrapServers: "SASL_SSL://kafka.kafka.svc.cluster.local:9092"
 
 ## If the Kafka Chart is disabled a URL and port are required to connect
 ## e.g. gnoble-panther-cp-schema-registry:8081
