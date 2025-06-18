@@ -2,15 +2,15 @@ FROM flink:1.17
 
 USER root
 
-ARG PYTHON_VERSION
-ENV PYTHON_VERSION=3.9.18
-ARG FLINK_VERSION
-ENV FLINK_VERSION=1.17.2
+ARG PYTHON_VERSION=3.9.18
+ARG FLINK_VERSION=1.17.2
+
+ENV PYTHON_VERSION=${PYTHON_VERSION}
+ENV FLINK_VERSION=${FLINK_VERSION}
 
 # Download connector libs
-RUN wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.1.0/kafka-clients-3.1.0.jar \
-  && wget -P /opt/flink/lib/ https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar
-
+ADD https://repo.maven.apache.org/maven2/org/apache/kafka/kafka-clients/3.1.0/kafka-clients-3.1.0.jar /opt/flink/lib/
+ADD https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/${FLINK_VERSION}/flink-sql-connector-kafka-${FLINK_VERSION}.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/3.3.4/hadoop-common-3.3.4.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-hdfs/3.3.4/hadoop-hdfs-3.3.4.jar /opt/flink/lib/
@@ -18,13 +18,13 @@ ADD https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.172/aw
 ADD https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-hadoop/1.17.0/flink-s3-fs-hadoop-1.17.0.jar /opt/flink/lib/
 ADD https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/3.1.0-1.17/flink-connector-kafka-3.1.0-1.17.jar /opt/flink/lib/
 
-COPY infra/services/minio/selfsigned.crt /usr/local/share/ca-certificates/
+COPY infra/certs/minio/selfsigned.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates && \
     keytool -importcert -alias minio-ca -file /usr/local/share/ca-certificates/selfsigned.crt \
     -keystore "${JAVA_HOME}/lib/security/cacerts" \
     -storepass changeit -noprompt
 
-COPY infra/services/kafka/certs/kafka.truststore.jks /opt/flink/secrets/kafka.truststore.jks
+COPY infra/certs/kafka/kafka.truststore.jks /opt/flink/secrets/kafka.truststore.jks
 
 RUN chmod -R 644 /opt/flink/lib/*.jar && \
     chmod 600 /opt/flink/secrets/kafka.truststore.jks
