@@ -1,12 +1,10 @@
 .DEFAULT_GOAL := help
 
-# Variables
 NAMESPACE ?= airflow
 CHART_POSTGRESQL ?= bitnami/postgresql
 CHART_REDIS ?= bitnami/redis
 AIRFLOW_OPERATOR ?= apache-airflow/airflow
 
-# Define phony targets
 .PHONY: \
 	build-custom-dockerfile \
 	release-docker-images \
@@ -21,55 +19,63 @@ AIRFLOW_OPERATOR ?= apache-airflow/airflow
 	create-clusterrolebinding-for-spark-applications \
 	help
 
-# Install all
-install-all: install-postgresql-redis install-airflow
+install: create-namespace install-postgresql-redis install-airflow
 
-# Uninstall all
-uninstall-all: uninstall-airflow uninstall-postgresql-redis
+uninstall: uninstall-airflow uninstall-postgresql-redis
 
 create-namespace:
 	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
 	kubectl create namespace $(NAMESPACE)
 
-# Build custom Dockerfile for Airflow
 build-custom-dockerfile:
 	@set -e; \
 	docker build --progress=plain \
 		-t huusy/airflow:2.10.5 \
 		-f infra/services/airflow/Dockerfile .
 
-# Release Docker images to Docker Hub
 release-docker-images:
 	@set -e; \
 	docker push huusy/airflow:2.10.5
 
-# Install PostgreSQL and Redis
 install-postgresql-redis:
 	@set -e; \
+	@echo "Installing PostgreSQL and Redis for Airflow..."; \
+	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+
 	helm upgrade --install postgresql $(CHART_POSTGRESQL) \
-	  --namespace $(NAMESPACE) --create-namespace \
-	  --values infra/services/airflow/postgresql/values.yaml; \
+	  --namespace $(NAMESPACE) \
+	  --create-namespace \
+	  -f infra/services/airflow/postgresql/values.yaml; \
 	helm upgrade --install redis $(CHART_REDIS) \
 	  --namespace $(NAMESPACE) \
-	  --values infra/services/airflow/redis/values.yaml
+	  -f infra/services/airflow/redis/values.yaml
+	@echo "PostgreSQL and Redis installation complete."
 
-# Uninstall PostgreSQL and Redis
 uninstall-postgresql-redis:
 	@set -e; \
+	@echo "Uninstalling PostgreSQL and Redis..."; \
 	helm uninstall postgresql --namespace $(NAMESPACE) || true; \
 	helm uninstall redis --namespace $(NAMESPACE) || true
+	@echo "PostgreSQL and Redis uninstallation complete."
 
-# Install Airflow
 install-airflow:
 	@set -e; \
+	@echo "Installing Airflow..."; \
+	helm repo list | grep -q apache-airflow || helm repo add apache-airflow https://airflow.apache.org
+	helm repo update
+
 	helm upgrade --install airflow $(AIRFLOW_OPERATOR) \
 	  --namespace $(NAMESPACE) \
-	  --values infra/services/airflow/operator/values.yaml
+	  -f infra/services/airflow/operator/values.yaml
+	@echo "Airflow installation complete."
 
 # Uninstall Airflow
 uninstall-airflow:
 	@set -e; \
+	@echo "Uninstalling Airflow..."; \
 	helm uninstall airflow --namespace $(NAMESPACE) || true
+	@echo "Airflow uninstallation complete."
 
 # Create cluster role binding for Spark applications
 # This is necessary for Airflow to run Spark jobs in the cluster
@@ -79,23 +85,32 @@ create-clusterrolebinding-for-spark-applications:
 		--clusterrole cluster-admin \
 		--serviceaccount=$(NAMESPACE):airflow-worker \
 		--namespace $(NAMESPACE)
+	@echo "Cluster role binding for Spark applications created."
 
 create-web-nodeport:
 	@set -e; \
+	@echo "Creating NodePort service for Airflow web server..."; \
 	kubectl apply -f infra/services/airflow/web-nodeport.yaml
+	@echo "NodePort service for Airflow web server created."
 
 delete-web-nodeport:
 	@set -e; \
+	@echo "Deleting NodePort service for Airflow web server..."; \
 	kubectl delete -f infra/services/airflow/web-nodeport.yaml
+	@echo "NodePort service for Airflow web server deleted."
 
 help:
-	@echo "Makefile commands:"; \
-	echo "make install-all                 - Install PostgreSQL, Redis, and Airflow"; \
-	echo "make uninstall-all               - Uninstall all components"; \
-	echo "make install-postgresql-redis    - Install only PostgreSQL and Redis"; \
-	echo "make uninstall-postgresql-redis  - Uninstall only PostgreSQL and Redis"; \
-	echo "make install-airflow             - Install only Airflow (assumes external services ready)"; \
-	echo "make uninstall-airflow           - Uninstall Airflow"; \
-	echo "make create-web-nodeport         - Create a NodePort service for Airflow web server"
-	echo "make delete-web-nodeport         - Delete the NodePort service for Airflow web server"; \
-	echo "make create-namespace            - Create Kubernetes namespace if not exists"; \
+	@echo "Makefile commands:"
+	@echo "  make install            				- Install all Airflow components (PostgreSQL, Redis, Airflow)"
+	@echo "  make uninstall          				- Uninstall all Airflow components"
+	@echo "  make create-namespace   				- Create the Airflow namespace"
+	@echo "  make build-custom-dockerfile 			- Build custom Airflow Docker image"
+	@echo "  make release-docker-images 			- Push custom Airflow Docker image to registry"
+	@echo "  make install-postgresql-redis 			- Install PostgreSQL and Redis for Airflow"
+	@echo "  make uninstall-postgresql-redis 		- Uninstall PostgreSQL and Redis"
+	@echo "  make install-airflow     				- Install Airflow"
+	@echo "  make uninstall-airflow   				- Uninstall Airflow"
+	@echo "  make create-web-nodeport 				- Create NodePort service for Airflow web server"
+	@echo "  make delete-web-nodeport 				- Delete NodePort service for Airflow web server"
+	@echo "  make create-clusterrolebinding-for-spark-applications - Create cluster role binding for Spark applications"
+	@echo "  make help                				- Show this help message"
