@@ -26,7 +26,7 @@ image:
   digest: ""
   # -- When true, only the content in `repository` is used as image reference
   useRepositoryAsSoleImageReference: false
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 # -- An optional list of references to secrets in the same namespace to use for pulling images.
 # @raw
@@ -583,7 +583,7 @@ coordinator:
     # coordinator.deployment.strategy -- The deployment strategy to use to replace existing pods with new ones.
 
   jvm:
-    maxHeapSize: "8G"
+    maxHeapSize: "6G"
     gcMethod:
       type: "UseG1GC"
       g1:
@@ -759,7 +759,7 @@ worker:
     # worker.deployment.strategy -- The deployment strategy to use to replace existing pods with new ones.
 
   jvm:
-    maxHeapSize: "8G"
+    maxHeapSize: "6G"
     gcMethod:
       type: "UseG1GC"
       g1:
@@ -786,7 +786,6 @@ worker:
   # ```
 
   resources:
-    resources: 
     limits:
       cpu: 2000m
       memory: 4096Mi
