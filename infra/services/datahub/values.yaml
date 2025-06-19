@@ -40,6 +40,27 @@ datahub-gms:
 
 datahub-frontend:
   enabled: true
+  replicaCount: 1
+  hpa:
+    # If enabled, Horizontal Pod Autoscaler (HPA) will automatically scale the number of replicas based on CPU and memory utilization thresholds.
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 3
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 180
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 60
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 70
   image:
     repository: acryldata/datahub-frontend-react
     # tag: "v0.11.0" # # defaults to .global.datahub.version
@@ -56,16 +77,27 @@ datahub-frontend:
   # Set up ingress to expose react front-end
   ingress:
     enabled: false
+    # className: ""
+    # extraLabels: {}
+    # annotations: {}
+    # hosts:
+    #   - host: chart-example.local
+    #     paths: []
+    #     redirectPaths: []
+    # tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+    # pathType: ImplementationSpecific
   defaultUserCredentials: {}
-  service:
-    extraLabels: {}
     # randomAdminPassword: true
     # You can also set specific passwords for default users
     # manualValues: |
     #   datahub:manualPassword
     #   initialViewer:manualPassword
+  service:
+    extraLabels: {}
   # Optionaly specify service type for datahub-frontend: LoadBalancer, ClusterIP or NodePort, by default: LoadBalancer
-  # service:
   #   type: ClusterIP
 
 acryl-datahub-actions:
@@ -351,6 +383,28 @@ datahubUpgrade:
     #    value: "dh"
   extraInitContainers: []
 
+## Code for ES replica tweaking
+datahubSystemCronHourly:
+  # This feature is not ready yet, DO NOT enable
+  # Enabled by default in case resources need to be allocated to be able to run this job
+  enabled: false
+  image:
+    repository: 795586375822.dkr.ecr.us-west-2.amazonaws.com/datahub-upgrade
+    # tag: "v0.2.0"  # defaults to .global.datahub.version
+  podSecurityContext: {}
+    # fsGroup: 1000
+  securityContext: {}
+    # runAsUser: 1000
+  podAnnotations: {}
+  # Add extra sidecar containers to job pod
+  extraSidecars: []
+    # - name: my-image-name
+    #   image: my-image
+    #   imagePullPolicy: Always
+  extraInitContainers: []
+  jvmOpts:
+    XX: ":+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=75.0"
+
 ## Runs system update processes
 ## Includes: Elasticsearch Indices Creation/Reindex (See global.elasticsearch.index for additional configuration)
 datahubSystemUpdate:
@@ -446,6 +500,10 @@ datahubSystemUpdate:
   extraInitContainers: []
 
 global:
+  # Uncomment and customize the following section to add custom labels to your pods
+  # podLabels:
+  #   name: datahub
+  #   environment: production
   strict_mode: true
   graph_service_impl: elasticsearch
   datahub_analytics_enabled: true
@@ -460,6 +518,16 @@ global:
     skipcheck: "false"
     insecure: "false"
     useSSL: "false"
+
+    # Authentication
+    # auth:
+      # username: "elastic"
+      # password:
+        # Value can be directly specified here, or stored in a secret with secretRef
+        # value: "<password>"
+        # or
+        # secretRef: <secret-ref>
+        # secretKey: <secret-key>
     # If you want to specify index prefixes use indexPrefix
     # indexPrefix: "dh"
 
@@ -621,6 +689,7 @@ global:
       #   gms: "<<release-name>>-duhe-consumer-job-client-gms"
       #   mae-consumer: "<<release-name>>-duhe-consumer-job-client-mcl"
       #   mce-consumer: "<<release-name>>-duhe-consumer-job-client-mcp"
+      datahub_actions_doc_propagation_consumer_group_id: "datahub_doc_propagation_action"
       datahub_actions_ingestion_executor_consumer_group_id: "ingestion_executor"
       datahub_actions_slack_consumer_group_id: "datahub_slack_action"
       datahub_actions_teams_consumer_group_id: "datahub_teams_action"
@@ -729,7 +798,7 @@ global:
       #   value: password
 
   datahub:
-    version: v1.0.0
+    version: v1.1.0
     gms:
       protocol: "http"
       port: "8080"
