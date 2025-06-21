@@ -1980,7 +1980,7 @@ metrics:
   jmx:
     ## @param metrics.jmx.enabled Whether or not to expose JMX metrics to Prometheus
     ##
-    enabled: false
+    enabled: true
     ## @param metrics.jmx.kafkaJmxPort JMX port where the exporter will collect metrics, exposed in the Kafka container.
     ##
     kafkaJmxPort: 5555
@@ -2160,24 +2160,25 @@ metrics:
   serviceMonitor:
     ## @param metrics.serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor (requires `metrics.jmx.enabled` to be `true`)
     ##
-    enabled: false
+    enabled: true
     ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
     ##
-    namespace: ""
+    namespace: "monitoring"
     ## @param metrics.serviceMonitor.path Path where JMX exporter serves metrics
     ##
     path: /metrics
     ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
     ##
-    interval: ""
+    interval: "30s"
     ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
     ##
     scrapeTimeout: ""
     ## @param metrics.serviceMonitor.labels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
     ##
-    labels: {}
+    labels:
+      prometheus: monitoring
     ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
     ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
     ##
