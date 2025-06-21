@@ -29,6 +29,7 @@ spec:
               value: "true"
           ports:
             - containerPort: 8080
-          command: ["/bin/sh", "-c"]
-          args:
-            - "mlflow models serve -w 3 -m 'runs:/9eb55fcee4be47c2906e57c1e6779809/model' --no-conda --host 0.0.0.0 --port 8080"
+          command:
+            - /bin/sh
+            - -c
+            - "mlflow models serve -w $(nproc) -m 'runs:/9eb55fcee4be47c2906e57c1e6779809/model' --no-conda --host 0.0.0.0 --port 8080"

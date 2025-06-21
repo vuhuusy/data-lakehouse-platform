@@ -1,5 +1,11 @@
 .PHONY: install-mlflow uninstall-mlflow expose-mlflow-service create-minio-ca-configmap
 
+install: create-namespace create-minio-ca-configmap install-mlflow expose-mlflow-service
+
+create-namespace:
+	@set -e; \
+	kubectl get namespace mlflow >/dev/null 2>&1 || kubectl create namespace mlflow
+
 # Install MLflow
 install-mlflow:
 	@set -e; \
@@ -20,9 +26,10 @@ create-minio-ca-configmap:
 	  -n mlflow
 
 # Uninstall MLflow
-uninstall-mlflow:
+uninstall:
 	@set -e; \
 	helm uninstall mlflow --namespace mlflow || true; \
+	kubectl delete configmap minio-ca-configmap --namespace mlflow || true; \
 	kubectl delete service mlflow --namespace mlflow || true
 
 server:
