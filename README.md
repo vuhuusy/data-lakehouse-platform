@@ -6,10 +6,10 @@
 - [Table of Contents](#table-of-contents)
 - [1. Overview](#1-overview)
 - [2. Quick Start](#2-quick-start)
-  - [2.1. Install Ansible and Prepare Environment](#21-install-ansible-and-prepare-environment)
-  - [2.2. Run Rancher with Docker](#22-run-rancher-with-docker)
-  - [2.3. Create and Configure RKE2 Cluster](#23-create-and-configure-rke2-cluster)
-  - [2.4. Install longhorn](#install-longhorn)
+  - [2.1 Install Ansible and Prepare Environment](#21-install-ansible-and-prepare-environment)
+  - [2.2 Run Rancher with Docker](#22-run-rancher-with-docker)
+  - [2.3 Create and Configure RKE2 Cluster](#23-create-and-configure-rke2-cluster)
+  - [2.4 Install longhorn](#install-longhorn)
     - [Install Minio](#install-minio)
     - [Install Spark](#install-spark)
     - [Install Airflow](#install-airflow)
@@ -19,7 +19,7 @@
     - [Install Kafka Connect](#install-kafka-connect)
     - [Install Trino](#install-trino)
     - [Install Datahub](#install-datahub)
-  - [License](#license)
+  - [3. License](#3-license)
 
 # 1. Overview
 
