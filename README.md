@@ -1,4 +1,4 @@
-Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture
+# Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
@@ -68,6 +68,9 @@ In Rancher UI home page, click ``Create``then choose ``Custom``for a self-hosted
 
 Pick a name for your cluster (e.g. lakehouse) and left other options as default.
 
+![image](https://github.com/user-attachments/assets/d417b3fd-5061-46ca-b823-63c99cd94595)
+
+
 In ``Registration`` step, choose ``etcd`` and ``Control Plane`` roles to be seted up onto your master node(s).
 
 After that, the ``Worker`` role will be seted up onto your worker node(s).
@@ -92,7 +95,9 @@ ansible-playbook infra/ansible/playbooks/setup-rke2-nodes.yml
 
 ```bash
 nano ~/.bashrc
+```
 
+```bash
 alias k='kubectl'
 alias kgp='kubectl get pods'
 alias kgs='kubectl get svc'
@@ -103,13 +108,18 @@ alias kdf='kubectl delete -f'
 alias kctx='kubectl config use-context'
 alias kns='kubectl config set-context --current --namespace'
 # add more for your needs, then apply the change
+```
 
+```bash
 source ~/.bashrc
 ```
 
 ### Install longhorn
 
 First, in your RKE cluster, get the KUBECONFIG from top left of the Rancher UI. Copy that and put into your Rancher host.
+
+![image](https://github.com/user-attachments/assets/d54e1ff7-23e8-4f60-9397-62f9b731485f)
+
 
 ```bash
 mkdir -p ~/.kube
