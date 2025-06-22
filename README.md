@@ -1,7 +1,6 @@
-# Data Lakehouse Platform - A Modern Architecture
+Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture
 
 # Table of Contents
-- [Data Lakehouse Platform - A Modern Architecture](#data-lakehouse-platform---a-modern-architecture)
 - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Data Lakehouse Architecture](#data-lakehouse-architecture)
