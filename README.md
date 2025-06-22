@@ -1,4 +1,4 @@
-Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture
+# Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
@@ -67,6 +67,9 @@ Open your browser at ``https://<your_rancher_host_ip_addr>`` and set a new passw
 In Rancher UI home page, click ``Create``then choose ``Custom``for a self-hosted K8s cluster.
 
 Pick a name for your cluster (e.g. lakehouse) and left other options as default.
+
+![image](https://github.com/user-attachments/assets/d417b3fd-5061-46ca-b823-63c99cd94595)
+
 
 In ``Registration`` step, choose ``etcd`` and ``Control Plane`` roles to be seted up onto your master node(s).
 
