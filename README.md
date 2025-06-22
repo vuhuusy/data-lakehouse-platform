@@ -5,10 +5,8 @@
   - [Overview](#overview)
   - [Data Lakehouse Architecture](#data-lakehouse-architecture)
   - [Quick Start](#quick-start)
-    - [Install Ansible on Rancher machine](#install-ansible-on-rancher-machine)
-    - [Create a Rancher Kubernetes Engine (RKE2) cluster](#create-a-rancher-kubernetes-engine-rke2-cluster)
-    - [Nodes Registration](#nodes-registration)
-    - [Set alias for kubectl shortcuts](#set-alias-for-kubectl-shortcuts)
+    - [Install Ansible](#install-ansible)
+    - [Create RKE2 cluster](#create-rke2-cluster)
     - [Install longhorn](#install-longhorn)
     - [Install Minio](#install-minio)
     - [Install Spark](#install-spark)
@@ -25,9 +23,11 @@
 
 ## Data Lakehouse Architecture
 
+![Data Lakehouse Architecture](figures/architecture.png)
+
 ## Quick Start
 
-### Install Ansible on Rancher machine
+### Install Ansible
 
 ```bash
 apt update
@@ -62,7 +62,7 @@ docker logs rancher 2>&1 | grep "Bootstrap Password:"
 
 Open your browser at ``https://<your_rancher_host_ip_addr>`` and set a new password to use.
 
-### Create a Rancher Kubernetes Engine (RKE2) cluster
+### Create RKE2 cluster
 
 In Rancher UI home page, click ``Create``then choose ``Custom``for a self-hosted K8s cluster.
 
