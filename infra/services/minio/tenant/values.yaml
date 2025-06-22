@@ -296,7 +296,22 @@ tenant:
   #    - name: my-minio-bucket
   #      objectLock: false        # optional
   #      region: us-east-1        # optional
-  buckets: [ ]
+  buckets:
+    - name: feast-feature-registry
+      region: us-east-1
+    - name: gold-zone
+      region: us-east-1
+    - name: hive-metastore
+      region: us-east-1
+    - name: mlflow
+      region: us-east-1
+    - name: raw-zone
+      region: us-east-1
+    - name: share
+      region: us-east-1
+    - name: work-zone
+      region: us-east-1
+
   ###
   # Array of Kubernetes secrets from which the Operator generates MinIO users during tenant provisioning.
   #
