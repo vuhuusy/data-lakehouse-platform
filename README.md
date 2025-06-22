@@ -5,7 +5,21 @@
 - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Data Lakehouse Architecture](#data-lakehouse-architecture)
-  - [Getting Started](#getting-started)
+  - [Quick Start](#quick-start)
+    - [Install Ansible on Rancher machine](#install-ansible-on-rancher-machine)
+    - [Create a Rancher Kubernetes Engine (RKE2) cluster](#create-a-rancher-kubernetes-engine-rke2-cluster)
+    - [Nodes Registration](#nodes-registration)
+    - [Set alias for kubectl shortcuts](#set-alias-for-kubectl-shortcuts)
+    - [Install longhorn](#install-longhorn)
+    - [Install Minio](#install-minio)
+    - [Install Spark](#install-spark)
+    - [Install Airflow](#install-airflow)
+    - [Install Hive Metastore](#install-hive-metastore)
+    - [Install Kafka](#install-kafka)
+    - [Install sources](#install-sources)
+    - [Install Kafka Connect](#install-kafka-connect)
+    - [Install Trino](#install-trino)
+    - [Install Datahub](#install-datahub)
   - [License](#license)
 
 ## Overview
@@ -27,7 +41,7 @@ Then in the root of this repo, run:
 
 ```bash
 ansible-playbook infra/ansible/playbooks/base-setup.yml
-ansible-playbook infra/ansible/playbooks/setup_rancher.yml
+ansible-playbook infra/ansible/playbooks/setup-rancher.yml
 ```
 
 Run Rancher on Docker:
@@ -72,7 +86,7 @@ nano infra/ansible/inventory/group_vars/all.yml
 Then run ansible-playbook:
 
 ```bash
-ansible-playbook infra/ansible/playbooks/setup_rke2_nodes.yml
+ansible-playbook infra/ansible/playbooks/setup-rke2-nodes.yml
 ```
 
 ### Set alias for kubectl shortcuts
