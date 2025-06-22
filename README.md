@@ -41,7 +41,7 @@ Then in the root of this repo, run:
 
 ```bash
 ansible-playbook infra/ansible/playbooks/base-setup.yml
-ansible-playbook infra/ansible/playbooks/setup-rancher.yml
+ansible-playbook infra/ansible/playbooks/setup-rancher-nodes.yml
 ```
 
 Run Rancher on Docker:
