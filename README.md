@@ -4,11 +4,12 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
-  - [1. Overview](#overview)
-  - [2. Quick Start](#quick-start)
-    - [2.1. Install Ansible and Prepare Environment](#install-ansible-and-prepare-environment)
-    - [2.2. Create RKE2 Cluster](#create-rke2-cluster)
-    - [2.3. Install longhorn](#install-longhorn)
+- [1. Overview](#1-overview)
+- [2. Quick Start](#2-quick-start)
+  - [2.1. Install Ansible and Prepare Environment](#21-install-ansible-and-prepare-environment)
+  - [2.2. Run Rancher with Docker](#22-run-rancher-with-docker)
+  - [2.3. Create and Configure RKE2 Cluster](#23-create-and-configure-rke2-cluster)
+  - [2.4. Install longhorn](#install-longhorn)
     - [Install Minio](#install-minio)
     - [Install Spark](#install-spark)
     - [Install Airflow](#install-airflow)
@@ -20,13 +21,13 @@
     - [Install Datahub](#install-datahub)
   - [License](#license)
 
-## Overview
+# 1. Overview
 
 This project demonstrates a scalable real-time fraud detection system built on a modern Data Lakehouse architecture. It integrates batch and streaming data pipelines using open-source Big Data technologies such as Apache Flink, Kafka, Spark, Delta Lake, and MLflow. The system is designed for low-latency inference, feature enrichment, and end-to-end observability, supporting both operational analytics and machine learning in production environments.
 
-## Quick Start
+# 2. Quick Start
 
-### Install Ansible and Prepare Environment
+## 2.1 Install Ansible and Prepare Environment
 
 Install Ansible on your Rancher host machine (Ubuntu/Debian-based):
 
@@ -51,7 +52,7 @@ ansible-playbook infra/ansible/playbooks/base-setup.yml
 ansible-playbook infra/ansible/playbooks/setup-rancher-nodes.yml
 ```
 
-### Run Rancher with Docker
+## 2.2 Run Rancher with Docker
 
 Start a standalone Rancher server using Docker:
 
@@ -79,39 +80,70 @@ https://<your_rancher_host_ip_addr>
 
 Login with the bootstrap password and follow the instructions to set a new admin password.
 
-### Create RKE2 Cluster
+## 2.3 Create and Configure RKE2 Cluster
 
-#### Create a new Kubernetes cluster in Rancher UI:
+### Create a new Kubernetes cluster in Rancher UI:
 - From the Rancher home page, click Create, then choose Custom for a self-hosted K8s cluster.
 - Enter a name for the cluster (e.g., lakehouse) and leave other settings as default.
 
 ![Create RKE2 cluster](https://github.com/user-attachments/assets/d417b3fd-5061-46ca-b823-63c99cd94595)
 
 
-#### Select node roles in the Registration step
+### Select node roles in the Registration step
 - Assign ``etcd`` and ``Control Plane`` roles to your master node(s).
 - Assign ``Worker`` role to worker node(s).
 - **Important**: Select the Insecure option to disable TLS verification if needed.
 
-### Nodes Registration
+### Register nodes with Ansible
 
-Change the server_url, token, and ca_checksum to fit with your cluster.
+Update the following variables in your inventory file:
 
 ```bash
 nano infra/ansible/inventory/group_vars/all.yml
 ```
 
-Then run ansible-playbook:
+Edit values:
+
+```bash
+server_url: "https://<your_rancher_server_ip>"
+token: "<your_cluster_token>"
+ca_checksum: "<your_cluster_ca_checksum>"
+```
+
+Then run the RKE2 setup playbook:
 
 ```bash
 ansible-playbook infra/ansible/playbooks/setup-rke2-nodes.yml
 ```
 
-### Set alias for kubectl shortcuts
+### Set up kubeconfig on your Rancher host
+
+After the cluster is active, download its KUBECONFIG file from the top-right menu of the Rancher UI.
+Copy it into your Rancher host at:
+
+![image](https://github.com/user-attachments/assets/d54e1ff7-23e8-4f60-9397-62f9b731485f)
+
+```bash
+mkdir -p ~/.kube
+nano ~/.kube/config
+# Paste your KUBECONFIG into that file
+```
+
+Then verify ``kubectl`` works:
+
+```bash
+kubectl get nodes
+```
+
+### (Optional) Set useful kubectl aliases
+
+Edit your shell config:
 
 ```bash
 nano ~/.bashrc
 ```
+
+Add these aliases:
 
 ```bash
 alias k='kubectl'
@@ -126,22 +158,13 @@ alias kns='kubectl config set-context --current --namespace'
 # add more for your needs, then apply the change
 ```
 
+Apply the changes:
+
 ```bash
 source ~/.bashrc
 ```
 
-### Install longhorn
-
-First, in your RKE cluster, get the KUBECONFIG from top left of the Rancher UI. Copy that and put into your Rancher host.
-
-![image](https://github.com/user-attachments/assets/d54e1ff7-23e8-4f60-9397-62f9b731485f)
-
-
-```bash
-mkdir -p ~/.kube
-nano ~/.kube/config
-# Paste your KUBECONFIG into that file
-```
+## 2.4 Install longhorn
 
 ```bash
 helm repo add longhorn https://charts.longhorn.io
@@ -150,24 +173,26 @@ helm repo update
 make longhorn-install
 ```
 
-### Install Minio
+## 2.5 Install Minio
 
 [Link to Minio Docs]
 
-### Install Spark
+## 2.6 Install Spark
 
-### Install Airflow
+## 2.7 Install Airflow
 
-### Install Hive Metastore
+## 2.8 Install Hive Metastore
 
-### Install Kafka
+## 2.9 Install Kafka
 
-### Install sources
+## 2.10 Install sources
 
-### Install Kafka Connect
+## 2.11 Install Kafka Connect
 
-### Install Trino
+## 2.12 Install Trino
 
-### Install Datahub
+## 2.13 Install Datahub
 
-## License
+# 3. License
+
+MIT License. See [LICENSE](./LICENSE) for details.
