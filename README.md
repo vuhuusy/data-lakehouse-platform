@@ -294,7 +294,7 @@ make -f infra/services/mlflow/Makefile install
 ## 2.16 Install Feast
 
 ```bash
-
+make -f infra/services/feast/Makefile install-online-store
 ```
 
 ## 2.17 Install Datahub
