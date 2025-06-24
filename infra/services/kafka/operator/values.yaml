@@ -2242,7 +2242,17 @@ provisioning:
   ##     max.message.bytes: 64000
   ##     flush.messages: 1
   ##
-  topics: []
+  topics:
+    - name: financial-ops.core.customer
+      partitions: 3
+      replicationFactor: 2
+    - name: financial-ops.core.merchant
+      partitions: 3
+      replicationFactor: 2
+    - name: financial-ops.core.transaction
+      partitions: 9
+      replicationFactor: 2
+      
   ## @param provisioning.nodeSelector Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
   ##
