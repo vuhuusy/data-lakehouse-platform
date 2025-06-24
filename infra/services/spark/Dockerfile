@@ -2,7 +2,7 @@ FROM bitnami/spark:3.5.3
 
 USER root
 
-COPY source_code/airflow/dags/spark-jobs/ /opt/spark-jobs/
+COPY script/airflow/dags/spark-jobs/ /opt/spark-jobs/
 
 WORKDIR /app
 

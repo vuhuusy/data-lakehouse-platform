@@ -2778,7 +2778,7 @@ dags:
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: "source_code/airflow/dags"
+    subPath: "script/airflow/dags"
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---

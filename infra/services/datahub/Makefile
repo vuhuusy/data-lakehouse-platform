@@ -1,5 +1,3 @@
-# Makefile for DataHub deployment
-
 NAMESPACE ?= datahub
 MYSQL_SECRET_NAME ?= mysql-secrets
 NEO4J_SECRET_NAME ?= neo4j-secrets
@@ -13,6 +11,13 @@ DATAHUB_PREREQ_CHART ?= datahub/datahub-prerequisites
 	release-docker-images \
 	create-web-nodeport
 
+install: create-namespace create-secrets install-prerequisites install-datahub create-web-nodeport
+
+create-namespace:
+	@set -e; \
+	kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	kubectl create namespace $(NAMESPACE)
+
 create-secrets:
 	@set -e; \
 	kubectl create namespace $(NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -; \
@@ -21,10 +26,18 @@ create-secrets:
 	kubectl create secret generic $(MYSQL_SECRET_NAME) --from-literal=mysql-root-password=datahub -n $(NAMESPACE); \
 	kubectl create secret generic $(NEO4J_SECRET_NAME) --from-literal=neo4j-password=datahub -n $(NAMESPACE)
 
-install:
+install-prerequisites:
 	@set -e; \
-	helm upgrade --install prerequisites $(DATAHUB_PREREQ_CHART) -n $(NAMESPACE) --create-namespace -f infra/services/datahub/prerequisites/values.yaml ; \
-	helm upgrade --install datahub $(DATAHUB_CHART) -n $(NAMESPACE) -f infra/services/datahub/values.yaml
+	helm list | grep -q datahub || helm repo add datahub https://helm.datahubproject.io/
+	helm upgrade --install prerequisites $(DATAHUB_PREREQ_CHART) \
+		-n $(NAMESPACE) --create-namespace \
+		-f infra/services/datahub/prerequisites/values.yaml
+
+install-datahub:
+	@set -e; \
+	helm upgrade --install datahub $(DATAHUB_CHART) \
+		-n $(NAMESPACE) \
+		-f infra/services/datahub/values.yaml
 
 create-web-nodeport:
 	@set -e; \

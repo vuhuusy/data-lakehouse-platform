@@ -7,7 +7,7 @@ from datetime import datetime
 import pendulum
 import sys
 
-sys.path.append("/opt/airflow/dags/repo/source_code/airflow/dags")
+sys.path.append("/opt/airflow/dags/repo/script/airflow/dags")
 
 default_args = {
     'start_date': datetime(2025, 6, 1),

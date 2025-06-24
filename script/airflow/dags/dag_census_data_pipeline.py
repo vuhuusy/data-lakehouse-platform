@@ -7,7 +7,7 @@ import pandas as pd
 from io import StringIO
 import sys
 import pendulum
-sys.path.append("/opt/airflow/dags/repo/source_code/airflow/census_api")
+sys.path.append("/opt/airflow/dags/repo/script/airflow/census_api")
 
 from census_etl import check_api_availability, extract, transform, load as load_to_minio
 
