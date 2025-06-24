@@ -3,29 +3,41 @@
 ![Data Lakehouse Architecture](./figures/architecture.png)
 
 # Table of Contents
+- [Scalable Real-time Fraud Detection Engine Built on Lakehouse Architecture](#scalable-real-time-fraud-detection-engine-built-on-lakehouse-architecture)
 - [Table of Contents](#table-of-contents)
 - [1. Overview](#1-overview)
-- [2. Quick Start](#2-quick-start)
+- [2. Installation](#2-installation)
   - [2.1 Install Ansible and Prepare Environment](#21-install-ansible-and-prepare-environment)
   - [2.2 Run Rancher with Docker](#22-run-rancher-with-docker)
   - [2.3 Create and Configure RKE2 Cluster](#23-create-and-configure-rke2-cluster)
-  - [2.4 Install longhorn](#install-longhorn)
-    - [Install Minio](#install-minio)
-    - [Install Spark](#install-spark)
-    - [Install Airflow](#install-airflow)
-    - [Install Hive Metastore](#install-hive-metastore)
-    - [Install Kafka](#install-kafka)
-    - [Install sources](#install-sources)
-    - [Install Kafka Connect](#install-kafka-connect)
-    - [Install Trino](#install-trino)
-    - [Install Datahub](#install-datahub)
-  - [3. License](#3-license)
+    - [Create a new Kubernetes cluster in Rancher UI:](#create-a-new-kubernetes-cluster-in-rancher-ui)
+    - [Select node roles in the Registration step](#select-node-roles-in-the-registration-step)
+    - [Register nodes with Ansible](#register-nodes-with-ansible)
+    - [Set up kubeconfig on your Rancher host](#set-up-kubeconfig-on-your-rancher-host)
+    - [(Optional) Set useful kubectl aliases](#optional-set-useful-kubectl-aliases)
+  - [2.4 Install Longhorn](#24-install-longhorn)
+  - [2.5 Install Minio](#25-install-minio)
+  - [2.6 Install Airflow](#26-install-airflow)
+  - [2.7 Install Spark Operator](#27-install-spark-operator)
+  - [2.8 Install Flink Operator](#28-install-flink-operator)
+  - [2.9 Install Hive Metastore](#29-install-hive-metastore)
+  - [2.10 Install Kafka](#210-install-kafka)
+  - [2.11 Install sources](#211-install-sources)
+  - [2.12 Install Kafka Connect](#212-install-kafka-connect)
+  - [2.13 Install Trino](#213-install-trino)
+  - [2.14 Install Superset](#214-install-superset)
+  - [2.15 Install MLFlow](#215-install-mlflow)
+  - [2.16 Install Feast](#216-install-feast)
+  - [2.17 Install Datahub](#217-install-datahub)
+  - [2.18 Install Prometheus Operator](#218-install-prometheus-operator)
+- [3. Run Applications](#3-run-applications)
+- [4. License](#4-license)
 
 # 1. Overview
 
 This project demonstrates a scalable real-time fraud detection system built on a modern Data Lakehouse architecture. It integrates batch and streaming data pipelines using open-source Big Data technologies such as Apache Flink, Kafka, Spark, Delta Lake, and MLflow. The system is designed for low-latency inference, feature enrichment, and end-to-end observability, supporting both operational analytics and machine learning in production environments.
 
-# 2. Quick Start
+# 2. Installation
 
 ## 2.1 Install Ansible and Prepare Environment
 
@@ -164,35 +176,141 @@ Apply the changes:
 source ~/.bashrc
 ```
 
-## 2.4 Install longhorn
+## 2.4 Install Longhorn
 
 ```bash
-helm repo add longhorn https://charts.longhorn.io
-helm repo update
-
-make longhorn-install
+make -f infra/services/longhorn/Makefile install
 ```
 
 ## 2.5 Install Minio
 
-[Link to Minio Docs]
+```bash
+make -f infra/services/minio/Makefile create-namespace
 
-## 2.6 Install Spark
+make -f infra/services/minio/Makefile generate-self-signed-cert
 
-## 2.7 Install Airflow
+make -f infra/services/minio/Makefile register-self-signed-cert
 
-## 2.8 Install Hive Metastore
+make -f infra/services/minio/Makefile install
 
-## 2.9 Install Kafka
+make -f infra/services/minio/Makefile create-nodeport
+```
 
-## 2.10 Install sources
+## 2.6 Install Airflow
 
-## 2.11 Install Kafka Connect
+```bash
+make -f infra/services/airflow/Makefile install
 
-## 2.12 Install Trino
+make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-applications
+```
 
-## 2.13 Install Datahub
+## 2.7 Install Spark Operator
 
-# 3. License
+```bash
+make -f infra/services/spark/Makefile build-spark-application-dockerfile
+
+make -f infra/services/spark/Makefile release-docker-image
+
+make -f infra/services/spark/Makefile install
+```
+
+## 2.8 Install Flink Operator
+
+```bash
+make -f infra/services/flink/Makefile build-flink-custom-dockerfile
+
+make -f infra/services/flink/Makefile release-docker-images
+
+make -f infra/services/flink/Makefile install-cert-manager
+
+make -f infra/services/spark/Makefile install
+```
+
+## 2.9 Install Hive Metastore
+
+```bash
+make -f infra/services/hive/Makefile build-metastore-custom-dockerfile
+
+make -f infra/services/hive/Makefile build-schematool-custom-dockerfile
+
+make -f infra/services/hive/Makefile release-docker-images
+
+make -f infra/services/hive/Makefile install
+```
+
+## 2.10 Install Kafka
+
+```bash
+make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
+
+make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
+
+make -f infra/services/kafka/Makefile install
+```
+
+## 2.11 Install sources
+
+```bash
+make -f infra/services/sources/Makefile install
+```
+
+## 2.12 Install Kafka Connect
+
+```bash
+make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile
+
+make -f infra/services/kafka/kafka-connect/Makefile release-docker-image
+
+make -f infra/services/kafka/kafka-connect/Makefile install
+
+make -f infra/services/kafka/kafka-connect/Makefile create-postgres-connector
+
+# install kafka ui
+make -f infra/services/kafka/kafka-ui/Makefile install
+```
+
+## 2.13 Install Trino
+
+```bash
+make -f infra/services/trino/Makefile build-trino-custom-dockerfile
+
+make -f infra/services/trino/Makefile release-docker-images
+
+make -f infra/services/trino/Makefile install
+```
+
+## 2.14 Install Superset
+
+```bash
+make -f infra/services/superset/Makefile install
+```
+
+## 2.15 Install MLFlow
+
+```bash
+make -f infra/services/mlflow/Makefile install
+```
+
+## 2.16 Install Feast
+
+```bash
+
+```
+
+## 2.17 Install Datahub
+
+```bash
+make -f infra/services/datahub/Makefile install
+```
+
+## 2.18 Install Prometheus Operator
+
+```bash
+make -f infra/services/monitoring/Makefile install
+```
+
+# 3. Run Applications
+
+# 4. License
 
 MIT License. See [LICENSE](./LICENSE) for details.
