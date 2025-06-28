@@ -651,9 +651,9 @@ primary:
       args:
         - |
           mc alias set --insecure myminio https://minio.minio.svc.cluster.local:443 minio minio123 && \
-          mc cp --insecure myminio/work-zone/tmp/customers.csv /workdir/customers.csv && \
-          mc cp --insecure myminio/work-zone/tmp/merchants.csv /workdir/merchants.csv && \
-          mc cp --recursive --insecure myminio/work-zone/tmp/ /workdir/
+          mc cp --insecure myminio/work-zone/tmp/customers/customers.csv /workdir/customers.csv && \
+          mc cp --insecure myminio/work-zone/tmp/merchants/merchants.csv /workdir/merchants.csv && \
+          mc cp --recursive --insecure myminio/work-zone/tmp/transactions/ /workdir/
 
       volumeMounts:
         - name: workdir
