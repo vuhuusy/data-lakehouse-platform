@@ -402,9 +402,7 @@ primary:
   ##   - name: FOO
   ##     value: "bar"
   ##
-  extraEnvVars:
-    - name: POSTGRESQL_STARTUP_TIMEOUT
-      value: "180"
+  extraEnvVars: []
   ## @param primary.extraEnvVarsCM Name of existing ConfigMap containing extra env vars for PostgreSQL Primary nodes
   ##
   extraEnvVarsCM: ""
