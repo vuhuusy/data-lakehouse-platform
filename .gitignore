@@ -1,6 +1,4 @@
 .env
 note
 venv
-infra/certs/kafka/*
-infra/certs/minio/*
 .vscode
