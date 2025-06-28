@@ -429,7 +429,7 @@ primary:
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
-    failureThreshold: 6
+    failureThreshold: 12
     successThreshold: 1
   ## @param primary.readinessProbe.enabled Enable readinessProbe on PostgreSQL Primary containers
   ## @param primary.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
@@ -453,10 +453,10 @@ primary:
   ## @param primary.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
-    timeoutSeconds: 1
+    timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
   ## @param primary.customLivenessProbe Custom livenessProbe that overrides the default one
