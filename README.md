@@ -226,7 +226,7 @@ make -f infra/services/spark/Makefile install
 make -f infra/services/flink/Makefile build-flink-custom-dockerfile
 make -f infra/services/flink/Makefile release-docker-images
 make -f infra/services/flink/Makefile install-cert-manager
-make -f infra/services/spark/Makefile install
+make -f infra/services/flink/Makefile install
 ```
 
 ## 2.11 Install Hive Metastore
