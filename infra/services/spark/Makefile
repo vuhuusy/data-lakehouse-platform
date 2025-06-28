@@ -22,6 +22,7 @@ create-namespace:
 install-spark:
 	@set -e; \
 	printf '\033[1;33mInstalling Spark Operator...\033[0m\n'; \
+	helm repo list | grep -q spark-operator || helm repo add spark-operator https://kubeflow.github.io/spark-operator; \
 	helm upgrade --install spark-operator $(SPARK_OPERATOR) \
 		--namespace $(NAMESPACE) \
 		--values infra/services/spark/operator/values.yaml; \
