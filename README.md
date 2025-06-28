@@ -18,10 +18,10 @@
   - [2.4 Install Longhorn](#24-install-longhorn)
   - [2.5 Install Minio](#25-install-minio)
   - [2.6 Install Airflow](#26-install-airflow)
-  - [2.7 Install Spark Operator](#27-install-spark-operator)
-  - [2.8 Install Flink Operator](#28-install-flink-operator)
-  - [2.9 Install Hive Metastore](#29-install-hive-metastore)
-  - [2.10 Install Kafka](#210-install-kafka)
+  - [2.7 Install Kafka](#27-install-kafka)
+  - [2.8 Install Spark Operator](#28-install-spark-operator)
+  - [2.9 Install Flink Operator](#29-install-flink-operator)
+  - [2.10 Install Hive Metastore](#210-install-hive-metastore)
   - [2.11 Install sources](#211-install-sources)
   - [2.12 Install Kafka Connect](#212-install-kafka-connect)
   - [2.13 Install Trino](#213-install-trino)
@@ -204,7 +204,17 @@ make -f infra/services/airflow/Makefile install
 make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-applications
 ```
 
-## 2.7 Install Spark Operator
+## 2.7 Install Kafka
+
+```bash
+make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
+
+make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
+
+make -f infra/services/kafka/Makefile install
+```
+
+## 2.8 Install Spark Operator
 
 ```bash
 make -f infra/services/spark/Makefile build-spark-application-dockerfile
@@ -214,7 +224,7 @@ make -f infra/services/spark/Makefile release-docker-image
 make -f infra/services/spark/Makefile install
 ```
 
-## 2.8 Install Flink Operator
+## 2.9 Install Flink Operator
 
 ```bash
 make -f infra/services/flink/Makefile build-flink-custom-dockerfile
@@ -226,7 +236,7 @@ make -f infra/services/flink/Makefile install-cert-manager
 make -f infra/services/spark/Makefile install
 ```
 
-## 2.9 Install Hive Metastore
+## 2.10 Install Hive Metastore
 
 ```bash
 make -f infra/services/hive/Makefile build-metastore-custom-dockerfile
@@ -238,15 +248,7 @@ make -f infra/services/hive/Makefile release-docker-images
 make -f infra/services/hive/Makefile install
 ```
 
-## 2.10 Install Kafka
 
-```bash
-make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
-
-make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
-
-make -f infra/services/kafka/Makefile install
-```
 
 ## 2.11 Install sources
 
