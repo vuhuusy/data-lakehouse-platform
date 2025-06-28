@@ -80,7 +80,7 @@ RUN pip install protobuf==3.20.3
 # Add Python script and feature repo
 USER flink
 RUN mkdir -p /opt/flink/usrlib
-COPY script/airflow/feature_store/fraud_detection/feature_repo/ /opt/flink/feature_store/
+COPY infra/services/feast/feature_repo/ /opt/flink/feature_store/
 ADD infra/services/flink/flink-job.py /opt/flink/usrlib/flink-job.py
 
 WORKDIR /opt/flink/feature_store
