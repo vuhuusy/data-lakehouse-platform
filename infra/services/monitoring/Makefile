@@ -16,6 +16,8 @@ create-namespace:
 install: create-namespace
 	@set -e; \
 	printf '\033[1;33mInstalling Prometheus Stack...\033[0m\n'; \
+	helm repo list | grep -q prometheus-community || helm repo add prometheus-community https://prometheus-community.github.io/helm-charts; \
+	helm repo update; \
 	helm upgrade --install kube-prometheus-stack $(CHART) \
 		--namespace $(NAMESPACE) \
 		-f infra/services/monitoring/values.yaml; \
