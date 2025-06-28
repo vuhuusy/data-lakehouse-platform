@@ -46,5 +46,5 @@ CREATE TABLE core.transaction (
 );
 
 -- insert data into tables --
-COPY core.customer FROM '/workdir/customers.csv' DELIMITER '|' CSV HEADER;
-COPY core.merchant FROM '/workdir/merchants.csv' DELIMITER '|' CSV HEADER;
+COPY core.customer FROM '/workdir/customers/customers.csv' DELIMITER '|' CSV HEADER;
+COPY core.merchant FROM '/workdir/merchants/merchants.csv' DELIMITER '|' CSV HEADER;
