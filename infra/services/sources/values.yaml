@@ -427,7 +427,7 @@ primary:
   livenessProbe:
     enabled: true
     initialDelaySeconds: 30
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 12
     successThreshold: 1
@@ -441,9 +441,9 @@ primary:
   readinessProbe:
     enabled: true
     initialDelaySeconds: 5
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
-    failureThreshold: 6
+    failureThreshold: 15
     successThreshold: 1
   ## @param primary.startupProbe.enabled Enable startupProbe on PostgreSQL Primary containers
   ## @param primary.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
@@ -455,7 +455,7 @@ primary:
   startupProbe:
     enabled: true
     initialDelaySeconds: 30
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
@@ -901,7 +901,7 @@ readReplicas:
   livenessProbe:
     enabled: true
     initialDelaySeconds: 30
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 6
     successThreshold: 1
@@ -915,7 +915,7 @@ readReplicas:
   readinessProbe:
     enabled: true
     initialDelaySeconds: 5
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 6
     successThreshold: 1
@@ -929,7 +929,7 @@ readReplicas:
   startupProbe:
     enabled: true
     initialDelaySeconds: 30
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
@@ -1799,7 +1799,7 @@ metrics:
   livenessProbe:
     enabled: true
     initialDelaySeconds: 5
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 6
     successThreshold: 1
@@ -1813,7 +1813,7 @@ metrics:
   readinessProbe:
     enabled: true
     initialDelaySeconds: 5
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 6
     successThreshold: 1
@@ -1827,7 +1827,7 @@ metrics:
   startupProbe:
     enabled: true
     initialDelaySeconds: 10
-    periodSeconds: 10
+    periodSeconds: 20
     timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
