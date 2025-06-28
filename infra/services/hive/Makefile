@@ -22,31 +22,36 @@ create-namespace:
 
 build-metastore-custom-dockerfile:
 	@set -e; \
+	printf '\033[1;33mBuilding Hive Metastore Docker image...\033[0m\n'; \
 	docker build \
 		-t huusy/hive-metastore-custom:3.0.0 \
-		-f infra/services/hive/metastore/Dockerfile .
+		-f infra/services/hive/metastore/Dockerfile .; \
+	printf '\033[1;32mBuilt hive-metastore-custom:3.0.0\033[0m\n'
 
 build-schematool-custom-dockerfile:
 	@set -e; \
+	printf '\033[1;33mBuilding Hive Schematool Docker image...\033[0m\n'; \
 	docker build \
 		-t huusy/hive-schematool-custom:4.0.0 \
-		-f infra/services/hive/schematool/Dockerfile .
+		-f infra/services/hive/schematool/Dockerfile .; \
+	printf '\033[1;32mBuilt hive-schematool-custom:4.0.0\033[0m\n'
 
 create-minio-secret:
 	@set -e; \
+	printf '\033[1;33mCreating MinIO secret...\033[0m\n'; \
 	kubectl delete secret minio-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic minio-secret \
 		--from-literal=ENDPOINT=https://minio.minio.svc.cluster.local:443 \
 		--from-literal=AWS_ACCESS_KEY_ID=minio \
 		--from-literal=AWS_SECRET_ACCESS_KEY=minio123 \
-		--namespace $(NAMESPACE)
+		--namespace $(NAMESPACE); \
+	printf '\033[1;32mMinIO secret created.\033[0m\n'
 
 install-hive-metastore:
 	@set -e; \
-	@echo "Installing Hive metastore and dependencies..."; \
-	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami
-	helm repo update
-
+	printf '\033[1;33mInstalling Hive metastore and dependencies...\033[0m\n'; \
+	helm repo list | grep -q bitnami || helm repo add bitnami https://charts.bitnami.com/bitnami; \
+	helm repo update; \
 	kubectl delete secret hive-metastore-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic hive-metastore-secret \
 		--from-literal=POSTGRES_URL=jdbc:postgresql://hive-metastore-postgres-postgresql.hive.svc.cluster.local:5432/metastore \
@@ -60,28 +65,32 @@ install-hive-metastore:
 		hive-metastore-postgres $(POSTGRES_CHART); \
 	kubectl apply -f infra/services/hive/schematool/job.yaml --namespace $(NAMESPACE); \
 	kubectl apply -f infra/services/hive/metastore/deployment.yaml --namespace $(NAMESPACE); \
-	kubectl apply -f infra/services/hive/metastore/service.yaml --namespace $(NAMESPACE)
+	kubectl apply -f infra/services/hive/metastore/service.yaml --namespace $(NAMESPACE); \
+	printf '\033[1;32mHive Metastore installed.\033[0m\n'
 
 uninstall:
 	@set -e; \
+	printf '\033[1;33mUninstalling Hive Metastore...\033[0m\n'; \
 	kubectl delete -f infra/services/hive/metastore/service.yaml --namespace $(NAMESPACE); \
 	kubectl delete -f infra/services/hive/metastore/deployment.yaml --namespace $(NAMESPACE); \
 	kubectl delete -f infra/services/hive/schematool/job.yaml --namespace $(NAMESPACE); \
-	helm uninstall --namespace $(NAMESPACE) \
-		hive-metastore-postgres
+	helm uninstall --namespace $(NAMESPACE) hive-metastore-postgres; \
+	printf '\033[1;32mHive Metastore uninstalled.\033[0m\n'
 
 release-docker-images:
 	@set -e; \
+	printf '\033[1;33mPushing Docker images...\033[0m\n'; \
 	docker push huusy/hive-metastore-custom:3.0.0; \
-	docker push huusy/hive-schematool-custom:4.0.0
+	docker push huusy/hive-schematool-custom:4.0.0; \
+	printf '\033[1;32mImages pushed to registry.\033[0m\n'
 
 help:
 	@echo "Available commands:"
-	@echo "  make install                				- Install Hive metastore and dependencies"
-	@echo "  make uninstall              				- Uninstall Hive metastore and dependencies"
-	@echo "  make build-metastore-custom-dockerfile 	- Build custom Docker image for Hive metastore"
-	@echo "  make build-schematool-custom-dockerfile 	- Build custom Docker image for Hive schematool"
-	@echo "  make release-docker-images 				- Push custom Docker images to registry"
-	@echo "  make create-minio-secret 					- Create MinIO secret for Hive metastore"
-	@echo "  make create-namespace       				- Create Kubernetes namespace for Hive"
-	@echo "  make help                   				- Show this help message"
+	@echo "  make install                        - Install Hive metastore and dependencies"
+	@echo "  make uninstall                      - Uninstall Hive metastore and dependencies"
+	@echo "  make build-metastore-custom-dockerfile - Build Hive metastore Docker image"
+	@echo "  make build-schematool-custom-dockerfile - Build Hive schematool Docker image"
+	@echo "  make release-docker-images          - Push custom Docker images to registry"
+	@echo "  make create-minio-secret            - Create MinIO secret in namespace"
+	@echo "  make create-namespace               - Create Kubernetes namespace for Hive"
+	@echo "  make help                           - Show this help message"
