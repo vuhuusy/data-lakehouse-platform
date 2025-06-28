@@ -15,21 +15,21 @@
     - [Register nodes with Ansible](#register-nodes-with-ansible)
     - [Set up kubeconfig on your Rancher host](#set-up-kubeconfig-on-your-rancher-host)
     - [(Optional) Set useful kubectl aliases](#optional-set-useful-kubectl-aliases)
-  - [2.4 Install Longhorn](#24-install-longhorn)
-  - [2.5 Install Minio](#25-install-minio)
-  - [2.6 Install Airflow](#26-install-airflow)
-  - [2.7 Install Kafka](#27-install-kafka)
-  - [2.8 Install Spark Operator](#28-install-spark-operator)
-  - [2.9 Install Flink Operator](#29-install-flink-operator)
-  - [2.10 Install Hive Metastore](#210-install-hive-metastore)
-  - [2.11 Install sources](#211-install-sources)
-  - [2.12 Install Kafka Connect](#212-install-kafka-connect)
-  - [2.13 Install Trino](#213-install-trino)
-  - [2.14 Install Superset](#214-install-superset)
-  - [2.15 Install MLFlow](#215-install-mlflow)
-  - [2.16 Install Feast](#216-install-feast)
-  - [2.17 Install Datahub](#217-install-datahub)
-  - [2.18 Install Prometheus Operator](#218-install-prometheus-operator)
+  - [2.4 Install Prometheus Operator](#24-install-prometheus-operator)
+  - [2.5 Install Longhorn](#25-install-longhorn)
+  - [2.6 Install Minio](#26-install-minio)
+  - [2.7 Install Airflow](#27-install-airflow)
+  - [2.8 Install Kafka](#28-install-kafka)
+  - [2.9 Install Spark Operator](#29-install-spark-operator)
+  - [2.10 Install Flink Operator](#210-install-flink-operator)
+  - [2.11 Install Hive Metastore](#211-install-hive-metastore)
+  - [2.12 Install sources](#212-install-sources)
+  - [2.13 Install Kafka Connect](#213-install-kafka-connect)
+  - [2.14 Install Trino](#214-install-trino)
+  - [2.15 Install Superset](#215-install-superset)
+  - [2.16 Install MLFlow](#216-install-mlflow)
+  - [2.17 Install Feast](#217-install-feast)
+  - [2.18 Install Datahub](#218-install-datahub)
 - [3. Run Applications](#3-run-applications)
 - [4. License](#4-license)
 
@@ -72,7 +72,7 @@ Start a standalone Rancher server using Docker:
 docker run -d --restart=unless-stopped \
   --name rancher \
   -p 80:80 -p 443:443 \
-    --privileged \
+  --privileged \
   --memory="3g" --cpus="1.5" \
   -v /opt/rancher-data:/var/lib/rancher \
   rancher/rancher:latest
@@ -99,7 +99,6 @@ Login with the bootstrap password and follow the instructions to set a new admin
 - Enter a name for the cluster (e.g., lakehouse) and leave other settings as default.
 
 ![Create RKE2 cluster](https://github.com/user-attachments/assets/d417b3fd-5061-46ca-b823-63c99cd94595)
-
 
 ### Select node roles in the Registration step
 - Assign ``etcd`` and ``Control Plane`` roles to your master node(s).
@@ -167,7 +166,6 @@ alias kaf='kubectl apply -f'
 alias kdf='kubectl delete -f'
 alias kctx='kubectl config use-context'
 alias kns='kubectl config set-context --current --namespace'
-# add more for your needs, then apply the change
 ```
 
 Apply the changes:
@@ -176,144 +174,121 @@ Apply the changes:
 source ~/.bashrc
 ```
 
-## 2.4 Install Longhorn
-
-```bash
-make -f infra/services/longhorn/Makefile install
-```
-
-## 2.5 Install Minio
-
-```bash
-make -f infra/services/minio/Makefile create-namespace
-
-make -f infra/services/minio/Makefile generate-self-signed-cert
-
-make -f infra/services/minio/Makefile register-self-signed-cert
-
-make -f infra/services/minio/Makefile install
-
-make -f infra/services/minio/Makefile create-nodeport
-```
-
-## 2.6 Install Airflow
-
-```bash
-make -f infra/services/airflow/Makefile install
-
-make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-applications
-```
-
-## 2.7 Install Kafka
-
-```bash
-make -f infra/services/kafka/Makefile create-namespace
-
-make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
-
-make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
-
-make -f infra/services/kafka/Makefile install
-```
-
-## 2.8 Install Spark Operator
-
-```bash
-make -f infra/services/spark/Makefile build-spark-application-dockerfile
-
-make -f infra/services/spark/Makefile release-docker-image
-
-make -f infra/services/spark/Makefile install
-```
-
-## 2.9 Install Flink Operator
-
-```bash
-make -f infra/services/flink/Makefile build-flink-custom-dockerfile
-
-make -f infra/services/flink/Makefile release-docker-images
-
-make -f infra/services/flink/Makefile install-cert-manager
-
-make -f infra/services/spark/Makefile install
-```
-
-## 2.10 Install Hive Metastore
-
-```bash
-make -f infra/services/hive/Makefile build-metastore-custom-dockerfile
-
-make -f infra/services/hive/Makefile build-schematool-custom-dockerfile
-
-make -f infra/services/hive/Makefile release-docker-images
-
-make -f infra/services/hive/Makefile install
-```
-
-
-
-## 2.11 Install sources
-
-```bash
-make -f infra/services/sources/Makefile install
-```
-
-## 2.12 Install Kafka Connect
-
-```bash
-make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile
-
-make -f infra/services/kafka/kafka-connect/Makefile release-docker-image
-
-make -f infra/services/kafka/kafka-connect/Makefile install
-
-make -f infra/services/kafka/kafka-connect/Makefile create-postgres-connector
-
-# install kafka ui
-make -f infra/services/kafka/kafka-ui/Makefile install
-```
-
-## 2.13 Install Trino
-
-```bash
-make -f infra/services/trino/Makefile build-trino-custom-dockerfile
-
-make -f infra/services/trino/Makefile release-docker-images
-
-make -f infra/services/trino/Makefile install
-```
-
-## 2.14 Install Superset
-
-```bash
-make -f infra/services/superset/Makefile install
-```
-
-## 2.15 Install MLFlow
-
-```bash
-make -f infra/services/mlflow/Makefile install
-```
-
-## 2.16 Install Feast
-
-```bash
-make -f infra/services/feast/Makefile install-online-store
-```
-
-## 2.17 Install Datahub
-
-```bash
-make -f infra/services/datahub/Makefile install
-```
-
-## 2.18 Install Prometheus Operator
+## 2.4 Install Prometheus Operator
 
 ```bash
 make -f infra/services/monitoring/Makefile install
 ```
 
+## 2.5 Install Longhorn
+
+```bash
+make -f infra/services/longhorn/Makefile install
+```
+
+## 2.6 Install Minio
+
+```bash
+make -f infra/services/minio/Makefile create-namespace
+make -f infra/services/minio/Makefile generate-self-signed-cert
+make -f infra/services/minio/Makefile register-self-signed-cert
+make -f infra/services/minio/Makefile install
+make -f infra/services/minio/Makefile create-nodeport
+```
+
+## 2.7 Install Airflow
+
+```bash
+make -f infra/services/airflow/Makefile install
+make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-applications
+```
+
+## 2.8 Install Kafka
+
+```bash
+make -f infra/services/kafka/Makefile create-namespace
+make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
+make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
+make -f infra/services/kafka/Makefile install
+```
+
+## 2.9 Install Spark Operator
+
+```bash
+make -f infra/services/spark/Makefile build-spark-application-dockerfile
+make -f infra/services/spark/Makefile release-docker-image
+make -f infra/services/spark/Makefile install
+```
+
+## 2.10 Install Flink Operator
+
+```bash
+make -f infra/services/flink/Makefile build-flink-custom-dockerfile
+make -f infra/services/flink/Makefile release-docker-images
+make -f infra/services/flink/Makefile install-cert-manager
+make -f infra/services/spark/Makefile install
+```
+
+## 2.11 Install Hive Metastore
+
+```bash
+make -f infra/services/hive/Makefile build-metastore-custom-dockerfile
+make -f infra/services/hive/Makefile build-schematool-custom-dockerfile
+make -f infra/services/hive/Makefile release-docker-images
+make -f infra/services/hive/Makefile install
+```
+
+## 2.12 Install sources
+
+```bash
+make -f infra/services/sources/Makefile install
+```
+
+## 2.13 Install Kafka Connect
+
+```bash
+make -f infra/services/kafka/kafka-connect/Makefile build-custom-dockerfile
+make -f infra/services/kafka/kafka-connect/Makefile release-docker-image
+make -f infra/services/kafka/kafka-connect/Makefile install
+make -f infra/services/kafka/kafka-connect/Makefile create-postgres-connector
+make -f infra/services/kafka/kafka-ui/Makefile install
+```
+
+## 2.14 Install Trino
+
+```bash
+make -f infra/services/trino/Makefile build-trino-custom-dockerfile
+make -f infra/services/trino/Makefile release-docker-images
+make -f infra/services/trino/Makefile install
+```
+
+## 2.15 Install Superset
+
+```bash
+make -f infra/services/superset/Makefile install
+```
+
+## 2.16 Install MLFlow
+
+```bash
+make -f infra/services/mlflow/Makefile install
+```
+
+## 2.17 Install Feast
+
+```bash
+make -f infra/services/feast/Makefile install-online-store
+```
+
+## 2.18 Install Datahub
+
+```bash
+make -f infra/services/datahub/Makefile install
+```
+
 # 3. Run Applications
+
+_TODO: Instructions for running demo applications, analytics queries, and pipelines._
 
 # 4. License
 
