@@ -3,25 +3,40 @@
 NAMESPACE ?= kafka
 KAFKA_OPERATOR ?= bitnami/kafka
 
-# Define phony targets
-.PHONY: install uninstall \
+.PHONY: \
+	install uninstall \
+	install-kafka uninstall-kafka \
 	generate-self-signed-cert-keystore-truststore \
 	register-self-signed-cert-keystore-truststore \
-	install-kafka \
-	uninstall-kafka \
 	create-kafka-client-pod \
 	create-namespace \
 	help
 
 install: create-namespace install-kafka
 
+uninstall: uninstall-kafka
+
 create-namespace:
-	@set -e; \
-	kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
+	@kubectl get namespace $(NAMESPACE) >/dev/null 2>&1 || \
 	kubectl create namespace $(NAMESPACE)
+
+install-kafka:
+	@set -e; \
+	printf '\033[1;33mInstalling Kafka Operator...\033[0m\n'; \
+	helm upgrade --install kafka $(KAFKA_OPERATOR) \
+		--namespace $(NAMESPACE) --create-namespace \
+		-f infra/services/kafka/operator/values.yaml; \
+	printf '\033[1;32mKafka Operator installation complete.\033[0m\n'
+
+uninstall-kafka:
+	@set -e; \
+	printf '\033[1;33mUninstalling Kafka Operator...\033[0m\n'; \
+	helm uninstall kafka --namespace $(NAMESPACE); \
+	printf '\033[1;32mKafka Operator uninstalled.\033[0m\n'
 
 generate-self-signed-cert-keystore-truststore:
 	@set -e; \
+	printf '\033[1;33mGenerating self-signed cert, keystore, and truststore...\033[0m\n'; \
 	rm -f infra/certs/kafka/*.jks; \
 	openssl req -new -x509 -nodes -days 730 -keyout infra/certs/kafka/kafka.key \
 		-out infra/certs/kafka/kafka.crt \
@@ -39,23 +54,25 @@ generate-self-signed-cert-keystore-truststore:
 	rm infra/certs/kafka/kafka.p12; \
 	keytool -importcert -alias kafka -file infra/certs/kafka/kafka.crt \
 		-keystore infra/certs/kafka/kafka.truststore.jks \
-		-storepass changeit -noprompt
+		-storepass changeit -noprompt; \
+	printf '\033[1;32mSelf-signed certificate and keystores generated.\033[0m\n'
 
 register-self-signed-cert-keystore-truststore:
 	@set -e; \
+	printf '\033[1;33mRegistering Kafka certs as Kubernetes secret...\033[0m\n'; \
 	kubectl delete secret kafka-jks --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic kafka-jks \
 		--from-file=kafka.truststore.jks=infra/certs/kafka/kafka.truststore.jks \
 		--from-file=kafka.keystore.jks=infra/certs/kafka/kafka.keystore.jks \
-		--namespace $(NAMESPACE)
+		--namespace $(NAMESPACE); \
+	printf '\033[1;32mKafka cert secret registered.\033[0m\n'
 
-install-kafka:
-	@set -e; \
-	helm upgrade --install kafka $(KAFKA_OPERATOR) \
-		--namespace $(NAMESPACE) --create-namespace \
-		-f infra/services/kafka/operator/values.yaml
-
-uninstall:
-	@set -e; \
-	helm uninstall --namespace $(NAMESPACE) \
-		kafka
+help:
+	@echo "Makefile commands:"
+	@echo "  make install                                   - Install Kafka Operator"
+	@echo "  make uninstall                                 - Uninstall Kafka Operator"
+	@echo "  make create-namespace                          - Create namespace for Kafka"
+	@echo "  make install-kafka                             - Install Kafka via Helm"
+	@echo "  make uninstall-kafka                           - Uninstall Kafka Helm release"
+	@echo "  make generate-self-signed-cert-keystore-truststore - Generate certs, keystore, truststore"
+	@echo "  make register-self-signed-cert-keystore-truststore - Register certs as Kubernetes secret"
