@@ -45,8 +45,8 @@ with DAG(
             bucket_name="gold-zone",
             object_name="features/online_store/state_features.parquet",
             minio_endpoint=Variable.get("MINIO_ENDPOINT"),
-            access_key=Variable.get("ACCESS_KEY"),
-            secret_key=Variable.get("SECRET_KEY"),
+            access_key=Variable.get("MINIO_ACCESS_KEY"),
+            secret_key=Variable.get("MINIO_SECRET_KEY"),
             use_ssl=False
         )
 
