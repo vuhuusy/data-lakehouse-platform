@@ -740,13 +740,7 @@ workers:
     #   memory: 128Mi
 
 
-  resources:
-   limits:
-    cpu: 1000m
-    memory: 1024Mi
-   requests:
-    cpu: 200m
-    memory: 256Mi
+  resources: {}
 
   # Grace period for tasks to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 600
