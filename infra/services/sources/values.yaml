@@ -927,10 +927,10 @@ readReplicas:
   ## @param readReplicas.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
-    timeoutSeconds: 1
+    timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
   ## @param readReplicas.customLivenessProbe Custom livenessProbe that overrides the default one
@@ -1825,10 +1825,10 @@ metrics:
   ## @param metrics.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 10
     periodSeconds: 10
-    timeoutSeconds: 1
+    timeoutSeconds: 5
     failureThreshold: 15
     successThreshold: 1
   ## @param metrics.customLivenessProbe Custom livenessProbe that overrides the default one
