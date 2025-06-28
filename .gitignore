@@ -2,3 +2,4 @@
 note
 venv
 .vscode
+infra/services/airflow/variables.json
