@@ -23,53 +23,48 @@ create-namespace:
 
 install-operator:
 	@set -e; \
-	@echo "Installing MinIO Operator..."
-	helm repo list | grep -q minio-operator || helm repo add minio-operator https://operator.min.io
-	helm repo update
-
+	printf '\033[1;33mInstalling MinIO Operator...\033[0m\n'; \
+	helm repo list | grep -q minio-operator || helm repo add minio-operator https://operator.min.io; \
+	helm repo update; \
 	helm upgrade --install minio-operator $(MINIO_OPERATOR) \
 		--namespace $(NAMESPACE) \
 		--create-namespace \
-		-f infra/services/minio/operator/values.yaml \
-	
-	@echo "MinIO Operator installation complete!"
+		-f infra/services/minio/operator/values.yaml; \
+	printf '\033[1;32mMinIO Operator installation complete.\033[0m\n'
 
 install-tenant:
 	@set -e; \
-	@echo "Installing MinIO Tenant..."
+	printf '\033[1;33mInstalling MinIO Tenant...\033[0m\n'; \
 	helm upgrade --install minio-tenant $(MINIO_TENANT) \
 		--namespace $(NAMESPACE) \
 		--create-namespace \
-		-f infra/services/minio/tenant/values.yaml
-
-	@echo "MinIO Tenant installation complete!"
+		-f infra/services/minio/tenant/values.yaml; \
+	printf '\033[1;32mMinIO Tenant installation complete.\033[0m\n'
 
 uninstall-operator:
 	@set -e; \
-	@echo "Uninstalling MinIO Operator..."
-	kubectl delete secret minio-selfsigned-secret --namespace $(NAMESPACE) || true
-	helm uninstall --namespace $(NAMESPACE) \
-		minio-operator
-	@echo "MinIO Operator uninstallation complete!"
+	printf '\033[1;33mUninstalling MinIO Operator...\033[0m\n'; \
+	kubectl delete secret minio-selfsigned-secret --namespace $(NAMESPACE) || true; \
+	helm uninstall --namespace $(NAMESPACE) minio-operator; \
+	printf '\033[1;32mMinIO Operator uninstalled.\033[0m\n'
 
 uninstall-tenant:
 	@set -e; \
-	@echo "Uninstalling MinIO Tenant..."
-	helm uninstall --namespace $(NAMESPACE) \
-		minio-tenant
-	@echo "MinIO Tenant uninstallation complete!"
+	printf '\033[1;33mUninstalling MinIO Tenant...\033[0m\n'; \
+	helm uninstall --namespace $(NAMESPACE) minio-tenant; \
+	printf '\033[1;32mMinIO Tenant uninstalled.\033[0m\n'
 
 generate-self-signed-cert:
 	@set -e; \
-	@echo "Generating self-signed certificate for MinIO..."
+	printf '\033[1;33mGenerating self-signed certificate...\033[0m\n'; \
 	openssl req -new -x509 -nodes -days 730 -keyout infra/certs/minio/selfsigned.key \
 		-out infra/certs/minio/selfsigned.crt \
-		-config infra/certs/minio/openssl.conf
-	@echo "Self-signed certificate generated at infra/certs/minio/selfsigned.crt"
+		-config infra/certs/minio/openssl.conf; \
+	printf '\033[1;32mCertificate generated at infra/certs/minio/selfsigned.crt\033[0m\n'
 
 register-self-signed-cert:
 	@set -e; \
-	@echo "Registering self-signed certificate with Kubernetes..."
+	printf '\033[1;33mRegistering self-signed certificate...\033[0m\n'; \
 	kubectl delete secret minio-selfsigned-secret --namespace $(NAMESPACE) || true; \
 	kubectl create secret tls minio-selfsigned-secret \
 		--key infra/certs/minio/selfsigned.key \
@@ -77,29 +72,32 @@ register-self-signed-cert:
 		--namespace $(NAMESPACE); \
 	kubectl delete secret operator-ca-tls --namespace $(NAMESPACE) || true; \
 	kubectl create secret generic operator-ca-tls \
-   		--from-file=public.crt=infra/certs/minio/selfsigned.crt \
+		--from-file=public.crt=infra/certs/minio/selfsigned.crt \
 		--from-file=private.key=infra/certs/minio/selfsigned.key \
-		--namespace $(NAMESPACE)
+		--namespace $(NAMESPACE); \
+	printf '\033[1;32mSelf-signed certificate registered.\033[0m\n'
 
 create-nodeport:
 	@set -e; \
-	kubectl apply -f infra/services/minio/console-nodeport.yaml
-	@echo "MinIO Console NodePort service created."
+	printf '\033[1;33mCreating MinIO Console NodePort...\033[0m\n'; \
+	kubectl apply -f infra/services/minio/console-nodeport.yaml; \
+	printf '\033[1;32mNodePort service created.\033[0m\n'
 
 delete-nodeport:
 	@set -e; \
-	kubectl delete -f infra/services/minio/console-nodeport.yaml || true
-	@echo "MinIO Console NodePort service deleted."
+	printf '\033[1;33mDeleting MinIO Console NodePort...\033[0m\n'; \
+	kubectl delete -f infra/services/minio/console-nodeport.yaml || true; \
+	printf '\033[1;32mNodePort service deleted.\033[0m\n'
 
 help:
 	@echo "Makefile commands:"
-	@echo "make install			       		- Install MinIO Operator and Tenant"
-	@echo "make uninstall     				- Uninstall MinIO Operator and Tenant"
-	@echo "make install-operator    		- Install MinIO Operator"
-	@echo "make install-tenant      		- Install MinIO Tenant"
-	@echo "make uninstall-operator  		- Uninstall MinIO Operator"
-	@echo "make uninstall-tenant    		- Uninstall MinIO Tenant"
-	@echo "make generate-self-signed-cert 	- Generate a self-signed certificate"
-	@echo "make register-self-signed-cert 	- Register the self-signed certificate with Kubernetes"
-	@echo "make create-nodeport             - Expose MinIO Console via NodePort (9443 -> 30943)"
-	@echo "make delete-nodeport             - Delete MinIO NodePort services (Console)"
+	@echo "  make install                     - Install MinIO Operator and Tenant"
+	@echo "  make uninstall                  - Uninstall MinIO Operator and Tenant"
+	@echo "  make install-operator           - Install MinIO Operator"
+	@echo "  make install-tenant             - Install MinIO Tenant"
+	@echo "  make uninstall-operator         - Uninstall MinIO Operator"
+	@echo "  make uninstall-tenant           - Uninstall MinIO Tenant"
+	@echo "  make generate-self-signed-cert  - Generate a self-signed certificate"
+	@echo "  make register-self-signed-cert  - Register the self-signed certificate with Kubernetes"
+	@echo "  make create-nodeport            - Expose MinIO Console via NodePort (9443 -> 30943)"
+	@echo "  make delete-nodeport            - Delete MinIO NodePort services (Console)"
