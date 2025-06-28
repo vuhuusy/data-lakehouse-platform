@@ -207,6 +207,8 @@ make -f infra/services/airflow/Makefile create-clusterrolebinding-for-spark-appl
 ## 2.7 Install Kafka
 
 ```bash
+make -f infra/services/kafka/Makefile create-namespace
+
 make -f infra/services/kafka/Makefile generate-self-signed-cert-keystore-truststore
 
 make -f infra/services/kafka/Makefile register-self-signed-cert-keystore-truststore
