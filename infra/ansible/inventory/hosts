@@ -1,12 +1,12 @@
 [ranchers]
-rancher-01 ansible_host=103.82.133.253 ansible_user=root ansible_ssh_pass=YrJ61czOoEAwT3ce
+rancher-01 ansible_host=103.179.188.154 ansible_user=root ansible_ssh_pass=7KJRoSEJdCKD9H2k
 
 [masters]
-master-01 ansible_host=103.82.38.225 ansible_user=root ansible_ssh_pass=1S3UUtc4cgfaR10r
+master-01 ansible_host=103.179.188.134 ansible_user=root ansible_ssh_pass=kQrreh0n5SUP25Vx
 
 [workers]
-worker-01 ansible_host=103.82.133.6 ansible_user=root ansible_ssh_pass=ek69AD99M57GxB5H
-worker-02 ansible_host=103.82.133.158 ansible_user=root ansible_ssh_pass=GpGREpzT5QT3aOHJ
-worker-03 ansible_host=103.82.38.176 ansible_user=root ansible_ssh_pass=52k95vkaQPE8Uka8
-worker-04 ansible_host=103.82.38.181 ansible_user=root ansible_ssh_pass=bY1CVdRmzuRma4z2
-worker-05 ansible_host=103.82.21.209 ansible_user=root ansible_ssh_pass=GE929AgT034ooUhg
+worker-01 ansible_host=103.179.188.179 ansible_user=root ansible_ssh_pass=A03bznMrcDW9QsU4
+worker-02 ansible_host=103.179.188.236 ansible_user=root ansible_ssh_pass=8A7Bm8ZeSUEGT5v0
+worker-03 ansible_host=103.179.188.62 ansible_user=root ansible_ssh_pass=z5ebqu6nFQ5a75T6
+# worker-04 ansible_host=103.82.38.181 ansible_user=root ansible_ssh_pass=bY1CVdRmzuRma4z2
+# worker-05 ansible_host=103.82.21.209 ansible_user=root ansible_ssh_pass=GE929AgT034ooUhg
