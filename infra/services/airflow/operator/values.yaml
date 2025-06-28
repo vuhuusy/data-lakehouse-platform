@@ -2830,7 +2830,7 @@ dags:
     # Go-style duration string (e.g. "100ms" or "0.1s" = 100ms).
     # For backwards compatibility, wait will be used if it is specified.
     period: 30s
-    wait: 30s
+    wait: 30
     # add variables from secret into gitSync containers, such proxy-config
     envFrom: ~
     # envFrom: |
