@@ -17,7 +17,7 @@ spec:
   taskManager:
     replicas: 3
     resource:
-      memory: "4096m"
+      memory: "6144m"
       cpu: 2
 
   job:
