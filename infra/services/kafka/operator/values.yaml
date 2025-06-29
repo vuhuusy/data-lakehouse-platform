@@ -279,7 +279,8 @@ sasl:
   client:
     users:
       - kafka
-    passwords: "kafka"
+    passwords: 
+      - kafka
   ## @param sasl.existingSecret Name of the existing secret containing credentials for client.users, interbroker.user and controller.user
   ## Create this secret running the command below where SECRET_NAME is the name of the secret you want to create:
   ##       kubectl create secret generic SECRET_NAME --from-literal=client-passwords=CLIENT_PASSWORD1,CLIENT_PASSWORD2 --from-literal=inter-broker-password=INTER_BROKER_PASSWORD --from-literal=inter-broker-client-secret=INTER_BROKER_CLIENT_SECRET --from-literal=controller-password=CONTROLLER_PASSWORD --from-literal=controller-client-secret=CONTROLLER_CLIENT_SECRET
