@@ -1455,6 +1455,8 @@ grafana:
   ## Passed to grafana subchart and used by servicemonitor below
   ##
   service:
+    type: NodePort
+    nodePort: 32000
     portName: http-web
     ipFamilies: []
     ipFamilyPolicy: ""
