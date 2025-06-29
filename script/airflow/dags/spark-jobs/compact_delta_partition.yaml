@@ -15,13 +15,13 @@ spec:
     type: Never
   driver:
     cores: 1
-    memory: "1024m"
+    memory: "1g"
     serviceAccount: spark-operator-spark
     labels:
       version: "3.5.3"
   executor:
     cores: 2
-    instances: 3
+    instances: 2
     memory: "4g"
     labels:
       version: "3.5.3"
