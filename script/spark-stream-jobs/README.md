@@ -12,3 +12,8 @@ k delete -f script/spark-stream-jobs/transaction/kafka-to-delta-transaction.yaml
 k delete -f script/spark-stream-jobs/prediction-transaction/kafka-to-delta-prediction-transaction.yaml -n spark-operator
 
 k delete -f script/flink-jobs/flink-kafka-job.yaml -n flink
+
+
+k create ns ingestion
+
+k apply -f script/realtime-data-simulation/ingest.yaml
