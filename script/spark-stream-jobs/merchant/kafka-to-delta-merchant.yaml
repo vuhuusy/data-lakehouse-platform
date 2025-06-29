@@ -1,7 +1,7 @@
 apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
-  name: kafka-to-delta-transaction
+  name: kafka-to-delta-merchant
   namespace: spark-operator
 spec:
   type: Python
@@ -9,20 +9,20 @@ spec:
   mode: cluster
   image: huusy/spark-application:3.5.3
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: "s3a://share/spark/repo/cdc_transaction.py"
+  mainApplicationFile: "s3a://share/spark/repo/cdc-merchant.py"
   sparkVersion: "3.5.3"
   restartPolicy:
     type: Always
   driver:
     cores: 1
-    memory: "1024m"
+    memory: "1g"
     serviceAccount: spark-operator-spark
     labels:
       version: "3.5.3"
   executor:
     cores: 2
     instances: 2
-    memory: "4g"
+    memory: "2g"
     labels:
       version: "3.5.3"
   deps:

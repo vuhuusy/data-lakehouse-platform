@@ -21,6 +21,9 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
+spark.sql("SET spark.databricks.delta.optimizeWrite.enabled = true")
+spark.sql("SET spark.databricks.delta.autoCompact.enabled = true")
+
 # Define the schema for the Kafka messages
 predicted_schema = StructType([
     StructField("id", StringType()),
@@ -65,7 +68,7 @@ predicted_schema = StructType([
     StructField("is_fraud", IntegerType())
 ])
 
-# Cấu hình
+# Variables configuration
 KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
 TOPIC = "predicted-transaction"
 DELTA_PATH = "s3a://gold-zone/f_transaction_predictions"
@@ -73,13 +76,13 @@ CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/f_transaction_predictions"
 TABLE_NAME = "f_transaction_predictions"
 DATABASE_NAME = "default"
 
-# Đọc từ Kafka
+# Read from Kafka
 df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
     .option("startingOffsets", "earliest") \
-    .option("maxOffsetsPerTrigger", 1000) \
+    .option("maxOffsetsPerTrigger", 50000) \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
@@ -96,10 +99,8 @@ parsed = df.selectExpr("CAST(value AS STRING) AS json") \
     .select("data.*") \
     .withColumn("partition", date_format(to_date(col("date"), "yyyy-MM-dd"), "yyyyMMdd"))
 
-# Đảm bảo DB tồn tại
-spark.sql(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
 
-# Tạo bảng Delta nếu chưa có
+spark.sql(f"CREATE DATABASE IF NOT EXISTS {DATABASE_NAME}")
 spark.sql(f"""
     CREATE TABLE IF NOT EXISTS {DATABASE_NAME}.{TABLE_NAME} (
         {', '.join([f"{f.name} {f.dataType.simpleString()}" for f in predicted_schema.fields])},
@@ -110,13 +111,13 @@ spark.sql(f"""
     LOCATION '{DELTA_PATH}'
 """)
 
-# Ghi stream
-parsed.coalesce(3) \
+# Write to Delta Lake
+parsed.coalesce(1) \
     .writeStream \
     .format("delta") \
     .outputMode("append") \
     .partitionBy("partition") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .trigger(processingTime="10 seconds") \
+    .trigger(processingTime="20 seconds") \
     .start(DELTA_PATH) \
     .awaitTermination()

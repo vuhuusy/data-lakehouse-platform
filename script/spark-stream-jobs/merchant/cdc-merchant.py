@@ -18,6 +18,9 @@ spark = SparkSession.builder \
     .enableHiveSupport() \
     .getOrCreate()
 
+spark.sql("SET spark.databricks.delta.optimizeWrite.enabled = true")
+spark.sql("SET spark.databricks.delta.autoCompact.enabled = true")
+
 # Define the schema for the Kafka messages
 merchant_after_schema = StructType([
     StructField("id", StringType()),
@@ -38,12 +41,12 @@ TABLE_NAME = "merchant"
 DATABASE_NAME = "default"
 
 
-
 df_merchant = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
     .option("startingOffsets", "earliest") \
+    .option("maxOffsetsPerTrigger", 50000) \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
@@ -75,7 +78,8 @@ spark.sql(f"""
 """)
 
 
-query = merchant.writeStream \
+query = merchant.coalesce(1) \
+    .writeStream \
     .format("delta") \
     .outputMode("append") \
     .option("checkpointLocation", CHECKPOINT_PATH) \

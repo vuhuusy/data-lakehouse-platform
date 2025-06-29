@@ -9,20 +9,20 @@ spec:
   mode: cluster
   image: huusy/spark-application:3.5.3
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: "s3a://share/spark/repo/cdc_customer.py"
+  mainApplicationFile: "s3a://share/spark/repo/cdc-customer.py"
   sparkVersion: "3.5.3"
   restartPolicy:
     type: Always
   driver:
     cores: 1
-    memory: "512m"
+    memory: "1g"
     serviceAccount: spark-operator-spark
     labels:
       version: "3.5.3"
   executor:
-    cores: 1
+    cores: 2
     instances: 2
-    memory: "1g"
+    memory: "2g"
     labels:
       version: "3.5.3"
   deps:

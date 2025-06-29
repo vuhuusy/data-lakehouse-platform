@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 
 # Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
@@ -17,6 +17,9 @@ spark = SparkSession.builder \
     .config("hive.metastore.uris", "thrift://hive-metastore.hive.svc.cluster.local:9083") \
     .enableHiveSupport() \
     .getOrCreate()
+
+spark.sql("SET spark.databricks.delta.optimizeWrite.enabled = true")
+spark.sql("SET spark.databricks.delta.autoCompact.enabled = true")
 
 # Define the schema for the Kafka messages
 customer_after_schema = StructType([
@@ -51,12 +54,12 @@ TABLE_NAME = "customer"
 DATABASE_NAME = "default"
 
 
-
 df_customer = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
     .option("subscribe", TOPIC) \
     .option("startingOffsets", "earliest") \
+    .option("maxOffsetsPerTrigger", 50000) \
     .option("failOnDataLoss", "false") \
     .option("kafka.security.protocol", "SASL_SSL") \
     .option("kafka.sasl.mechanism", "SCRAM-SHA-256") \
@@ -100,11 +103,12 @@ spark.sql(f"""
     LOCATION '{DELTA_PATH}'
 """)
 
-query = customer.writeStream \
+query = customer.coalesce(1) \
+    .writeStream \
     .format("delta") \
     .outputMode("append") \
     .option("checkpointLocation", CHECKPOINT_PATH) \
-    .trigger(processingTime="60 seconds") \
+    .trigger(processingTime="600 seconds") \
     .start(DELTA_PATH)
 
 query.awaitTermination()
