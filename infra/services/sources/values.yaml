@@ -476,18 +476,18 @@ primary:
   ## @param primary.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if primary.resources is set (primary.resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  # resources:
-  #   requests:
-  #     cpu: 500m
-  #     memory: 512Mi
-  #   limits:
-  #     cpu: 2000m
-  #     memory: 4096Mi
-  ##
-  resources: {}
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 3000m
+      memory: 6192Mi
+  #
+  # resources: {}
   ## Pod Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param primary.podSecurityContext.enabled Enable security context
@@ -950,18 +950,18 @@ readReplicas:
   ## @param readReplicas.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if readReplicas.resources is set (readReplicas.resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param readReplicas.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  # resources:
-  #   requests:
-  #     cpu: 200m
-  #     memory: 256Mi
-  #   limits:
-  #     cpu: 500m
-  #     memory: 512Mi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
   ##
-  resources: {}
+  # resources: {}
   ## Pod Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ## @param readReplicas.podSecurityContext.enabled Enable security context
@@ -1394,17 +1394,17 @@ backup:
     ## @param backup.cronjob.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if backup.cronjob.resources is set (backup.cronjob.resources is recommended for production).
     ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
     ##
-    resourcesPreset: "nano"
+    # resourcesPreset: "nano"
     ## @param backup.cronjob.resources Set container requests and limits for different resources like CPU or memory
     ## Example:
-    resources: {}
-    # resources:
-    #   requests:
-    #     cpu: 200m
-    #     memory: 256Mi
-    #   limits:
-    #     cpu: 500m
-    #     memory: 512Mi
+    # resources: {}
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1024Mi
     networkPolicy:
       ## @param backup.cronjob.networkPolicy.enabled Specifies whether a NetworkPolicy should be created
       ##
@@ -1553,18 +1553,18 @@ passwordUpdateJob:
   ## @param passwordUpdateJob.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if passwordUpdateJob.resources is set (passwordUpdateJob.resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "micro"
+  # resourcesPreset: "micro"
   ## @param passwordUpdateJob.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1024m
+      memory: 1024Mi
   ##
-  resources: {}
+  # resources: {}
   ## @param passwordUpdateJob.customLivenessProbe Custom livenessProbe that overrides the default one
   ##
   customLivenessProbe: {}
@@ -1629,18 +1629,18 @@ volumePermissions:
   ## @param volumePermissions.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if volumePermissions.resources is set (volumePermissions.resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param volumePermissions.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
-  ##
-  resources: {}
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+  
+  # resources: {}
   ## Init container' Security Context
   ## Note: the chown of the data folder is done to containerSecurityContext.runAsUser
   ## and not the below volumePermissions.containerSecurityContext.runAsUser
