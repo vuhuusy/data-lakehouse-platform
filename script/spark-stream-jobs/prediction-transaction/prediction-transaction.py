@@ -4,7 +4,7 @@ from pyspark.sql.types import StructType, StructField, StringType, FloatType, In
 
 # Init Spark Session with Delta + S3 support
 spark = SparkSession.builder \
-    .appName("Predicted-Transaction") \
+    .appName("Prediction-Transaction") \
     .config("spark.driver.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.executor.extraClassPath", "/opt/bitnami/spark/jars/*") \
     .config("spark.sql.shuffle.partitions", "5") \
