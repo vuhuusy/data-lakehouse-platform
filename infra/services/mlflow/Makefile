@@ -65,18 +65,13 @@ release-image:
 	docker push $(IMAGE_TAG); \
 	printf '\033[1;32mImage pushed.\033[0m\n'
 
-server:
+mlflow-serve:
 	@set -e; \
 	printf '\033[1;33mRunning local MLflow model server...\033[0m\n'; \
-	docker run -p 5001:8080 \
-		-e MLFLOW_TRACKING_URI=http://103.82.133.158:30500 \
-		-e MLFLOW_S3_ENDPOINT_URL=https://103.82.133.158:30900 \
-		-e AWS_ACCESS_KEY_ID=minio \
-		-e AWS_SECRET_ACCESS_KEY=minio123 \
-		-e MLFLOW_S3_IGNORE_TLS=true \
-		-v ~/.mlflow:/root/.mlflow \
-		$(IMAGE_TAG) \
-		mlflow models serve -m "runs:/ac6b711d418f48d4abef42374c9b50c2/model" --no-conda --host 0.0.0.0 --port 8080
+	kubectl apply -f infra/services/mlflow/mlflow-server.yaml; \
+	kubectl wait --for=condition=available --timeout=90s deployment/mlflow-server -n $(NAMESPACE); \
+	kubectl apply -f infra/services/mlflow/mlflow-nodeport.yaml; \
+	printf '\033[1;32mMLflow model server is running.\033[0m\n'
 
 help:
 	@echo "Makefile commands:"

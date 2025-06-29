@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: mlflow-model-serving
 spec:
-  replicas: 1  # Số lượng Pod có thể scale theo nhu cầu
+  replicas: 2
   selector:
     matchLabels:
       app: mlflow-serving
@@ -18,9 +18,9 @@ spec:
           imagePullPolicy: Always
           env:
             - name: MLFLOW_TRACKING_URI
-              value: "http://103.82.133.158:30500"
+              value: "http://103.82.27.47:30500"
             - name: MLFLOW_S3_ENDPOINT_URL
-              value: "https://103.82.133.158:30900"
+              value: "https://103.82.27.47:30900"
             - name: AWS_ACCESS_KEY_ID
               value: "minio"
             - name: AWS_SECRET_ACCESS_KEY
