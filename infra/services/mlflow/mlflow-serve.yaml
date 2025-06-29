@@ -20,7 +20,7 @@ spec:
             - name: MLFLOW_TRACKING_URI
               value: "http://mlflow.mlflow.svc.cluster.local:5000"
             - name: MLFLOW_S3_ENDPOINT_URL
-              value: "https://minio.minio.svc.cluster.local:9000"
+              value: "https://minio-api.minio.svc.cluster.local:9000"
             - name: AWS_ACCESS_KEY_ID
               value: "minio"
             - name: AWS_SECRET_ACCESS_KEY
