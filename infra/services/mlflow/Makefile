@@ -56,7 +56,7 @@ uninstall:
 build-image:
 	@set -e; \
 	printf '\033[1;33mBuilding MLflow Docker image...\033[0m\n'; \
-	docker build -t $(IMAGE_TAG) infra/services/mlflow/.; \
+	docker build -t $(IMAGE_TAG) -f infra/services/mlflow/Dockerfile .; \
 	printf '\033[1;32mImage built: $(IMAGE_TAG)\033[0m\n'
 
 release-image:
