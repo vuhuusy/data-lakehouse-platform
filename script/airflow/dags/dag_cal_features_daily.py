@@ -32,7 +32,7 @@ with DAG(
     feast_apply_materialize = KubernetesPodOperator(
         task_id="feast_apply_materialize",
         name="feast-materialize-job",
-        namespace="feast",
+        namespace="feature-store",
         image="huusy/feast:0.16.1",
         image_pull_policy="Always",
         cmds=["bash", "-c"],
