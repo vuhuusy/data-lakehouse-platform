@@ -8,7 +8,7 @@ echo "==> Copying data from MinIO..."
 mc cp --recursive --insecure myminio/work-zone/tmp/transactions /workdir/
 
 echo "==> Starting replay..."
-for file in $(ls /workdir/transactions_*.csv | sort); do
+for file in $(ls /workdir/transactions/transactions_*.csv | sort); do
     echo "==> Replaying $file ($(wc -l < "$file") lines)"
     python /app/replay.py "$file"
 done
