@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from datetime import datetime
 
 import joblib
 import s3fs
@@ -28,6 +29,8 @@ spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", True)
 spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
 spark.conf.set("spark.sql.shuffle.partitions", 32)
 spark.conf.set("spark.sql.adaptive.enabled", True)
+spark.sql("SET spark.databricks.delta.optimizeWrite.enabled = true")
+spark.sql("SET spark.databricks.delta.autoCompact.enabled = true")
 ####################################################################################################
 
 # Read Delta tables and Parquet files
@@ -39,7 +42,7 @@ state_features = spark.read.parquet("s3a://gold-zone/features/online_store/state
 ####################################################################################################
 
 # Calculate customer features
-reference_date = spark.sql("SELECT current_date()").collect()[0][0]
+reference_date = datetime.now().strftime("%Y-%m-%d")
 
 customer = customer \
     .withColumnRenamed('id', 'customer_id') \
@@ -112,7 +115,9 @@ txn_last_7d = txn_last_7d.withColumn('avg_txn_last_7d', col('sum_amt_last_7d') /
 d_customer = d_customer \
     .join(txn_last_7d, 'customer_id', 'left')
 
-partition = spark.sql("SELECT date_format(current_date(), 'yyyyMMdd')").collect()[0][0]
+partition = datetime.now().strftime("%Y%m%d")
+print(f"▶ Job is generating features for partition: {partition}")
+
 d_merchant = d_merchant.withColumn('partition', lit(partition))
 d_customer = d_customer.withColumn('partition', lit(partition))
 

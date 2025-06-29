@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from pyspark.sql import SparkSession
 from delta.tables import DeltaTable
 
@@ -23,11 +24,11 @@ spark.conf.set("spark.sql.shuffle.partitions", 8)
 spark.conf.set("spark.sql.adaptive.enabled", "true")
 spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", "true")
 spark.conf.set("spark.databricks.delta.retentionDurationCheck.enabled", "false")  # allow vacuum 0h
+spark.sql("SET spark.databricks.delta.optimizeWrite.enabled = true")
+spark.sql("SET spark.databricks.delta.autoCompact.enabled = true")
 
 # === Get partition N-1 (Vietnam time) ===
-compact_partition = spark.sql("""
-    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), 1), 'yyyyMMdd') AS partition
-""").collect()[0]['partition']
+compact_partition = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
 print(f">>> 🕒 Processing partition = {compact_partition}")
 
 # === Table info: {table_name: coalesce_num}
