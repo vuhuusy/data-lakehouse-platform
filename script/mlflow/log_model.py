@@ -28,7 +28,7 @@ s3 = boto3.client(
 
 # ====== Load model from S3 ======
 bucket_name = 'mlflow'
-object_key = 'model/fraud_detection/model/xg_classifier.pkl'
+object_key = 'model/fraud_detection/xg_classifier.pkl'
 
 response = s3.get_object(Bucket=bucket_name, Key=object_key)
 model_data = response['Body'].read()
