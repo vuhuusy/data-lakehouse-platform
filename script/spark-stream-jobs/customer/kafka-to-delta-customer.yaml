@@ -14,15 +14,15 @@ spec:
   restartPolicy:
     type: Always
   driver:
-    cores: 1
+    cores: 500m
     memory: "1g"
     serviceAccount: spark-operator-spark
     labels:
       version: "3.5.3"
   executor:
-    cores: 2
-    instances: 2
-    memory: "2g"
+    cores: 1500m
+    instances: 1
+    memory: "3g"
     labels:
       version: "3.5.3"
   deps:

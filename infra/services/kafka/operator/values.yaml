@@ -799,10 +799,10 @@ controller:
   ## Example:
   resources:
     requests:
-      cpu: 1
-      memory: 1024Mi
+      cpu: 500m
+      memory: 512Mi
     limits:
-      cpu: 3
+      cpu: 2000m
       memory: 4096Mi
   ##
   # resources: {}
@@ -1260,10 +1260,10 @@ broker:
   ## Example:
   resources:
     requests:
-      cpu: 1
+      cpu: 500m
       memory: 1024Mi
     limits:
-      cpu: 3
+      cpu: 2000m
       memory: 4096Mi
   ##
   # resources: {}
@@ -2055,10 +2055,10 @@ metrics:
     ## Example:
     resources:
       requests:
-        cpu: 1
+        cpu: 500m
         memory: 1024Mi
       limits:
-        cpu: 3
+        cpu: 2000m
         memory: 4096Mi
     ##
     # resources: {}
