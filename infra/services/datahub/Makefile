@@ -53,7 +53,7 @@ install-datahub:
 create-web-nodeport:
 	@set -e; \
 	printf '\033[1;33mCreating NodePort for DataHub Web UI...\033[0m\n'; \
-	kubectl apply -f infra/services/datahub/datahub-web-nodeport.yaml -n $(NAMESPACE); \
+	kubectl apply -f infra/services/datahub/datahub-nodeport.yaml -n $(NAMESPACE); \
 	printf '\033[1;32mNodePort created.\033[0m\n'
 
 uninstall:
