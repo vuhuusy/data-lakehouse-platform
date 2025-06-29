@@ -23,28 +23,20 @@ servicePort: 8083
 ## Kafka Connect properties
 ## ref: https://docs.confluent.io/current/connect/userguide.html#configuring-workers
 configurationOverrides:
-  "plugin.path": "/usr/share/java,/usr/share/confluent-hub-components"
-  "key.converter": "io.confluent.connect.avro.AvroConverter"
-  "value.converter": "io.confluent.connect.avro.AvroConverter"
-  "key.converter.schemas.enable": "false"
-  "value.converter.schemas.enable": "false"
-  "internal.key.converter": "org.apache.kafka.connect.json.JsonConverter"
-  "internal.value.converter": "org.apache.kafka.connect.json.JsonConverter"
-  "config.storage.replication.factor": "3"
-  "offset.storage.replication.factor": "3"
-  "status.storage.replication.factor": "3"
-  "security.protocol": "SASL_SSL"
-  "sasl.mechanism": "SCRAM-SHA-512"
-  "sasl.jaas.config": >-
+  key.converter: org.apache.kafka.connect.json.JsonConverter
+  value.converter: org.apache.kafka.connect.json.JsonConverter
+  security.protocol: SASL_SSL
+  sasl.mechanism: SCRAM-SHA-512
+  sasl.jaas.config: >
     org.apache.kafka.common.security.scram.ScramLoginModule required
     username="kafka" password="kafka";
-  "ssl.truststore.type": "JKS"
-  "ssl.truststore.location": "/usr/share/confluent-hub-components/kafka.truststore.jks"
-  "ssl.truststore.password": "changeit"
-  "ssl.keystore.type": "JKS"
-  "ssl.keystore.location": "/usr/share/confluent-hub-components/kafka.keystore.jks"
-  "ssl.keystore.password": "changeit"
-  "connector.client.config.override.policy": "All"
+  ssl.truststore.type: JKS
+  ssl.truststore.location: /usr/share/confluent-hub-components/kafka.truststore.jks
+  ssl.truststore.password: changeit
+  ssl.keystore.type: JKS
+  ssl.keystore.location: /usr/share/confluent-hub-components/kafka.keystore.jks
+  ssl.keystore.password: changeit
+  connector.client.config.override.policy: All
 ## Kafka Connect JVM Heap Option
 heapOptions: "-Xms512M -Xmx512M"
 
