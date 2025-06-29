@@ -2231,7 +2231,7 @@ provisioning:
   useHelmHooks: true
   ## @param provisioning.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
   ##
   numPartitions: 1
@@ -2346,13 +2346,13 @@ provisioning:
       truststorePasswordSecretKey: truststore-password
       ## @param provisioning.auth.tls.keyPassword Password to access the password-protected PEM key if necessary. Ignored if 'passwordsSecret' is provided.
       ##
-      keyPassword: ""
+      keyPassword: "changeit"
       ## @param provisioning.auth.tls.keystorePassword Password to access the JKS keystore. Ignored if 'passwordsSecret' is provided.
       ##
-      keystorePassword: ""
+      keystorePassword: "changeit"
       ## @param provisioning.auth.tls.truststorePassword Password to access the JKS truststore. Ignored if 'passwordsSecret' is provided.
       ##
-      truststorePassword: ""
+      truststorePassword: "changeit"
   ## @param provisioning.command Override provisioning container command
   ##
   command: []
