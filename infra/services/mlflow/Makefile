@@ -69,8 +69,7 @@ mlflow-serve:
 	@set -e; \
 	printf '\033[1;33mRunning local MLflow model server...\033[0m\n'; \
 	kubectl apply -f infra/services/mlflow/mlflow-serve.yaml; \
-	kubectl wait --for=condition=available --timeout=90s deployment/mlflow-serve -n $(NAMESPACE); \
-	kubectl apply -f infra/services/mlflow/mlflow-nodeport.yaml; \
+	kubectl wait --for=condition=available --timeout=90s deployment/mlflow-model-serving -n $(NAMESPACE); \
 	printf '\033[1;32mMLflow model server is running.\033[0m\n'
 
 help:
