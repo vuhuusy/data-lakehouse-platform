@@ -7,6 +7,6 @@ RUN pip install boto3 lightgbm==4.3.0 pandas==2.2.3 numpy==2.2.6 \
     pyarrow==19.0.1 cloudpickle==3.1.1 mlflow==2.22.1 catboost==1.2.8 gunicorn xgboost==3.0.2
 
 WORKDIR /app
-COPY log_model.py .
+COPY script/mlflow/log_model.py .
 
 CMD ["python", "log_model.py"]
