@@ -2222,7 +2222,7 @@ metrics:
 provisioning:
   ## @param provisioning.enabled Enable Kafka provisioning Job
   ##
-  enabled: true
+  enabled: false
   ## @param provisioning.waitForKafka Whether an init container should be created to wait until Kafka is ready before provisioning
   ##
   waitForKafka: true
@@ -2231,7 +2231,7 @@ provisioning:
   useHelmHooks: true
   ## @param provisioning.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: true
+  automountServiceAccountToken: false
   ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
   ##
   numPartitions: 1
