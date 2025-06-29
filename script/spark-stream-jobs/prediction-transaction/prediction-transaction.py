@@ -70,7 +70,7 @@ predicted_schema = StructType([
 
 # Variables configuration
 KAFKA_BOOTSTRAP = "kafka.kafka.svc.cluster.local:9092"
-TOPIC = "predicted-transaction"
+TOPIC = "financial-ops.prediction.transaction"
 DELTA_PATH = "s3a://gold-zone/f_transaction_predictions"
 CHECKPOINT_PATH = "s3a://work-zone/spark/checkpoints/f_transaction_predictions"
 TABLE_NAME = "f_transaction_predictions"
