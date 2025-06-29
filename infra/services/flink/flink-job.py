@@ -192,13 +192,13 @@ def main():
     )
 
     predicted_sink = FlinkKafkaProducer(
-        topic='predicted-transaction',
+        topic='financial-ops.prediction.transaction',
         serialization_schema=SimpleStringSchema(),
         producer_config=kafka_props
     )
 
     fraud_sink = FlinkKafkaProducer(
-        topic='fraud-transaction',
+        topic='financial-ops.alert.transaction',
         serialization_schema=SimpleStringSchema(),
         producer_config=kafka_props
     )
