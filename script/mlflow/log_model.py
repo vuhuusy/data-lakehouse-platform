@@ -8,7 +8,7 @@ from mlflow.tracking import MlflowClient
 
 # ====== CONFIGURATION ======
 MLFLOW_TRACKING_URI = "http://mlflow.mlflow.svc.cluster.local:5000"
-S3_ENDPOINT = "https://minio.minio.svc.cluster.local:9000"
+S3_ENDPOINT = "https://minio-api.minio.svc.cluster.local:9000"
 AWS_ACCESS_KEY_ID = "minio"
 AWS_SECRET_ACCESS_KEY = "minio123"
 
