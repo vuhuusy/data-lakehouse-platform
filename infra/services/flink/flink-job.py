@@ -26,7 +26,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return R * c
 
 
-MLFLOW_PREDICT_URL = "http://103.82.133.158:30051/invocations"
+MLFLOW_PREDICT_URL = "http://mlflow-model-serving.mlflow.svc.cluster.local:8080/invocations"
 
 
 class FeatureEngineeringFunction(KeyedProcessFunction):
@@ -35,8 +35,8 @@ class FeatureEngineeringFunction(KeyedProcessFunction):
         state_desc = MapStateDescriptor("txn_state", Types.STRING(), Types.PICKLED_BYTE_ARRAY())
         self.txn_state = runtime_context.get_map_state(state_desc)
         self.txn_window_secs = 7200
-        self.cache_ttl_secs = 3600  # TTL for feature cache: 5 minutes
-        self.feature_cache = {}  # key: (customer_id, merchant_id) -> {"features": ..., "ts": ...}
+        self.cache_ttl_secs = 3600
+        self.feature_cache = {}
         self.store = FeatureStore(repo_path="/opt/flink/feature_store/")
 
     def process_element(self, value, ctx: 'KeyedProcessFunction.Context'):
