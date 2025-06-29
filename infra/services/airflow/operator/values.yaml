@@ -957,13 +957,13 @@ scheduler:
       maxUnavailable: 1
       # minAvailable: 1
 
-  resources:
-   limits:
-    cpu: 1000m
-    memory: 1024Mi
-   requests:
-    cpu: 200m
-    memory: 256Mi
+  resources: {}
+  #  limits:
+  #   cpu: 1000m
+  #   memory: 1024Mi
+  #  requests:
+  #   cpu: 200m
+  #   memory: 256Mi
 
   # This setting tells kubernetes that its ok to evict
   # when it wants to scale a node down.
@@ -1318,13 +1318,13 @@ apiServer:
       ports:
         - port: "{{ .Values.ports.apiServer }}"
 
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+  resources: {}
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1024Mi
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
 
   livenessProbe:
     initialDelaySeconds: 15
@@ -1472,13 +1472,13 @@ webserver:
       ports:
         - port: "{{ .Values.ports.airflowUI }}"
 
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+  resources: {}
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1024Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
   # Create initial user.
   defaultUser:
@@ -1663,13 +1663,13 @@ triggerer:
     # Annotations to add to triggerer volumes
     annotations: {}
 
-  resources:
-   limits:
-    cpu: 1000m
-    memory: 1024Mi
-   requests:
-    cpu: 200m
-    memory: 256Mi
+  resources: {}
+  #  limits:
+  #   cpu: 1000m
+  #   memory: 1024Mi
+  #  requests:
+  #   cpu: 200m
+  #   memory: 256Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -1863,13 +1863,13 @@ dagProcessor:
   # container level lifecycle hooks
   containerLifecycleHooks: {}
 
-  resources:
-   limits:
-    cpu: 1000m
-    memory: 1024Mi
-   requests:
-    cpu: 200m
-    memory: 256Mi
+  resources: {}
+  #  limits:
+  #   cpu: 1000m
+  #   memory: 1024Mi
+  #  requests:
+  #   cpu: 200m
+  #   memory: 256Mi
 
   # Grace period for dag processor to finish after SIGTERM is sent from kubernetes
   terminationGracePeriodSeconds: 60
@@ -2149,13 +2149,13 @@ statsd:
 
   # Additional network policies as needed
   extraNetworkPolicies: []
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
   service:
     extraAnnotations: {}
@@ -2861,13 +2861,13 @@ dags:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
-    resources:
-     limits:
-      cpu: 500m
-      memory: 512Mi
-     requests:
-      cpu: 100m
-      memory: 128Mi
+    resources: {}
+    #  limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    #  requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
 logs:
   # Configuration for empty dir volume (if logs.persistence.enabled == false)
