@@ -1,5 +1,5 @@
 NAMESPACE ?= kafka
-CONNECT_HOST ?= 103.179.172.171:30083
+CONNECT_HOST ?= 103.179.188.179:30083
 
 .PHONY: \
 	install uninstall \
