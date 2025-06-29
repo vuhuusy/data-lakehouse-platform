@@ -43,7 +43,7 @@ install-kafka:
 		--set controller.automountServiceAccountToken=true \
 		--set broker.automountServiceAccountToken=true \
 		--set serviceAccount.create=true \
-		--set rbac.create=true \
+		--set rbac.create=true; \
 	printf '\033[1;32mKafka Operator installation complete.\033[0m\n'
 
 uninstall-kafka:
