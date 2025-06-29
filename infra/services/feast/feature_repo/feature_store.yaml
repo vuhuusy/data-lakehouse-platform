@@ -10,7 +10,7 @@ provider: local
 
 online_store:
   type: redis
-  connection_string: redis-master.feature-store.svc.cluster.local:6379
+  connection_string: redis://:redis@redis-master.feature-store.svc.cluster.local:6379/0
 
 offline_store:
   type: feast_trino.trino.TrinoOfflineStore
