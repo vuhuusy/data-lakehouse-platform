@@ -16,4 +16,4 @@ k delete -f script/flink-jobs/flink-kafka-job.yaml -n flink
 
 k create ns ingestion
 
-k apply -f script/realtime-data-simulation/ingest.yaml
+k apply -f script/realtime-data-simulation/ingest.yaml -n ingestion
