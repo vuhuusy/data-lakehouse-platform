@@ -41,12 +41,8 @@ spec:
           envFrom:
             - secretRef:
                 name: aws-credentials
-          env:
-            - name: SLACK_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: slack-token
-                  key: SLACK_TOKEN
+            - secretRef:
+                name: slack-token
       volumes:
         - name: kafka-truststore
           secret:
