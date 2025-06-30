@@ -53,7 +53,7 @@ def main():
         'ssl.truststore.password': 'changeit',
         'ssl.keystore.location': '/opt/flink/secrets/kafka.keystore.jks',
         'ssl.keystore.password': 'changeit',
-        'auto.offset.reset': 'latest'
+        'auto.offset.reset': 'earliest'
     }
 
     source = FlinkKafkaConsumer(
