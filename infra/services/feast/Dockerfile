@@ -23,4 +23,4 @@ RUN pip install psycopg2-binary
 
 WORKDIR /app
 
-COPY ./feature_repo/ /app/
+COPY infra/services/feast/feature_repo/ /app/
