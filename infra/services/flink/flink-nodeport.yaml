@@ -8,7 +8,6 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: kafka-to-kafka
     component: jobmanager
   ports:
     - name: rest
