@@ -82,5 +82,6 @@ USER flink
 RUN mkdir -p /opt/flink/usrlib
 COPY infra/services/feast/feature_repo/ /opt/flink/feature_store/
 ADD infra/services/flink/flink-job.py /opt/flink/usrlib/flink-job.py
+ADD infra/services/flink/flink-alert-job.py /opt/flink/usrlib/flink-alert-job.py
 
 WORKDIR /opt/flink/feature_store
