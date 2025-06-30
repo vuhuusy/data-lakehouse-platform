@@ -1,0 +1,74 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: flink-alert-job
+  namespace: flink
+spec:
+  image: huusy/flink:1.17
+  imagePullPolicy: Always
+  flinkVersion: v1_17
+  serviceAccount: flink
+
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+
+  taskManager:
+    replicas: 2
+    resource:
+      memory: "4096m"
+      cpu: 1
+
+  job:
+    jarURI: local:///opt/flink/opt/flink-python-1.17.2.jar
+    entryClass: "org.apache.flink.client.python.PythonDriver"
+    parallelism: 2
+    args:
+      - "-pyclientexec"
+      - "/usr/local/bin/python3"
+      - "-py"
+      - "/opt/flink/usrlib/flink-alert-job.py"
+    upgradeMode: last-state
+
+  podTemplate:
+    spec:
+      containers:
+        - name: flink-main-container
+          volumeMounts:
+            - name: kafka-truststore
+              mountPath: /opt/flink/secrets
+          envFrom:
+            - secretRef:
+                name: aws-credentials
+          env:
+            - name: SLACK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slack-token
+                  key: SLACK_TOKEN
+      volumes:
+        - name: kafka-truststore
+          secret:
+            secretName: kafka-jks
+
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "2"
+    state.backend: filesystem
+    state.backend.incremental: "true"
+    state.checkpoints.dir: s3a://work-zone/flink/checkpoints/alert
+    state.savepoints.dir: s3a://work-zone/flink/savepoints/alert
+    execution.checkpointing.interval: "180000"
+    execution.checkpointing.mode: EXACTLY_ONCE
+    execution.checkpointing.timeout: "180000"
+    s3.access.key: minio
+    s3.secret.key: minio123
+    s3.endpoint: https://minio.minio.svc.cluster.local:443
+    fs.s3a.endpoint: https://minio.minio.svc.cluster.local:443
+    fs.s3a.access.key: minio
+    fs.s3a.secret.key: minio123
+    fs.s3a.path.style.access: "true"
+    fs.s3a.connection.ssl.enabled: "true"
+    fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+    classloader.resolve-order: parent-first
+    env.java.opts: "-XX:MaxDirectMemorySize=4096m"
